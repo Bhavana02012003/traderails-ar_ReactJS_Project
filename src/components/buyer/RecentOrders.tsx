@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, ChevronRight, Eye, Truck, Shield } from 'lucide-react';
+import { ChevronDown, ChevronRight, Eye, Truck, Shield, CreditCard } from 'lucide-react';
+import FinancialWorkflowTrigger from '@/components/finance/FinancialWorkflowTrigger';
 
 interface RecentOrdersProps {
   expanded?: boolean;
@@ -11,6 +12,7 @@ interface RecentOrdersProps {
 
 const RecentOrders = ({ expanded = false }: RecentOrdersProps) => {
   const [expandedOrders, setExpandedOrders] = useState<string[]>([]);
+  const [selectedOrderForWorkflow, setSelectedOrderForWorkflow] = useState<string | null>(null);
 
   const orders = [
     {
@@ -22,6 +24,12 @@ const RecentOrders = ({ expanded = false }: RecentOrdersProps) => {
       deliveryDate: 'Dec 15, 2024',
       escrowAmount: '$125,000',
       fxLocked: true,
+      buyer: 'Rohan Marble Imports (NY, USA)',
+      amount: {
+        inr: "₹18,45,000",
+        usd: "USD $22,100"
+      },
+      workflowStatus: 'approved' as const,
       timeline: [
         { step: 'Order Placed', completed: true, date: 'Nov 20' },
         { step: 'Factory QC', completed: true, date: 'Nov 25' },
@@ -39,6 +47,12 @@ const RecentOrders = ({ expanded = false }: RecentOrdersProps) => {
       deliveryDate: 'Completed',
       escrowAmount: '$89,500',
       fxLocked: true,
+      buyer: 'Premium Stone Trading Co. (Dubai, UAE)',
+      amount: {
+        inr: "₹12,35,000",
+        usd: "USD $14,800"
+      },
+      workflowStatus: 'approved' as const,
       timeline: [
         { step: 'Order Placed', completed: true, date: 'Oct 15' },
         { step: 'Factory QC', completed: true, date: 'Oct 20' },
@@ -56,6 +70,12 @@ const RecentOrders = ({ expanded = false }: RecentOrdersProps) => {
       deliveryDate: 'Jan 10, 2025',
       escrowAmount: '$245,000',
       fxLocked: false,
+      buyer: 'Marble Palace Inc. (Los Angeles, USA)',
+      amount: {
+        inr: "₹32,80,000",
+        usd: "USD $39,300"
+      },
+      workflowStatus: 'pending' as const,
       timeline: [
         { step: 'Order Placed', completed: true, date: 'Dec 1' },
         { step: 'Factory QC', completed: false, date: 'Dec 12' },
@@ -73,6 +93,34 @@ const RecentOrders = ({ expanded = false }: RecentOrdersProps) => {
         : [...prev, orderId]
     );
   };
+
+  const handleFinancialWorkflow = (orderId: string) => {
+    setSelectedOrderForWorkflow(orderId);
+  };
+
+  const selectedOrder = orders.find(order => order.id === selectedOrderForWorkflow);
+
+  if (selectedOrderForWorkflow && selectedOrder) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="outline" 
+            onClick={() => setSelectedOrderForWorkflow(null)}
+          >
+            ← Back to Orders
+          </Button>
+          <h3 className="text-lg font-semibold text-stone-900">Financial Workflow - {selectedOrder.id}</h3>
+        </div>
+        <FinancialWorkflowTrigger
+          invoiceId={selectedOrder.id}
+          amount={selectedOrder.amount}
+          buyer={selectedOrder.buyer}
+          status={selectedOrder.workflowStatus}
+        />
+      </div>
+    );
+  }
 
   return (
     <Card className="bg-white/70 backdrop-blur-sm border border-stone-200">
@@ -101,6 +149,15 @@ const RecentOrders = ({ expanded = false }: RecentOrdersProps) => {
                 <Button variant="outline" size="sm">
                   <Eye className="w-4 h-4 mr-1" />
                   Track
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleFinancialWorkflow(order.id)}
+                  className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                >
+                  <CreditCard className="w-4 h-4 mr-1" />
+                  Workflow
                 </Button>
                 <Button
                   variant="ghost"
