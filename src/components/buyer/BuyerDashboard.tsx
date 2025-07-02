@@ -1,17 +1,13 @@
+
 import { useState } from 'react';
 import DashboardHeader from '@/components/exporter/DashboardHeader';
 import BuyerSummaryCards from './BuyerSummaryCards';
-import RecentOrders from './RecentOrders';
-import LocationMap from './LocationMap';
-import TrustBadges from './TrustBadges';
-import AssignedAgents from './AssignedAgents';
-import SlabBookmarks from './SlabBookmarks';
 import BuyerQuickActions from './BuyerQuickActions';
-import QuotesList from './QuotesList';
 import QuoteReviewPage from './QuoteReviewPage';
 import FinancialWorkflowTrigger from '@/components/finance/FinancialWorkflowTrigger';
 import InviteUserFlow from '@/components/invite/InviteUserFlow';
 import ShipmentTrackingView from '@/components/shipment/ShipmentTrackingView';
+import TrustBadges from './TrustBadges';
 
 interface BuyerDashboardProps {
   onShowInviteFlow?: () => void;
@@ -106,32 +102,18 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
           <BuyerSummaryCards />
         </div>
 
-        {/* Quick Actions */}
+        {/* Main Content with Tabs */}
         <div className="mb-8">
-          <BuyerQuickActions onShowInviteFlow={handleShowInviteFlow} />
+          <BuyerQuickActions 
+            onShowInviteFlow={handleShowInviteFlow}
+            onViewQuote={handleViewQuote}
+            onFinancialWorkflow={handleFinancialWorkflow}
+            onTrackShipment={handleTrackShipment}
+          />
         </div>
 
-        {/* Main Dashboard Sections */}
-        <div className="space-y-8">
-          {/* Primary Sections */}
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            <QuotesList onViewQuote={handleViewQuote} />
-            <RecentOrders 
-              onFinancialWorkflow={handleFinancialWorkflow} 
-              onTrackShipment={handleTrackShipment}
-            />
-          </div>
-
-          {/* Secondary Sections */}
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            {userType === 'buyer' && <AssignedAgents />}
-            <LocationMap />
-          </div>
-
-          {/* Additional Sections */}
-          <SlabBookmarks />
-          <TrustBadges />
-        </div>
+        {/* Trust Badges */}
+        <TrustBadges />
       </div>
     </div>
   );
