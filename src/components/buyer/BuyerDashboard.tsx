@@ -9,6 +9,7 @@ import AssignedAgents from './AssignedAgents';
 import LocationMap from './LocationMap';
 import TrustBadges from './TrustBadges';
 import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
+import OrgDetailsPage from '@/components/org/OrgDetailsPage';
 
 interface BuyerDashboardProps {
   onShowInviteFlow?: () => void;
@@ -50,6 +51,8 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
 
   // Only show organization switcher for traders and agents
   const canSwitchOrganizations = userType === 'trader' || userType === 'agent';
+  // Only show organization details for buyers (not agents or traders)
+  const canManageOrganization = userType === 'buyer';
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -89,6 +92,11 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
             <TabsTrigger value="agents" className="px-6 py-2 data-[state=active]:bg-emerald-500 data-[state=active]:text-white">
               Agents
             </TabsTrigger>
+            {canManageOrganization && (
+              <TabsTrigger value="organization" className="px-6 py-2 data-[state=active]:bg-emerald-500 data-[state=active]:text-white">
+                Organization
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -121,6 +129,12 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
           <TabsContent value="agents">
             <AssignedAgents />
           </TabsContent>
+
+          {canManageOrganization && (
+            <TabsContent value="organization">
+              <OrgDetailsPage />
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </div>

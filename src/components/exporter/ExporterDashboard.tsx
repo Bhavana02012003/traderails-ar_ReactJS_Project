@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Plus, Upload, Download, Bell, TrendingUp, Package, Truck, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +12,7 @@ import PayoutSummary from './PayoutSummary';
 import BuyerInquiries from './BuyerInquiries';
 import CompliancePanel from './CompliancePanel';
 import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
+import OrgDetailsPage from '@/components/org/OrgDetailsPage';
 
 interface ExporterDashboardProps {
   onShowInviteFlow?: () => void;
@@ -54,6 +54,8 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
 
   // Only show organization switcher for traders
   const canSwitchOrganizations = userType === 'trader';
+  // Only show organization details for exporters (not traders)
+  const canManageOrganization = userType === 'exporter';
 
   const summaryMetrics = [
     {
@@ -137,6 +139,9 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
             <TabsTrigger value="shipments" className="px-6 py-3">Shipments</TabsTrigger>
             <TabsTrigger value="payouts" className="px-6 py-3">Payouts</TabsTrigger>
             <TabsTrigger value="inquiries" className="px-6 py-3">Inquiries</TabsTrigger>
+            {canManageOrganization && (
+              <TabsTrigger value="organization" className="px-6 py-3">Organization</TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -167,6 +172,12 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
           <TabsContent value="inquiries">
             <BuyerInquiries detailed />
           </TabsContent>
+
+          {canManageOrganization && (
+            <TabsContent value="organization">
+              <OrgDetailsPage />
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </div>

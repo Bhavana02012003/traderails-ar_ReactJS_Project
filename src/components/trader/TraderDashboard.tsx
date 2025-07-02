@@ -262,7 +262,6 @@ const TraderDashboard = ({ onShowInviteFlow }: TraderDashboardProps) => {
             <TabsTrigger value="slabs" className="px-6 py-3">Slabs for Sale</TabsTrigger>
             <TabsTrigger value="buyers" className="px-6 py-3">Active Buyers</TabsTrigger>
             <TabsTrigger value="payments" className="px-6 py-3">Payments</TabsTrigger>
-            <TabsTrigger value="org-details" className="px-6 py-3">Organization</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -469,10 +468,6 @@ const TraderDashboard = ({ onShowInviteFlow }: TraderDashboardProps) => {
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
-
-          <TabsContent value="org-details">
-            <OrgDetailsPage />
           </TabsContent>
         </Tabs>
       </div>
