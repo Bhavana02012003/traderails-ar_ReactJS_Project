@@ -1,204 +1,74 @@
 
-import { useState } from 'react';
-import { Globe } from 'lucide-react';
-import Header from '@/components/Header';
-import HeroSection from '@/components/HeroSection';
-import TrustSection from '@/components/TrustSection';
-import FeaturesSection from '@/components/FeaturesSection';
-import MarketplacePreview from '@/components/MarketplacePreview';
-import MarketplaceContent from '@/components/MarketplaceContent';
-import ExporterDashboard from '@/components/exporter/ExporterDashboard';
-import BuyerDashboard from '@/components/buyer/BuyerDashboard';
-import AdminDashboard from '@/components/admin/AdminDashboard';
-import TraderDashboard from '@/components/trader/TraderDashboard';
-import AgentDashboard from '@/components/agent/AgentDashboard';
-import LoginModal from '@/components/LoginModal';
-import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
-import InviteUserFlow from '@/components/invite/InviteUserFlow';
+import { Link } from "react-router-dom";
+import { ArrowRight, Eye, Cube } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Header from "@/components/Header";
+import HeroSection from "@/components/HeroSection";
+import FeaturesSection from "@/components/FeaturesSection";
+import MarketplacePreview from "@/components/MarketplacePreview";
+import TrustSection from "@/components/TrustSection";
 
 const Index = () => {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin' | 'trader' | 'agent' | 'onboarding' | 'invite'>('home');
-  const [userType, setUserType] = useState<'exporter' | 'buyer' | 'admin' | 'agent' | 'trader' | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const handleLoginClick = () => {
-    setIsLoginModalOpen(true);
-  };
-
-  const handleLoginSuccess = (type: 'buyer' | 'exporter' | 'agent' | 'trader') => {
-    setUserType(type);
-    setIsLoggedIn(true);
-    setIsLoginModalOpen(false);
-    // Redirect to appropriate dashboard after login
-    if (type === 'buyer') {
-      setCurrentView('buyer');
-    } else if (type === 'agent') {
-      setCurrentView('agent');
-    } else if (type === 'exporter') {
-      setCurrentView('exporter');
-    } else if (type === 'trader') {
-      setCurrentView('trader');
-    }
-  };
-
-  const handleLogout = () => {
-    setUserType(null);
-    setIsLoggedIn(false);
-    setCurrentView('home');
-  };
-
-  const handleBrowseClick = () => {
-    setCurrentView('marketplace');
-  };
-
-  const handleHomeClick = () => {
-    setCurrentView('home');
-  };
-
-  const handleListClick = () => {
-    setCurrentView('exporter');
-  };
-
-  const handleDashboardClick = () => {
-    if (!isLoggedIn || !userType) {
-      setIsLoginModalOpen(true);
-      return;
-    }
-    
-    // Show appropriate dashboard based on user type
-    if (userType === 'buyer') {
-      setCurrentView('buyer');
-    } else if (userType === 'agent') {
-      setCurrentView('agent');
-    } else if (userType === 'exporter') {
-      setCurrentView('exporter');
-    } else if (userType === 'trader') {
-      setCurrentView('trader');
-    } else if (userType === 'admin') {
-      setCurrentView('admin');
-    }
-  };
-
-  const handleCreateAccount = () => {
-    setCurrentView('onboarding');
-    setIsLoginModalOpen(false);
-  };
-
-  const handleShowInviteFlow = () => {
-    setCurrentView('invite');
-  };
-
   return (
-    <div className="min-h-screen bg-white">
-      {/* Only show header if not in admin view, onboarding, or invite flow */}
-      {currentView !== 'admin' && currentView !== 'onboarding' && currentView !== 'invite' && (
-        <Header 
-          onLoginClick={handleLoginClick} 
-          onMarketplaceClick={handleBrowseClick}
-          onHomeClick={handleHomeClick}
-          onDashboardClick={handleDashboardClick}
-          currentView={currentView}
-          isLoggedIn={isLoggedIn}
-          userType={userType}
-          onLogout={handleLogout}
-        />
-      )}
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-sage-50">
+      <Header />
+      <HeroSection />
       
-      {currentView === 'home' ? (
-        <>
-          <main>
-            <HeroSection 
-              onBrowseClick={handleBrowseClick}
-              onListClick={handleListClick}
-            />
-            <TrustSection />
-            <FeaturesSection />
-            <MarketplacePreview />
-          </main>
-
-          <footer className="bg-stone-900 text-white py-12">
-            <div className="container mx-auto px-4 lg:px-8">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                  <div className="flex items-center space-x-2 mb-4">
-                    <div className="w-8 h-8 emerald-gradient rounded-lg flex items-center justify-center">
-                      <Globe className="w-5 h-5 text-white" />
-                    </div>
-                    <span className="text-xl font-bold">TradeRails</span>
-                  </div>
-                  <p className="text-stone-400 text-sm">
-                    The premium B2B platform for global stone trading.
-                  </p>
-                </div>
-                
-                <div>
-                  <h3 className="font-semibold mb-4">Platform</h3>
-                  <ul className="space-y-2 text-sm text-stone-400">
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Marketplace</a></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Features</a></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Pricing</a></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">API</a></li>
-                  </ul>
-                </div>
-                
-                <div>
-                  <h3 className="font-semibold mb-4">Support</h3>
-                  <ul className="space-y-2 text-sm text-stone-400">
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Help Center</a></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Contact Us</a></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Status</a></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Security</a></li>
-                  </ul>
-                </div>
-                
-                <div>
-                  <h3 className="font-semibold mb-4">Company</h3>
-                  <ul className="space-y-2 text-sm text-stone-400">
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">About</a></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Careers</a></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Privacy</a></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Terms</a></li>
-                  </ul>
-                </div>
+      {/* Quick Actions Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-stone-900 mb-4">
+              Platform Tools
+            </h2>
+            <p className="text-lg text-stone-600">
+              Explore our advanced tools for stone trading
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Eye className="w-8 h-8 text-emerald-600" />
               </div>
-              
-              <div className="border-t border-stone-800 mt-8 pt-8 text-center text-sm text-stone-400">
-                <p>&copy; 2024 TradeRails. All rights reserved.</p>
-              </div>
+              <h3 className="text-xl font-semibold mb-2">Marketplace</h3>
+              <p className="text-stone-600 mb-4">Browse premium stone slabs from verified suppliers</p>
+              <Button variant="outline" className="w-full">
+                Explore Marketplace
+              </Button>
             </div>
-          </footer>
-        </>
-      ) : currentView === 'marketplace' ? (
-        <MarketplaceContent />
-      ) : currentView === 'exporter' ? (
-        <ExporterDashboard 
-          onShowInviteFlow={handleShowInviteFlow} 
-          userType={userType === 'trader' ? 'trader' : 'exporter'}
-        />
-      ) : currentView === 'buyer' ? (
-        <BuyerDashboard 
-          onShowInviteFlow={handleShowInviteFlow}
-          userType={userType === 'agent' ? 'agent' : userType === 'trader' ? 'trader' : 'buyer'}
-        />
-      ) : currentView === 'trader' ? (
-        <TraderDashboard onShowInviteFlow={handleShowInviteFlow} />
-      ) : currentView === 'agent' ? (
-        <AgentDashboard onShowInviteFlow={handleShowInviteFlow} />
-      ) : currentView === 'admin' ? (
-        <AdminDashboard onLogout={handleLogout} onShowInviteFlow={handleShowInviteFlow} />
-      ) : currentView === 'invite' ? (
-        <InviteUserFlow onBack={handleHomeClick} />
-      ) : (
-        <OnboardingWizard />
-      )}
-
-      <LoginModal 
-        open={isLoginModalOpen} 
-        onOpenChange={setIsLoginModalOpen}
-        onLoginSuccess={handleLoginSuccess}
-        onCreateAccount={handleCreateAccount}
-      />
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Cube className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">3D Slab Viewer</h3>
+              <p className="text-stone-600 mb-4">Immersive 3D inspection of stone slabs with AR support</p>
+              <Link to="/slab-viewer">
+                <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                  Launch 3D Viewer
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <ArrowRight className="w-8 h-8 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Trade Tools</h3>
+              <p className="text-stone-600 mb-4">Advanced tools for quotes, orders, and payments</p>
+              <Button variant="outline" className="w-full">
+                View Tools
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <FeaturesSection />
+      <MarketplacePreview />
+      <TrustSection />
     </div>
   );
 };
