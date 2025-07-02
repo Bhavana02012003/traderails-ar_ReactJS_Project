@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { UserPlus, Eye, MapPin, Quote, ChevronDown, ChevronRight } from 'lucide-react';
+import { UserPlus, Eye, MapPin, Quote, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
 
 interface BuyerQuickActionsProps {
   onShowInviteFlow?: () => void;
@@ -58,6 +58,24 @@ const BuyerQuickActions = ({ onShowInviteFlow, onViewQuote, onFinancialWorkflow 
     // Handle specific actions
     if (action.id === 'quotes') {
       onViewQuote?.('sample-quote-id');
+    }
+  };
+
+  const handleRecordClick = (record: any, actionId: string) => {
+    switch (actionId) {
+      case 'quotes':
+        onViewQuote?.(record.id);
+        break;
+      case 'inspection':
+        console.log('Opening inspection details for:', record.id);
+        // Add inspection detail navigation logic here
+        break;
+      case 'locations':
+        console.log('Opening location details for:', record.id);
+        // Add location detail navigation logic here
+        break;
+      default:
+        console.log('Record clicked:', record);
     }
   };
 
@@ -131,17 +149,26 @@ const BuyerQuickActions = ({ onShowInviteFlow, onViewQuote, onFinancialWorkflow 
                 </h3>
                 <div className="space-y-3">
                   {getRecordsForAction(selectedAction).map((record: any) => (
-                    <div key={record.id} className="flex items-center justify-between p-3 bg-stone-50 rounded-lg hover:bg-stone-100 transition-colors">
+                    <div 
+                      key={record.id} 
+                      className="flex items-center justify-between p-3 bg-stone-50 rounded-lg hover:bg-stone-100 transition-colors cursor-pointer group"
+                      onClick={() => handleRecordClick(record, selectedAction)}
+                    >
                       <div className="flex-1">
-                        <p className="font-medium text-sm text-stone-900">{record.title || record.name}</p>
+                        <p className="font-medium text-sm text-stone-900 group-hover:text-emerald-700 transition-colors">
+                          {record.title || record.name}
+                        </p>
                         <p className="text-xs text-stone-600">
                           {record.exporter || record.location || record.address || record.date}
                         </p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium text-stone-900">
-                          {record.amount || record.status || record.type}
-                        </p>
+                      <div className="flex items-center gap-2">
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-stone-900">
+                            {record.amount || record.status || record.type}
+                          </p>
+                        </div>
+                        <ExternalLink className="w-4 h-4 text-stone-400 group-hover:text-emerald-600 transition-colors" />
                       </div>
                     </div>
                   ))}
