@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Globe, User, Menu, X } from 'lucide-react';
+import { Globe, User, Menu, X, Settings } from 'lucide-react';
 
 interface HeaderProps {
   onLoginClick: () => void;
@@ -9,10 +9,32 @@ interface HeaderProps {
   onHomeClick?: () => void;
   onDashboardClick?: () => void;
   currentView?: 'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin';
+  isLoggedIn?: boolean;
+  userType?: 'buyer' | 'exporter' | 'admin' | null;
+  onLogout?: () => void;
 }
 
-const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onDashboardClick, currentView = 'home' }: HeaderProps) => {
+const Header = ({ 
+  onLoginClick, 
+  onMarketplaceClick, 
+  onHomeClick, 
+  onDashboardClick, 
+  currentView = 'home',
+  isLoggedIn = false,
+  userType,
+  onLogout
+}: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleAccountClick = () => {
+    // For now, just show dashboard - could be expanded to show account settings
+    onDashboardClick?.();
+  };
+
+  const handleLogout = () => {
+    onLogout?.();
+    setIsMenuOpen(false);
+  };
 
   return (
     <header className="relative z-50 bg-white/95 backdrop-blur-sm border-b border-stone-200">
@@ -71,13 +93,30 @@ const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onDashboardClic
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" onClick={onLoginClick} className="text-stone-600">
-              <User className="w-4 h-4 mr-2" />
-              Login
-            </Button>
-            <Button onClick={onLoginClick} className="emerald-gradient text-white">
-              Get Started
-            </Button>
+            {isLoggedIn && (userType === 'buyer' || userType === 'exporter') ? (
+              <>
+                <Button variant="ghost" onClick={handleAccountClick} className="text-stone-600">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Account
+                </Button>
+                <Button onClick={onDashboardClick} className="emerald-gradient text-white">
+                  Dashboard
+                </Button>
+                <Button variant="outline" onClick={handleLogout} className="text-stone-600">
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" onClick={onLoginClick} className="text-stone-600">
+                  <User className="w-4 h-4 mr-2" />
+                  Login
+                </Button>
+                <Button onClick={onLoginClick} className="emerald-gradient text-white">
+                  Get Started
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -146,13 +185,33 @@ const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onDashboardClic
                 Contact
               </a>
               <div className="flex flex-col space-y-2 pt-4 border-t border-stone-200">
-                <Button variant="ghost" onClick={onLoginClick} className="justify-start text-stone-600">
-                  <User className="w-4 h-4 mr-2" />
-                  Login
-                </Button>
-                <Button onClick={onLoginClick} className="emerald-gradient text-white">
-                  Get Started
-                </Button>
+                {isLoggedIn && (userType === 'buyer' || userType === 'exporter') ? (
+                  <>
+                    <Button variant="ghost" onClick={handleAccountClick} className="justify-start text-stone-600">
+                      <Settings className="w-4 h-4 mr-2" />
+                      Account
+                    </Button>
+                    <Button onClick={() => {
+                      onDashboardClick?.();
+                      setIsMenuOpen(false);
+                    }} className="emerald-gradient text-white">
+                      Dashboard
+                    </Button>
+                    <Button variant="outline" onClick={handleLogout} className="justify-start text-stone-600">
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="ghost" onClick={onLoginClick} className="justify-start text-stone-600">
+                      <User className="w-4 h-4 mr-2" />
+                      Login
+                    </Button>
+                    <Button onClick={onLoginClick} className="emerald-gradient text-white">
+                      Get Started
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>

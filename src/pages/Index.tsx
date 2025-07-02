@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import Header from '@/components/Header';
@@ -34,6 +33,12 @@ const Index = () => {
     } else if (type === 'admin') {
       setCurrentView('admin');
     }
+  };
+
+  const handleLogout = () => {
+    setUserType(null);
+    setIsLoggedIn(false);
+    setCurrentView('home');
   };
 
   const handleBrowseClick = () => {
@@ -74,6 +79,9 @@ const Index = () => {
           onHomeClick={handleHomeClick}
           onDashboardClick={handleDashboardClick}
           currentView={currentView}
+          isLoggedIn={isLoggedIn}
+          userType={userType}
+          onLogout={handleLogout}
         />
       )}
       
@@ -148,11 +156,7 @@ const Index = () => {
       ) : currentView === 'buyer' ? (
         <BuyerDashboard />
       ) : (
-        <AdminDashboard onLogout={() => {
-          setCurrentView('home');
-          setIsLoggedIn(false);
-          setUserType(null);
-        }} />
+        <AdminDashboard onLogout={handleLogout} />
       )}
 
       <LoginModal 
