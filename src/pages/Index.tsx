@@ -1,4 +1,3 @@
-
 /**
  * Main Index Page Component
  * 
@@ -61,8 +60,6 @@ type UserType = 'exporter' | 'buyer' | 'admin' | 'agent' | 'trader' | null;
 const Index = () => {
   // Authentication and modal state management
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [showAboutOverlay, setShowAboutOverlay] = useState(false);
-  const [showContactOverlay, setShowContactOverlay] = useState(false);
   
   // Primary navigation state - determines which view/page is currently active
   const [currentView, setCurrentView] = useState<ViewType>('home');
@@ -133,17 +130,17 @@ const Index = () => {
   };
 
   /**
-   * Shows about overlay
+   * Navigates to about view
    */
   const handleAboutClick = () => {
-    setShowAboutOverlay(true);
+    setCurrentView('about');
   };
 
   /**
-   * Shows contact overlay
+   * Navigates to contact view
    */
   const handleContactClick = () => {
-    setShowContactOverlay(true);
+    setCurrentView('contact');
   };
 
   /**
@@ -256,11 +253,7 @@ const Index = () => {
             <MarketplacePreview />
           </main>
 
-          {/* 
-            Footer Section
-            Contains company information, navigation links, and branding
-            Uses dark theme with emerald accent colors
-          */}
+          {/* Footer Section */}
           <footer className="bg-slate-900 text-white py-12">
             <div className="container mx-auto px-4 lg:px-8">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -321,11 +314,11 @@ const Index = () => {
         /* Marketplace view for browsing stone inventory */
         <MarketplaceContent />
       ) : currentView === 'about' ? (
-        /* About view for company information */
-        <AboutContent />
+        /* About view using the overlay component as a full page */
+        <AboutOverlay onClose={handleHomeClick} />
       ) : currentView === 'contact' ? (
-        /* Contact view for contact information and form */
-        <ContactContent />
+        /* Contact view using the overlay component as a full page */
+        <ContactOverlay onClose={handleHomeClick} />
       ) : currentView === 'onboarding' ? (
         /* Onboarding view for creating new accounts */
         <OnboardingWizard onCancel={handleCancelOnboarding} />
@@ -353,16 +346,6 @@ const Index = () => {
       ) : (
         /* User invitation flow for onboarding new platform members */
         <InviteUserFlow onBack={handleHomeClick} />
-      )}
-
-      {/* About Overlay */}
-      {showAboutOverlay && (
-        <AboutOverlay onClose={() => setShowAboutOverlay(false)} />
-      )}
-
-      {/* Contact Overlay */}
-      {showContactOverlay && (
-        <ContactOverlay onClose={() => setShowContactOverlay(false)} />
       )}
 
       {/* 
