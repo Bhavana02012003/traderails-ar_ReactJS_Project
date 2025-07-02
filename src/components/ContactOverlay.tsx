@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { X, MapPin, Phone, Mail, Globe } from 'lucide-react';
+import { ArrowLeft, MapPin, Phone, Mail, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ContactOverlayProps {
@@ -9,18 +9,28 @@ interface ContactOverlayProps {
 
 const ContactOverlay = ({ onClose }: ContactOverlayProps) => {
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-stone-200 p-6 flex items-center justify-between rounded-t-2xl">
-          <h2 className="text-3xl font-bold text-stone-900">Contact Us</h2>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="w-5 h-5" />
-          </Button>
+    <div className="min-h-screen bg-stone-50">
+      {/* Header - Fixed positioning */}
+      <div className="bg-white border-b border-stone-200 sticky top-0 z-50 shadow-sm">
+        <div className="container mx-auto px-4 lg:px-8 py-4">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="flex items-center gap-2 text-stone-600 hover:text-stone-900"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Home
+            </Button>
+            <h1 className="text-2xl font-bold text-stone-900">Contact Us</h1>
+          </div>
         </div>
+      </div>
 
-        {/* Content */}
-        <div className="p-6">
+      {/* Content */}
+      <div className="container mx-auto px-4 lg:px-8 py-12">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <p className="text-lg text-stone-600 leading-relaxed">
               Ready to transform your stone trading business? Get in touch with our team 
@@ -34,7 +44,7 @@ const ContactOverlay = ({ onClose }: ContactOverlayProps) => {
               <h3 className="text-2xl font-semibold text-stone-900 mb-6">Get in Touch</h3>
               
               <div className="space-y-6">
-                <div className="flex items-start space-x-4">
+                <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6 flex items-start space-x-4">
                   <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <MapPin className="w-6 h-6 text-emerald-600" />
                   </div>
@@ -49,7 +59,7 @@ const ContactOverlay = ({ onClose }: ContactOverlayProps) => {
                   </div>
                 </div>
                 
-                <div className="flex items-start space-x-4">
+                <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6 flex items-start space-x-4">
                   <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Phone className="w-6 h-6 text-emerald-600" />
                   </div>
@@ -62,7 +72,7 @@ const ContactOverlay = ({ onClose }: ContactOverlayProps) => {
                   </div>
                 </div>
                 
-                <div className="flex items-start space-x-4">
+                <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6 flex items-start space-x-4">
                   <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Mail className="w-6 h-6 text-emerald-600" />
                   </div>
@@ -75,7 +85,7 @@ const ContactOverlay = ({ onClose }: ContactOverlayProps) => {
                   </div>
                 </div>
                 
-                <div className="flex items-start space-x-4">
+                <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6 flex items-start space-x-4">
                   <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Globe className="w-6 h-6 text-emerald-600" />
                   </div>
@@ -91,7 +101,7 @@ const ContactOverlay = ({ onClose }: ContactOverlayProps) => {
             </div>
             
             {/* Contact Form */}
-            <div className="glass-panel p-8 rounded-xl">
+            <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-8">
               <h3 className="text-2xl font-semibold text-stone-900 mb-6">Send us a Message</h3>
               <form className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -158,6 +168,25 @@ const ContactOverlay = ({ onClose }: ContactOverlayProps) => {
                 </button>
               </form>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Trust Footer */}
+      <div className="bg-stone-100 border-t border-stone-200 py-6 mt-12">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-center md:text-left">
+              <p className="text-stone-600 text-sm">
+                <span className="font-semibold text-emerald-600">Get in touch</span> with our expert team
+              </p>
+              <p className="text-stone-500 text-xs mt-1">
+                Quick response • Expert guidance • Global support
+              </p>
+            </div>
+            <Button variant="outline" size="sm" className="text-stone-600">
+              Schedule a Call
+            </Button>
           </div>
         </div>
       </div>
