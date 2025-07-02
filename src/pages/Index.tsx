@@ -252,7 +252,7 @@ const Index = () => {
 
           {/* Footer Section */}
           <footer className="bg-slate-900 text-white py-12">
-            <div className="container mx-auto px-4 lg:px-8">
+            <div className="container mx-auto px-6 lg:px-12 max-w-7xl">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 {/* Logo and Branding Column */}
                 <div>
