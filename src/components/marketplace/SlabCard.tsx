@@ -1,221 +1,225 @@
 
-import { useState } from 'react';
-import { Heart, Eye, Star, MapPin, Clock, Verified } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { 
+  Heart, 
+  Star, 
+  MapPin, 
+  Clock, 
+  Verified, 
+  Eye,
+  Box,
+  Sparkles
+} from 'lucide-react';
 import { Slab } from '@/types/marketplace';
-import PayoutModal from './PayoutModal';
 
 interface SlabCardProps {
   slab: Slab;
   viewMode: 'grid' | 'list';
   onClick: () => void;
+  on3DViewClick?: () => void;
 }
 
-const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
-  const [showPayoutModal, setShowPayoutModal] = useState(false);
-
-  const handleViewDetails = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onClick();
-  };
-
-  const handleRequestQuote = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Handle quote request
-    console.log('Request quote for:', slab.id);
-  };
-
-  const handleBuyNow = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowPayoutModal(true);
-  };
-
-  const handleARView = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Handle AR view
-    console.log('AR view for:', slab.id);
-  };
-
+const SlabCard = ({ slab, viewMode, onClick, on3DViewClick }: SlabCardProps) => {
   if (viewMode === 'list') {
     return (
-      <>
-        <div className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group cursor-pointer">
-          <div className="flex" onClick={onClick}>
-            <div className="w-48 aspect-[4/3] relative overflow-hidden">
+      <Card className="hover:shadow-lg transition-all cursor-pointer bg-white/80 backdrop-blur-sm">
+        <CardContent className="p-0">
+          <div className="flex">
+            {/* Image */}
+            <div className="w-48 h-32 relative overflow-hidden flex-shrink-0">
               <img 
-                src={slab.thumbnail} 
+                src={slab.images[0]} 
                 alt={slab.name}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
               />
               {slab.featured && (
-                <Badge className="absolute top-3 left-3 bg-emerald-500 text-white">
+                <Badge className="absolute top-2 left-2 bg-emerald-500 text-white text-xs">
                   Featured
                 </Badge>
               )}
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // Handle favorite
+                }}
+                className="absolute top-2 right-2 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors"
+              >
+                <Heart className="w-4 h-4 text-stone-600" />
+              </button>
             </div>
-            
-            <div className="flex-1 p-6">
-              <div className="flex items-start justify-between mb-3">
+
+            {/* Content */}
+            <div className="flex-1 p-4" onClick={onClick}>
+              <div className="flex items-start justify-between mb-2">
                 <div>
-                  <h3 className="text-xl font-bold text-stone-900 mb-1">{slab.name}</h3>
-                  <div className="flex items-center text-stone-600 text-sm mb-2">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    {slab.supplier.name} • {slab.supplier.location}
-                    {slab.supplier.verified && (
-                      <Verified className="w-4 h-4 ml-1 text-emerald-500" />
-                    )}
+                  <h3 className="font-semibold text-stone-900 mb-1">{slab.name}</h3>
+                  <div className="flex items-center text-stone-600 text-sm">
+                    <MapPin className="w-3 h-3 mr-1" />
+                    {slab.supplier.location}
                   </div>
                 </div>
-                <button className="w-10 h-10 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center transition-colors">
-                  <Heart className="w-5 h-5 text-stone-600" />
-                </button>
-              </div>
-
-              <div className="flex items-center mb-4">
-                <div className="flex items-center mr-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star 
-                      key={i} 
-                      className={`w-4 h-4 ${i < Math.floor(slab.grade) ? 'text-yellow-400 fill-current' : 'text-stone-300'}`} 
-                    />
-                  ))}
-                  <span className="ml-2 text-sm text-stone-600">
-                    AI Grade {slab.grade.toFixed(1)}
-                  </span>
+                <div className="text-right">
+                  <div className="text-xl font-bold text-emerald-600">
+                    ${slab.price}
+                    <span className="text-sm text-stone-500">/{slab.priceUnit}</span>
+                  </div>
+                  <div className="flex items-center mt-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`w-3 h-3 ${i < Math.floor(slab.grade) ? 'text-yellow-400 fill-current' : 'text-stone-300'}`} 
+                      />
+                    ))}
+                    <span className="ml-1 text-xs text-stone-600">{slab.grade}</span>
+                  </div>
                 </div>
-                <Badge variant="outline" className="text-xs">
-                  {slab.finish}
-                </Badge>
               </div>
 
               <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-2xl font-bold text-emerald-600">
-                    ${slab.price}/{slab.priceUnit}
-                  </div>
-                  <div className="text-sm text-stone-500 flex items-center">
-                    <Clock className="w-4 h-4 mr-1" />
-                    {slab.shippingTime}
-                  </div>
+                <div className="flex items-center space-x-4 text-sm text-stone-600">
+                  <span className="capitalize">{slab.material}</span>
+                  <span className="capitalize">{slab.finish}</span>
+                  <span>{slab.dimensions.length}×{slab.dimensions.width}×{slab.dimensions.thickness}cm</span>
                 </div>
                 
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={handleRequestQuote}>
-                    Request Quote
-                  </Button>
-                  <Button className="emerald-gradient text-white" onClick={handleBuyNow}>
-                    Buy Now
-                  </Button>
+                <div className="flex items-center gap-2">
+                  <Badge className="bg-purple-100 text-purple-700 text-xs">
+                    <Sparkles className="w-3 h-3 mr-1" />
+                    AI {slab.aiQualityScore}
+                  </Badge>
+                  {on3DViewClick && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        on3DViewClick();
+                      }}
+                      className="text-xs"
+                    >
+                      <Box className="w-3 h-3 mr-1" />
+                      3D
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <PayoutModal 
-          isOpen={showPayoutModal} 
-          onClose={() => setShowPayoutModal(false)} 
-          slab={slab}
-        />
-      </>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <>
-      <div className="bg-white rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:scale-[1.02]">
-        <div className="relative aspect-[4/3] overflow-hidden" onClick={onClick}>
-          <img 
-            src={slab.thumbnail} 
-            alt={slab.name}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-          />
-          
-          {/* Overlay badges */}
-          <div className="absolute top-4 left-4 flex flex-col gap-2">
-            {slab.featured && (
-              <Badge className="bg-emerald-500 text-white">
-                Featured
-              </Badge>
-            )}
-            <Badge className="glass-panel text-white text-xs">
-              AI Graded • Premium Quality
-            </Badge>
-          </div>
+    <Card className="group hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm overflow-hidden">
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <img 
+          src={slab.images[0]} 
+          alt={slab.name}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 cursor-pointer"
+          onClick={onClick}
+        />
+        
+        {slab.featured && (
+          <Badge className="absolute top-3 left-3 bg-emerald-500 text-white">
+            Featured
+          </Badge>
+        )}
+        
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            // Handle favorite
+          }}
+          className="absolute top-3 right-3 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors"
+        >
+          <Heart className="w-5 h-5 text-stone-600" />
+        </button>
 
-          {/* Quick actions */}
-          <div className="absolute top-4 right-4 flex flex-col gap-2">
-            <button className="w-10 h-10 glass-panel rounded-full flex items-center justify-center hover:scale-110 transition-transform text-white">
-              <Heart className="w-5 h-5" />
-            </button>
-            <button className="w-10 h-10 glass-panel rounded-full flex items-center justify-center hover:scale-110 transition-transform text-white">
-              <Eye className="w-5 h-5" />
-            </button>
-          </div>
+        {/* 3D View Button */}
+        {on3DViewClick && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              on3DViewClick();
+            }}
+            className="absolute bottom-3 right-3 glass-panel px-3 py-2 rounded-lg text-white hover:scale-105 transition-transform text-sm font-medium"
+          >
+            <Box className="w-4 h-4 mr-1 inline" />
+            3D View
+          </button>
+        )}
+      </div>
 
-          {/* Bottom overlay */}
-          <div className="absolute bottom-4 right-4">
-            <Badge className="glass-panel text-white text-xs">
-              3D | AR
-            </Badge>
-          </div>
-
-          {/* Grade indicator */}
-          <div className="absolute bottom-4 left-4 flex items-center glass-panel px-2 py-1 rounded-full">
-            <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
-            <span className="text-white text-sm font-medium">{slab.grade.toFixed(1)}</span>
+      <CardContent className="p-4" onClick={onClick}>
+        <div className="flex items-center mb-2">
+          <div className="flex items-center">
+            {[...Array(5)].map((_, i) => (
+              <Star 
+                key={i} 
+                className={`w-4 h-4 ${i < Math.floor(slab.grade) ? 'text-yellow-400 fill-current' : 'text-stone-300'}`} 
+              />
+            ))}
+            <span className="ml-2 text-sm text-stone-600">({slab.grade})</span>
           </div>
         </div>
 
-        <div className="p-6">
-          <div className="flex items-start justify-between mb-3">
-            <div>
-              <h3 className="text-lg font-bold text-stone-900 mb-1">{slab.name}</h3>
-              <div className="flex items-center text-stone-600 text-sm">
-                <MapPin className="w-3 h-3 mr-1" />
-                {slab.supplier.location}
-                {slab.supplier.verified && (
-                  <Verified className="w-3 h-3 ml-1 text-emerald-500" />
-                )}
-              </div>
-            </div>
+        <h3 className="text-lg font-semibold text-stone-900 mb-2 cursor-pointer hover:text-emerald-600 transition-colors">
+          {slab.name}
+        </h3>
+        
+        <div className="flex items-center text-stone-600 text-sm mb-3">
+          <div className="flex items-center mr-4">
+            <span className="font-medium">{slab.supplier.name}</span>
+            {slab.supplier.verified && (
+              <Verified className="w-4 h-4 ml-1 text-emerald-500" />
+            )}
           </div>
+        </div>
+        
+        <div className="flex items-center text-stone-600 text-sm mb-3">
+          <MapPin className="w-3 h-3 mr-1" />
+          {slab.supplier.location}
+        </div>
 
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-2xl font-bold text-emerald-600">
-              ${slab.price}
-              <span className="text-sm font-normal text-stone-500">/{slab.priceUnit}</span>
-            </div>
-            <div className="text-right">
-              <div className="text-xs text-stone-500">Block ID</div>
-              <div className="text-sm font-medium text-stone-700">{slab.blockId}</div>
-            </div>
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-2xl font-bold text-emerald-600">
+            ${slab.price}
+            <span className="text-sm text-stone-500">/{slab.priceUnit}</span>
           </div>
+          <div className="text-right text-sm text-stone-600">
+            <div>{slab.dimensions.length}×{slab.dimensions.width}×{slab.dimensions.thickness}cm</div>
+            <div className="capitalize">{slab.material} • {slab.finish}</div>
+          </div>
+        </div>
 
-          <div className="flex items-center justify-between text-sm text-stone-500 mb-4">
-            <span className="capitalize">{slab.finish} finish</span>
-            <div className="flex items-center">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Badge className="bg-purple-100 text-purple-700">
+              <Sparkles className="w-3 h-3 mr-1" />
+              AI Score {slab.aiQualityScore}
+            </Badge>
+            <div className="flex items-center text-stone-500 text-sm">
               <Clock className="w-3 h-3 mr-1" />
               {slab.shippingTime}
             </div>
           </div>
-
-          <div className="flex gap-2">
-            <Button variant="outline" className="flex-1 text-sm" onClick={handleViewDetails}>
-              View Details
-            </Button>
-            <Button className="flex-1 emerald-gradient text-white text-sm" onClick={handleBuyNow}>
-              Buy Now
-            </Button>
-          </div>
+          
+          <Badge 
+            className={
+              slab.availability === 'in-stock' ? 'bg-green-100 text-green-800' :
+              slab.availability === 'pre-order' ? 'bg-yellow-100 text-yellow-800' :
+              'bg-red-100 text-red-800'
+            }
+          >
+            {slab.availability === 'in-stock' ? 'In Stock' :
+             slab.availability === 'pre-order' ? 'Pre-Order' : 'Sold'}
+          </Badge>
         </div>
-      </div>
-      <PayoutModal 
-        isOpen={showPayoutModal} 
-        onClose={() => setShowPayoutModal(false)} 
-        slab={slab}
-      />
-    </>
+      </CardContent>
+    </Card>
   );
 };
 

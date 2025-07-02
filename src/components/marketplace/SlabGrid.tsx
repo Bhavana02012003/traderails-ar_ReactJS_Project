@@ -1,198 +1,213 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
+import { Slab } from '@/types/marketplace';
 import SlabCard from './SlabCard';
-import { Slab, MarketplaceFilters } from '@/types/marketplace';
+
+// Mock data for demonstration
+const mockSlabs: Slab[] = [
+  {
+    id: 'SLB-001',
+    name: 'Carrara White Marble',
+    blockId: 'BLK-4521',
+    material: 'marble',
+    finish: 'polished',
+    colors: ['white', 'gray'],
+    dimensions: { length: 320, width: 160, thickness: 2 },
+    price: 145,
+    priceUnit: 'sqft',
+    grade: 4.9,
+    aiQualityScore: 9.2,
+    availability: 'in-stock',
+    shippingTime: '7-14 days',
+    images: [
+      'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=500&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=500&h=600&fit=crop'
+    ],
+    supplier: {
+      id: 'SUP-001',
+      name: 'Marble Masters Italy',
+      location: 'Carrara, Italy',
+      verified: true,
+      rating: 4.8
+    },
+    quarry: {
+      name: 'Carrara Quarry Premium',
+      location: 'Carrara, Italy'
+    },
+    certifications: ['CE Certified', 'ISO 9001'],
+    featured: true
+  },
+  {
+    id: 'SLB-002',
+    name: 'Absolute Black Granite',
+    blockId: 'BLK-7831',
+    material: 'granite',
+    finish: 'honed',
+    colors: ['black'],
+    dimensions: { length: 300, width: 150, thickness: 3 },
+    price: 89,
+    priceUnit: 'sqft',
+    grade: 4.7,
+    aiQualityScore: 8.8,
+    availability: 'in-stock',
+    shippingTime: '10-21 days',
+    images: [
+      'https://images.unsplash.com/photo-1493397212122-2b85dda8106b?w=500&h=600&fit=crop'
+    ],
+    supplier: {
+      id: 'SUP-002',
+      name: 'Granite World India',
+      location: 'Karnataka, India',
+      verified: true,
+      rating: 4.6
+    },
+    quarry: {
+      name: 'Karnataka Black Quarry',
+      location: 'Karnataka, India'
+    },
+    certifications: ['CE Certified'],
+    featured: false
+  },
+  {
+    id: 'SLB-003',
+    name: 'Calacatta Gold Marble',
+    blockId: 'BLK-9142',
+    material: 'marble',
+    finish: 'polished',
+    colors: ['white', 'gold'],
+    dimensions: { length: 280, width: 140, thickness: 2 },
+    price: 289,
+    priceUnit: 'sqft',
+    grade: 5.0,
+    aiQualityScore: 9.5,
+    availability: 'pre-order',
+    shippingTime: '14-28 days',
+    images: [
+      'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=500&h=600&fit=crop'
+    ],
+    supplier: {
+      id: 'SUP-003',
+      name: 'Premium Stone Co.',
+      location: 'Tuscany, Italy',
+      verified: true,
+      rating: 4.9
+    },
+    quarry: {
+      name: 'Tuscany Premium Quarry',
+      location: 'Tuscany, Italy'
+    },
+    certifications: ['CE Certified', 'ISO 9001', 'FSC Certified'],
+    featured: true
+  }
+];
 
 interface SlabGridProps {
   viewMode: 'grid' | 'list';
   searchQuery: string;
   sortBy: string;
-  filters: MarketplaceFilters;
+  filters: {
+    material: string[];
+    finish: string[];
+    colors: string[];
+    countries: string[];
+    priceRange: [number, number];
+    gradeMin: number;
+  };
   onSlabClick: (slab: Slab) => void;
+  on3DViewClick?: (slab: Slab) => void;
 }
 
-const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabGridProps) => {
-  const [slabs, setSlabs] = useState<Slab[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // Mock data for demonstration
-  useEffect(() => {
-    const mockSlabs: Slab[] = [
-      {
-        id: '1',
-        name: 'Carrara White Marble',
-        material: 'granite',
-        finish: 'polished',
-        color: 'white',
-        price: 145,
-        priceUnit: 'sqft',
-        dimensions: { length: 320, width: 160, thickness: 2 },
-        images: [
-          'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=600&fit=crop',
-          'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=800&h=600&fit=crop'
-        ],
-        thumbnail: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400&h=300&fit=crop',
-        supplier: {
-          name: 'Marble Masters Italy',
-          location: 'Carrara, Italy',
-          country: 'Italy',
-          rating: 4.9,
-          verified: true
-        },
-        quarry: { name: 'Carrara Quarry', location: 'Tuscany, Italy' },
-        blockId: 'CAR-2024-001',
-        grade: 4.8,
-        aiQualityScore: 95,
-        certifications: ['CE', 'ISO 9001'],
-        availability: 'in-stock',
-        shippingTime: '14-21 days',
-        featured: true,
-        createdAt: '2024-01-15',
-        updatedAt: '2024-01-15'
-      },
-      {
-        id: '2',
-        name: 'Absolute Black Granite',
-        material: 'granite',
-        finish: 'honed',
-        color: 'black',
-        price: 89,
-        priceUnit: 'sqft',
-        dimensions: { length: 300, width: 150, thickness: 3 },
-        images: [
-          'https://images.unsplash.com/photo-1493397212122-2b85dda8106b?w=800&h=600&fit=crop'
-        ],
-        thumbnail: 'https://images.unsplash.com/photo-1493397212122-2b85dda8106b?w=400&h=300&fit=crop',
-        supplier: {
-          name: 'Granite World India',
-          location: 'Karnataka, India',
-          country: 'India',
-          rating: 4.7,
-          verified: true
-        },
-        quarry: { name: 'Karnataka Quarry', location: 'Bangalore, India' },
-        blockId: 'ABS-2024-002',
-        grade: 4.6,
-        aiQualityScore: 88,
-        certifications: ['ASTM', 'BIS'],
-        availability: 'in-stock',
-        shippingTime: '21-28 days',
-        featured: false,
-        createdAt: '2024-01-14',
-        updatedAt: '2024-01-14'
-      },
-      {
-        id: '3',
-        name: 'Calacatta Gold Marble',
-        material: 'granite',
-        finish: 'polished',
-        color: 'white',
-        price: 289,
-        priceUnit: 'sqft',
-        dimensions: { length: 310, width: 155, thickness: 2 },
-        images: [
-          'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=800&h=600&fit=crop'
-        ],
-        thumbnail: 'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=400&h=300&fit=crop',
-        supplier: {
-          name: 'Premium Stone Co.',
-          location: 'Tuscany, Italy',
-          country: 'Italy',
-          rating: 5.0,
-          verified: true
-        },
-        quarry: { name: 'Calacatta Quarry', location: 'Tuscany, Italy' },
-        blockId: 'CAL-2024-003',
-        grade: 5.0,
-        aiQualityScore: 97,
-        certifications: ['CE', 'ISO 9001', 'GREENGUARD'],
-        availability: 'in-stock',
-        shippingTime: '10-14 days',
-        featured: true,
-        createdAt: '2024-01-13',
-        updatedAt: '2024-01-13'
-      },
-      {
-        id: '4',
-        name: 'Kashmir White Granite',
-        material: 'granite',
-        finish: 'flamed',
-        color: 'white',
-        price: 125,
-        priceUnit: 'sqft',
-        dimensions: { length: 280, width: 140, thickness: 2 },
-        images: [
-          'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=600&fit=crop'
-        ],
-        thumbnail: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400&h=300&fit=crop',
-        supplier: {
-          name: 'Kashmir Stone Works',
-          location: 'Rajasthan, India',
-          country: 'India',
-          rating: 4.5,
-          verified: true
-        },
-        quarry: { name: 'Kashmir Quarry', location: 'Rajasthan, India' },
-        blockId: 'KAS-2024-004',
-        grade: 4.3,
-        aiQualityScore: 85,
-        certifications: ['ASTM', 'BIS'],
-        availability: 'pre-order',
-        shippingTime: '28-35 days',
-        featured: false,
-        createdAt: '2024-01-12',
-        updatedAt: '2024-01-12'
+const SlabGrid = ({ 
+  viewMode, 
+  searchQuery, 
+  sortBy, 
+  filters, 
+  onSlabClick,
+  on3DViewClick 
+}: SlabGridProps) => {
+  const filteredAndSortedSlabs = useMemo(() => {
+    let filtered = mockSlabs.filter(slab => {
+      // Search filter
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const matchesSearch = 
+          slab.name.toLowerCase().includes(query) ||
+          slab.material.toLowerCase().includes(query) ||
+          slab.blockId.toLowerCase().includes(query) ||
+          slab.supplier.name.toLowerCase().includes(query) ||
+          slab.supplier.location.toLowerCase().includes(query);
+        
+        if (!matchesSearch) return false;
       }
-    ];
 
-    setSlabs(mockSlabs);
-    setLoading(false);
-  }, []);
-
-  const filteredSlabs = slabs.filter(slab => {
-    // Apply search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      if (!slab.name.toLowerCase().includes(query) &&
-          !slab.supplier.name.toLowerCase().includes(query) &&
-          !slab.blockId.toLowerCase().includes(query)) {
+      // Material filter
+      if (filters.material.length > 0 && !filters.material.includes(slab.material)) {
         return false;
       }
+
+      // Finish filter
+      if (filters.finish.length > 0 && !filters.finish.includes(slab.finish)) {
+        return false;
+      }
+
+      // Colors filter
+      if (filters.colors.length > 0) {
+        const hasMatchingColor = filters.colors.some(color => 
+          slab.colors.includes(color)
+        );
+        if (!hasMatchingColor) return false;
+      }
+
+      // Countries filter
+      if (filters.countries.length > 0) {
+        const hasMatchingCountry = filters.countries.some(country =>
+          slab.supplier.location.toLowerCase().includes(country.toLowerCase())
+        );
+        if (!hasMatchingCountry) return false;
+      }
+
+      // Price filter
+      if (slab.price < filters.priceRange[0] || slab.price > filters.priceRange[1]) {
+        return false;
+      }
+
+      // Grade filter
+      if (slab.grade < filters.gradeMin) {
+        return false;
+      }
+
+      return true;
+    });
+
+    // Sort
+    switch (sortBy) {
+      case 'price-low':
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      case 'grade':
+        filtered.sort((a, b) => b.grade - a.grade);
+        break;
+      case 'popularity':
+        filtered.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+        break;
+      case 'newest':
+      default:
+        // Keep original order for newest
+        break;
     }
 
-    // Apply filters
-    if (filters.material.length > 0 && !filters.material.includes(slab.material)) return false;
-    if (filters.finish.length > 0 && !filters.finish.includes(slab.finish)) return false;
-    if (filters.colors.length > 0 && !filters.colors.includes(slab.color)) return false;
-    if (filters.countries.length > 0 && !filters.countries.includes(slab.supplier.country)) return false;
-    if (slab.price < filters.priceRange[0] || slab.price > filters.priceRange[1]) return false;
-    if (slab.grade < filters.gradeMin) return false;
+    return filtered;
+  }, [searchQuery, sortBy, filters]);
 
-    return true;
-  });
-
-  if (loading) {
+  if (filteredAndSortedSlabs.length === 0) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="bg-white rounded-2xl shadow-sm animate-pulse">
-            <div className="aspect-[4/3] bg-stone-200 rounded-t-2xl" />
-            <div className="p-6 space-y-3">
-              <div className="h-4 bg-stone-200 rounded w-3/4" />
-              <div className="h-3 bg-stone-200 rounded w-1/2" />
-              <div className="h-6 bg-stone-200 rounded w-1/3" />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (filteredSlabs.length === 0) {
-    return (
-      <div className="text-center py-16">
+      <div className="text-center py-12">
         <div className="text-stone-400 text-lg mb-2">No slabs found</div>
-        <div className="text-stone-500 text-sm">Try adjusting your filters or search terms</div>
+        <div className="text-stone-500 text-sm">
+          Try adjusting your search criteria or filters
+        </div>
       </div>
     );
   }
@@ -200,15 +215,16 @@ const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabG
   return (
     <div className={
       viewMode === 'grid' 
-        ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' 
+        ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
         : 'space-y-4'
     }>
-      {filteredSlabs.map(slab => (
+      {filteredAndSortedSlabs.map(slab => (
         <SlabCard
           key={slab.id}
           slab={slab}
           viewMode={viewMode}
           onClick={() => onSlabClick(slab)}
+          on3DViewClick={on3DViewClick ? () => on3DViewClick(slab) : undefined}
         />
       ))}
     </div>
