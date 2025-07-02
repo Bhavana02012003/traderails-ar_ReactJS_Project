@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import Header from '@/components/Header';
@@ -17,7 +16,7 @@ import InviteUserFlow from '@/components/invite/InviteUserFlow';
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin' | 'onboarding' | 'invite'>('home');
-  const [userType, setUserType] = useState<'exporter' | 'buyer' | 'admin' | 'agent' | 'trader' | null>(null);
+  const [userType, setUserType] = useState<'exporter' | 'buyer' | 'admin' | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLoginClick = () => {
@@ -25,17 +24,19 @@ const Index = () => {
   };
 
   const handleLoginSuccess = (type: 'buyer' | 'exporter' | 'agent' | 'trader') => {
-    setUserType(type);
+    // Map agent and trader to buyer for dashboard purposes
+    if (type === 'agent' || type === 'trader') {
+      setUserType('buyer');
+    } else {
+      setUserType(type);
+    }
     setIsLoggedIn(true);
     setIsLoginModalOpen(false);
     // Redirect to appropriate dashboard after login
-    if (type === 'buyer') {
+    if (type === 'buyer' || type === 'agent' || type === 'trader') {
       setCurrentView('buyer');
     } else if (type === 'exporter') {
       setCurrentView('exporter');
-    } else if (type === 'agent' || type === 'trader') {
-      // For now, redirect agents and traders to marketplace
-      setCurrentView('marketplace');
     }
   };
 
@@ -70,8 +71,6 @@ const Index = () => {
       setCurrentView('exporter');
     } else if (userType === 'admin') {
       setCurrentView('admin');
-    } else if (userType === 'agent' || userType === 'trader') {
-      setCurrentView('marketplace');
     }
   };
 
