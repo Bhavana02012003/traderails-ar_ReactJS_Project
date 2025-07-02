@@ -1,13 +1,18 @@
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Search, UserPlus, Eye, MapPin } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Search, UserPlus, Eye, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface BuyerQuickActionsProps {
   onShowInviteFlow?: () => void;
+  children?: React.ReactNode;
 }
 
-const BuyerQuickActions = ({ onShowInviteFlow }: BuyerQuickActionsProps) => {
+const BuyerQuickActions = ({ onShowInviteFlow, children }: BuyerQuickActionsProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const actions = [
     {
       title: 'Browse Marketplace',
@@ -42,23 +47,48 @@ const BuyerQuickActions = ({ onShowInviteFlow }: BuyerQuickActionsProps) => {
       <CardHeader>
         <CardTitle className="text-lg font-semibold text-stone-900">Quick Actions</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <CardContent className="space-y-4">
+        {/* Main Quick Actions */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {actions.map((action, index) => (
             <Button
               key={index}
               variant={action.variant}
-              className={`h-auto p-4 flex flex-col items-center space-y-3 min-h-[100px] ${action.className || ''}`}
+              className={`h-auto p-3 flex flex-col items-center space-y-2 min-h-[80px] text-center ${action.className || ''}`}
               onClick={action.onClick}
             >
-              <action.icon className="w-6 h-6 flex-shrink-0" />
-              <div className="text-center space-y-1">
-                <div className="font-medium text-sm leading-tight">{action.title}</div>
+              <action.icon className="w-5 h-5 flex-shrink-0" />
+              <div className="space-y-1">
+                <div className="font-medium text-xs leading-tight">{action.title}</div>
                 <div className="text-xs opacity-75 leading-tight">{action.description}</div>
               </div>
             </Button>
           ))}
         </div>
+
+        {/* Collapsible Menu for Other Sections */}
+        {children && (
+          <div className="border-t border-stone-200 pt-4">
+            <Button
+              variant="ghost"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="w-full justify-between p-2 h-auto"
+            >
+              <span className="text-sm font-medium text-stone-700">View More Sections</span>
+              {isExpanded ? (
+                <ChevronUp className="w-4 h-4 text-stone-500" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-stone-500" />
+              )}
+            </Button>
+            
+            {isExpanded && (
+              <div className="mt-4 space-y-4">
+                {children}
+              </div>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

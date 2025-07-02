@@ -58,7 +58,6 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
     return <QuoteReviewPage onBack={handleBackToDashboard} />;
   }
 
-  // Render financial workflow if an invoice is selected
   if (selectedInvoice) {
     return (
       <FinancialWorkflowTrigger 
@@ -85,39 +84,33 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
           </p>
         </div>
 
-        {/* Summary Cards - Full Width */}
+        {/* Summary Cards - Always Visible */}
         <div className="mb-8">
           <BuyerSummaryCards />
         </div>
 
-        {/* Quick Actions - Full Width */}
+        {/* Quick Actions with Collapsible Sections */}
         <div className="mb-8">
-          <BuyerQuickActions onShowInviteFlow={handleShowInviteFlow} />
-        </div>
+          <BuyerQuickActions onShowInviteFlow={handleShowInviteFlow}>
+            {/* Collapsible Content */}
+            <div className="space-y-6">
+              {/* Essential Sections */}
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <QuotesList onViewQuote={handleViewQuote} />
+                <RecentOrders onFinancialWorkflow={handleFinancialWorkflow} />
+              </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
-          {/* Left Column - Quotes and Orders */}
-          <div className="xl:col-span-2 space-y-8">
-            <QuotesList onViewQuote={handleViewQuote} />
-            <RecentOrders onFinancialWorkflow={handleFinancialWorkflow} />
-          </div>
-          
-          {/* Right Column - Sidebar */}
-          <div className="space-y-8">
-            {userType === 'buyer' && <AssignedAgents />}
-            <LocationMap />
-          </div>
-        </div>
+              {/* Secondary Sections */}
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                {userType === 'buyer' && <AssignedAgents />}
+                <LocationMap />
+              </div>
 
-        {/* Slab Bookmarks - Full Width */}
-        <div className="mb-8">
-          <SlabBookmarks />
-        </div>
-
-        {/* Trust Badges - Full Width */}
-        <div className="mb-8">
-          <TrustBadges />
+              {/* Additional Sections */}
+              <SlabBookmarks />
+              <TrustBadges />
+            </div>
+          </BuyerQuickActions>
         </div>
       </div>
     </div>
