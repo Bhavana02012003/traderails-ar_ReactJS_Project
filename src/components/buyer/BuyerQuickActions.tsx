@@ -3,7 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Search, UserPlus, Eye, MapPin } from 'lucide-react';
 
-const BuyerQuickActions = () => {
+interface BuyerQuickActionsProps {
+  onShowInviteFlow?: () => void;
+}
+
+const BuyerQuickActions = ({ onShowInviteFlow }: BuyerQuickActionsProps) => {
   const actions = [
     {
       title: 'Browse Marketplace',
@@ -13,10 +17,11 @@ const BuyerQuickActions = () => {
       className: 'emerald-gradient text-white'
     },
     {
-      title: 'Add Buyer Agent',
-      description: 'Assign inspection agent',
+      title: 'Invite Team Member',
+      description: 'Add agents or partners',
       icon: UserPlus,
-      variant: 'outline' as const
+      variant: 'outline' as const,
+      onClick: onShowInviteFlow
     },
     {
       title: 'Request Inspection',
@@ -44,6 +49,7 @@ const BuyerQuickActions = () => {
               key={index}
               variant={action.variant}
               className={`h-auto p-4 flex flex-col items-center space-y-2 ${action.className || ''}`}
+              onClick={action.onClick}
             >
               <action.icon className="w-6 h-6" />
               <div className="text-center">
