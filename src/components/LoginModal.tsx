@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Globe, Mail, Phone, Eye, EyeOff, User } from 'lucide-react';
 import OTPVerificationFlow, { ContactData } from './auth/OTPVerificationFlow';
+import ChooseOrganizationModal from './auth/ChooseOrganizationModal';
 
 interface LoginModalProps {
   open: boolean;
@@ -14,6 +14,31 @@ interface LoginModalProps {
   onLoginSuccess?: (userType: 'buyer' | 'exporter' | 'agent' | 'trader') => void;
   onCreateAccount?: () => void;
 }
+
+// Mock organizations for demonstration
+const mockOrganizations = [
+  {
+    id: '1',
+    name: 'Shivani Granites Ltd.',
+    type: 'Factory' as const,
+    location: 'Jaipur, India',
+    lastAccessed: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+  },
+  {
+    id: '2',
+    name: 'Global Stone Exports',
+    type: 'Exporter' as const,
+    location: 'Mumbai, India',
+    lastAccessed: new Date(Date.now() - 24 * 60 * 60 * 1000), // Yesterday
+  },
+  {
+    id: '3',
+    name: 'Premium Marble Trading Co.',
+    type: 'Trader' as const,
+    location: 'Dubai, UAE',
+    lastAccessed: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 1 week ago
+  },
+];
 
 const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: LoginModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,6 +49,7 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
   const [showMfaInput, setShowMfaInput] = useState(false);
   const [showOtpFlow, setShowOtpFlow] = useState(false);
   const [selectedUserType, setSelectedUserType] = useState<'buyer' | 'exporter' | 'agent' | 'trader'>('buyer');
+  const [showOrgChoice, setShowOrgChoice] = useState(false);
 
   const getUserTypeConfig = (userType: string) => {
     switch (userType) {
@@ -62,9 +88,17 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
   };
 
   const handleOTPVerificationSuccess = (contactData: ContactData) => {
-    onLoginSuccess?.(selectedUserType);
-    onOpenChange(false);
-    setShowOtpFlow(false);
+    // Check if user has multiple organizations
+    const userOrganizations = mockOrganizations; // In real app, this would come from API
+    
+    if (userOrganizations.length > 1) {
+      setShowOrgChoice(true);
+      setShowOtpFlow(false);
+    } else {
+      onLoginSuccess?.(selectedUserType);
+      onOpenChange(false);
+      setShowOtpFlow(false);
+    }
   };
 
   const handleBackFromOTP = () => {
@@ -84,7 +118,20 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
       }
     }
     
-    // Mock login - always succeed
+    // Mock login - check for multiple organizations
+    const userOrganizations = mockOrganizations; // In real app, this would come from API
+    
+    if (userOrganizations.length > 1) {
+      setShowOrgChoice(true);
+    } else {
+      onLoginSuccess?.(selectedUserType);
+      onOpenChange(false);
+    }
+  };
+
+  const handleOrganizationSelect = (orgId: string) => {
+    console.log('Selected organization:', orgId);
+    setShowOrgChoice(false);
     onLoginSuccess?.(selectedUserType);
     onOpenChange(false);
   };
@@ -105,6 +152,20 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
     }
   };
 
+  // Choose Organization Modal
+  if (showOrgChoice) {
+    return (
+      <ChooseOrganizationModal
+        open={open}
+        onOpenChange={onOpenChange}
+        organizations={mockOrganizations}
+        onOrganizationSelect={handleOrganizationSelect}
+        userType={selectedUserType}
+      />
+    );
+  }
+
+  // OTP Flow conditional rendering
   if (showOtpFlow) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -121,6 +182,7 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
     );
   }
 
+  // Main login form
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-white border-0 shadow-2xl">
