@@ -122,11 +122,13 @@ const Index = () => {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                   <div className="flex items-center space-x-2 mb-4">
-                    <img 
-                      src="/lovable-uploads/3445b0da-b926-49fc-9f5e-9a14522b14fd.png" 
-                      alt="TradeRails" 
-                      className="h-8 brightness-0 invert"
-                    />
+                    <div className="bg-white p-2 rounded-lg">
+                      <img 
+                        src="/lovable-uploads/3445b0da-b926-49fc-9f5e-9a14522b14fd.png" 
+                        alt="Company Logo" 
+                        className="h-8 w-auto"
+                      />
+                    </div>
                   </div>
                   <p className="text-emerald-400 text-xs italic">
                     The Invisible Rails of Global Commerce

@@ -2,7 +2,7 @@
 /// <reference path="../../types/model-viewer.d.ts" />
 
 import { useState, useRef, useEffect } from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -26,7 +26,8 @@ import {
   RotateCw,
   Settings,
   Sun,
-  Lightbulb
+  Lightbulb,
+  Box
 } from 'lucide-react';
 import { Slab } from '@/types/marketplace';
 
@@ -42,36 +43,184 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
   const [showInfo, setShowInfo] = useState(true);
   const [showLightingControls, setShowLightingControls] = useState(false);
   const [autoRotate, setAutoRotate] = useState(true);
+  const [rotationY, setRotationY] = useState(0);
   const [lighting, setLighting] = useState({
     ambient: 0.4,
     directional: 0.8,
     exposure: 1.0,
     shadowIntensity: 0.3
   });
-  const modelViewerRef = useRef<any>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationRef = useRef<number>();
+
+  useEffect(() => {
+    if (!canvasRef.current || !slab) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas size
+    canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+    canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+    const width = canvas.offsetWidth;
+    const height = canvas.offsetHeight;
+
+    // Load the slab image
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const animate = () => {
+        // Clear canvas with gradient background
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, '#1c1917');
+        gradient.addColorStop(1, '#44403c');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        // Save context for 3D transformation
+        ctx.save();
+
+        // Move to center
+        ctx.translate(width / 2, height / 2);
+
+        // Auto-rotate if enabled
+        if (autoRotate) {
+          setRotationY(prev => prev + 0.005);
+        }
+
+        // Apply 3D-like transformation
+        const perspective = Math.cos(rotationY) * 0.8 + 0.2;
+        const skewX = Math.sin(rotationY) * 0.3;
+
+        // Create 3D slab effect
+        const slabWidth = 300 * perspective;
+        const slabHeight = 200;
+        const slabDepth = 20;
+
+        // Draw slab shadow
+        ctx.fillStyle = `rgba(0, 0, 0, ${0.3 * lighting.shadowIntensity})`;
+        ctx.fillRect(-slabWidth/2 + 10, -slabHeight/2 + 10, slabWidth, slabHeight);
+
+        // Draw slab sides (depth effect)
+        if (rotationY > 0) {
+          // Right side
+          ctx.fillStyle = `rgba(100, 100, 100, ${0.6 * lighting.exposure})`;
+          ctx.beginPath();
+          ctx.moveTo(slabWidth/2, -slabHeight/2);
+          ctx.lineTo(slabWidth/2 + slabDepth, -slabHeight/2 - slabDepth);
+          ctx.lineTo(slabWidth/2 + slabDepth, slabHeight/2 - slabDepth);
+          ctx.lineTo(slabWidth/2, slabHeight/2);
+          ctx.closePath();
+          ctx.fill();
+        } else {
+          // Left side
+          ctx.fillStyle = `rgba(80, 80, 80, ${0.5 * lighting.exposure})`;
+          ctx.beginPath();
+          ctx.moveTo(-slabWidth/2, -slabHeight/2);
+          ctx.lineTo(-slabWidth/2 - slabDepth, -slabHeight/2 - slabDepth);
+          ctx.lineTo(-slabWidth/2 - slabDepth, slabHeight/2 - slabDepth);
+          ctx.lineTo(-slabWidth/2, slabHeight/2);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // Draw top edge
+        ctx.fillStyle = `rgba(120, 120, 120, ${0.7 * lighting.exposure})`;
+        ctx.beginPath();
+        ctx.moveTo(-slabWidth/2, -slabHeight/2);
+        ctx.lineTo(-slabWidth/2 - slabDepth * Math.sin(rotationY), -slabHeight/2 - slabDepth);
+        ctx.lineTo(slabWidth/2 - slabDepth * Math.sin(rotationY), -slabHeight/2 - slabDepth);
+        ctx.lineTo(slabWidth/2, -slabHeight/2);
+        ctx.closePath();
+        ctx.fill();
+
+        // Apply skew for perspective
+        ctx.transform(1, 0, skewX, 1, 0, 0);
+
+        // Draw main slab surface with image
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(-slabWidth/2, -slabHeight/2, slabWidth, slabHeight);
+        ctx.clip();
+
+        // Apply lighting effect
+        ctx.globalAlpha = lighting.exposure * (0.8 + 0.2 * Math.cos(rotationY));
+        ctx.drawImage(img, -slabWidth/2, -slabHeight/2, slabWidth, slabHeight);
+        ctx.restore();
+
+        // Add ambient lighting overlay
+        const lightGradient = ctx.createRadialGradient(0, -slabHeight/4, 0, 0, 0, slabWidth/2);
+        lightGradient.addColorStop(0, `rgba(255, 255, 255, ${lighting.ambient * 0.2})`);
+        lightGradient.addColorStop(1, `rgba(255, 255, 255, ${lighting.ambient * 0.05})`);
+        ctx.fillStyle = lightGradient;
+        ctx.fillRect(-slabWidth/2, -slabHeight/2, slabWidth, slabHeight);
+
+        // Add directional light highlight
+        if (lighting.directional > 0.5) {
+          const highlightGradient = ctx.createLinearGradient(-slabWidth/2, -slabHeight/2, slabWidth/4, slabHeight/4);
+          highlightGradient.addColorStop(0, `rgba(255, 255, 255, ${(lighting.directional - 0.5) * 0.3})`);
+          highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          ctx.fillStyle = highlightGradient;
+          ctx.fillRect(-slabWidth/2, -slabHeight/2, slabWidth, slabHeight);
+        }
+
+        ctx.restore();
+
+        // Draw traceability markers if enabled
+        if (showTraceability) {
+          // Block ID marker
+          ctx.fillStyle = '#10b981';
+          ctx.beginPath();
+          ctx.arc(width * 0.7, height * 0.3, 8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = 'white';
+          ctx.font = '12px Inter';
+          ctx.fillText(slab.blockId, width * 0.7 + 15, height * 0.3 + 4);
+
+          // Location marker
+          ctx.fillStyle = '#3b82f6';
+          ctx.beginPath();
+          ctx.arc(width * 0.3, height * 0.7, 8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = 'white';
+          ctx.fillText(slab.quarry.location, width * 0.3 + 15, height * 0.7 + 4);
+        }
+
+        animationRef.current = requestAnimationFrame(animate);
+      };
+
+      animate();
+    };
+
+    img.src = slab.images[0] || slab.thumbnail;
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [slab, autoRotate, rotationY, lighting, showTraceability]);
 
   if (!slab) return null;
 
-  const getSlabImage = () => {
-    return slab.images[0] || slab.thumbnail;
-  };
-
   const handleReset = () => {
+    setRotationY(0);
     setAutoRotate(true);
-    if (modelViewerRef.current) {
-      modelViewerRef.current.resetTurntableRotation();
-      modelViewerRef.current.jumpCameraToGoal();
-    }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={`p-0 border-0 ${isFullscreen ? 'max-w-full h-full' : 'max-w-7xl h-[90vh]'} overflow-hidden`}>
+        <DialogTitle className="sr-only">3D Slab Viewer - {slab.name}</DialogTitle>
         <div className="relative h-full bg-gradient-to-br from-stone-900 to-stone-800">
           {/* Top Controls */}
           <div className="absolute top-6 left-6 right-6 z-20 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Badge className="bg-emerald-600 text-white px-4 py-2 text-sm font-medium font-[Inter]">
+                <Box className="w-4 h-4 mr-2" />
                 3D Viewer
               </Badge>
               <Badge variant="outline" className="bg-black/20 text-white border-white/20 backdrop-blur-sm font-[Inter]">
@@ -118,82 +267,13 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
             </div>
           </div>
 
-          {/* Main 3D Viewer */}
-          <div className="h-full relative overflow-hidden">
-            <model-viewer
-              ref={modelViewerRef}
-              src="data:application/octet-stream;base64,Z0xURgIAAAAPAAAAKAAAAAgAAAABAAAAAAAAAAAAAAA="
-              poster={getSlabImage()}
-              alt={`3D view of ${slab.name}`}
-              camera-controls
-              auto-rotate={autoRotate}
-              rotation-per-second="30deg"
-              environment-image="neutral"
-              exposure={lighting.exposure}
-              shadow-intensity={lighting.shadowIntensity}
-              camera-orbit="0deg 75deg 2.5m"
-              min-camera-orbit="auto auto 1m"
-              max-camera-orbit="auto auto 10m"
-              style={{
-                width: '100%',
-                height: '100%',
-                background: 'transparent',
-                '--poster-color': 'transparent'
-              }}
-            >
-              {/* Custom Plane Geometry with Texture */}
-              <div 
-                slot="default"
-                style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: '60%',
-                  height: '40%',
-                  backgroundImage: `url(${getSlabImage()})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat',
-                  border: '2px solid rgba(255,255,255,0.1)',
-                  borderRadius: '8px',
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
-                  filter: `brightness(${lighting.exposure}) contrast(1.1)`,
-                  transition: 'all 0.3s ease'
-                }}
-              />
-
-              {/* Traceability Hotspots */}
-              {showTraceability && (
-                <>
-                  <button
-                    className="bg-emerald-600 text-white px-3 py-2 rounded-full text-sm font-semibold font-[Inter] shadow-lg border-2 border-white"
-                    slot="hotspot-1"
-                    data-position="0.5 0.2 0.5"
-                    data-normal="0 0 1"
-                  >
-                    {slab.blockId}
-                  </button>
-                  <button
-                    className="bg-blue-600 text-white px-3 py-2 rounded-full text-xs font-[Inter] shadow-lg border-2 border-white"
-                    slot="hotspot-2"
-                    data-position="-0.5 -0.2 0.5"
-                    data-normal="0 0 1"
-                  >
-                    {slab.quarry.location}
-                  </button>
-                </>
-              )}
-
-              {/* AR Button */}
-              <div slot="ar-button" className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
-                <Button className="bg-emerald-600 text-white hover:bg-emerald-700">
-                  <Smartphone className="w-4 h-4 mr-2" />
-                  View in AR
-                </Button>
-              </div>
-            </model-viewer>
-          </div>
+          {/* Main 3D Canvas */}
+          <canvas
+            ref={canvasRef}
+            className="w-full h-full cursor-grab active:cursor-grabbing"
+            onClick={() => setAutoRotate(!autoRotate)}
+            style={{ width: '100%', height: '100%' }}
+          />
 
           {/* Lighting Controls Panel */}
           {showLightingControls && (
@@ -287,43 +367,20 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
             </div>
           )}
 
-          {/* Rotation Controls */}
+          {/* Manual Rotation Controls */}
           <div className="absolute left-6 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => {
-                if (modelViewerRef.current) {
-                  const currentOrbit = modelViewerRef.current.getCameraOrbit();
-                  modelViewerRef.current.cameraOrbit = `${currentOrbit.theta}rad ${currentOrbit.phi}rad ${Math.max(currentOrbit.radius * 0.8, 1)}m`;
-                }
-              }}
+              onClick={() => setRotationY(prev => prev - 0.1)}
               className="bg-black/20 border-white/20 text-white hover:bg-black/40 backdrop-blur-sm w-10 h-10 p-0"
             >
-              <ZoomIn className="w-4 h-4" />
+              <RotateCcw className="w-4 h-4" />
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => {
-                if (modelViewerRef.current) {
-                  const currentOrbit = modelViewerRef.current.getCameraOrbit();
-                  modelViewerRef.current.cameraOrbit = `${currentOrbit.theta}rad ${currentOrbit.phi}rad ${Math.min(currentOrbit.radius * 1.2, 10)}m`;
-                }
-              }}
-              className="bg-black/20 border-white/20 text-white hover:bg-black/40 backdrop-blur-sm w-10 h-10 p-0"
-            >
-              <ZoomOut className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                if (modelViewerRef.current) {
-                  const currentOrbit = modelViewerRef.current.getCameraOrbit();
-                  modelViewerRef.current.cameraOrbit = `${currentOrbit.theta + Math.PI/4}rad ${currentOrbit.phi}rad ${currentOrbit.radius}m`;
-                }
-              }}
+              onClick={() => setRotationY(prev => prev + 0.1)}
               className="bg-black/20 border-white/20 text-white hover:bg-black/40 backdrop-blur-sm w-10 h-10 p-0"
             >
               <RotateCw className="w-4 h-4" />
@@ -353,6 +410,10 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
                 <Eye className="w-4 h-4 mr-2" />
                 {showInfo ? 'Hide' : 'Show'} Info
               </Button>
+
+              <div className="bg-black/20 backdrop-blur-sm rounded-lg px-3 py-2 text-white text-sm">
+                Click to pause/resume rotation
+              </div>
             </div>
 
             {/* Info Panel */}
@@ -420,9 +481,9 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
           <div className="absolute top-20 right-6 z-20 md:hidden">
             <Card className="bg-black/40 backdrop-blur-sm border-white/20">
               <CardContent className="p-3 text-xs text-white">
-                <p className="font-[Inter]">• Pinch to zoom</p>
-                <p className="font-[Inter]">• Drag to rotate</p>
-                <p className="font-[Inter]">• Tap hotspots for info</p>
+                <p className="font-[Inter]">• Tap to pause/resume rotation</p>
+                <p className="font-[Inter]">• Use side controls to manually rotate</p>
+                <p className="font-[Inter]">• Tap hotspots for traceability info</p>
               </CardContent>
             </Card>
           </div>

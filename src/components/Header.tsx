@@ -44,11 +44,13 @@ const Header = ({
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center cursor-pointer" onClick={onHomeClick}>
-            <img 
-              src="/lovable-uploads/3445b0da-b926-49fc-9f5e-9a14522b14fd.png" 
-              alt="TradeRails" 
-              className="h-8"
-            />
+            <div className="bg-white p-2 rounded-lg shadow-sm border border-stone-200">
+              <img 
+                src="/lovable-uploads/3445b0da-b926-49fc-9f5e-9a14522b14fd.png" 
+                alt="Company Logo" 
+                className="h-8 w-auto"
+              />
+            </div>
           </div>
 
           {/* Desktop Navigation */}
