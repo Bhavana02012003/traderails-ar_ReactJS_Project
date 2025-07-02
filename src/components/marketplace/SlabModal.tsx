@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { 
   Dialog, 
@@ -28,11 +29,11 @@ interface SlabModalProps {
   slab: Slab;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  on3DViewClick?: () => void;
 }
 
-const SlabModal = ({ slab, open, onOpenChange, on3DViewClick }: SlabModalProps) => {
+const SlabModal = ({ slab, open, onOpenChange }: SlabModalProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [view3D, setView3D] = useState(false);
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % slab.images.length);
@@ -95,16 +96,14 @@ const SlabModal = ({ slab, open, onOpenChange, on3DViewClick }: SlabModalProps) 
               {/* Bottom controls */}
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
                 <div className="flex gap-2">
-                  {on3DViewClick && (
-                    <Button 
-                      className="glass-panel text-white border-white/20 hover:bg-white/20"
-                      variant="outline"
-                      onClick={on3DViewClick}
-                    >
-                      <Box className="w-4 h-4 mr-2" />
-                      3D View
-                    </Button>
-                  )}
+                  <Button 
+                    className="glass-panel text-white border-white/20 hover:bg-white/20"
+                    variant="outline"
+                    onClick={() => setView3D(!view3D)}
+                  >
+                    <Box className="w-4 h-4 mr-2" />
+                    {view3D ? 'Photo View' : '3D View'}
+                  </Button>
                   <Button className="glass-panel text-white border-white/20 hover:bg-white/20" variant="outline">
                     <Smartphone className="w-4 h-4 mr-2" />
                     AR Preview

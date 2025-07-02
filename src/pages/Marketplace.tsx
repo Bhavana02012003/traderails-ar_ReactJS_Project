@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import MarketplaceFilters from '@/components/marketplace/MarketplaceFilters';
 import SlabGrid from '@/components/marketplace/SlabGrid';
 import SlabModal from '@/components/marketplace/SlabModal';
-import SlabViewer3D from '@/components/slab-viewer/SlabViewer3D';
 import { Slab } from '@/types/marketplace';
 
 const Marketplace = () => {
@@ -15,7 +14,6 @@ const Marketplace = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedSlab, setSelectedSlab] = useState<Slab | null>(null);
-  const [show3DViewer, setShow3DViewer] = useState(false);
   const [filters, setFilters] = useState({
     material: [] as string[],
     finish: [] as string[],
@@ -32,56 +30,6 @@ const Marketplace = () => {
     { value: 'grade', label: 'AI Quality Score' },
     { value: 'popularity', label: 'Most Popular' }
   ];
-
-  const handleSlabClick = (slab: Slab) => {
-    setSelectedSlab(slab);
-  };
-
-  const handle3DViewClick = (slab: Slab) => {
-    setSelectedSlab(slab);
-    setShow3DViewer(true);
-  };
-
-  const close3DViewer = () => {
-    setShow3DViewer(false);
-  };
-
-  // Convert Slab to SlabData format for 3D viewer
-  const convertSlabToSlabData = (slab: Slab) => ({
-    id: slab.id,
-    name: slab.name,
-    blockId: slab.blockId,
-    material: slab.material,
-    finish: slab.finish,
-    thickness: `${slab.dimensions.thickness}cm`,
-    dimensions: `${slab.dimensions.length}×${slab.dimensions.width}×${slab.dimensions.thickness}cm`,
-    quarryOrigin: slab.quarry.location,
-    finishingDate: '2024-06-15', // Default date since not in Slab type
-    defects: [
-      {
-        id: 'DEF-001',
-        position: [1, 0.1, 0.5] as [number, number, number],
-        type: 'Natural Variation',
-        description: 'Natural stone variation - characteristic of this material'
-      }
-    ],
-    documents: [
-      { name: 'Quality Certificate', type: 'PDF', url: '#' },
-      { name: 'Block Photo', type: 'JPG', url: '#' }
-    ]
-  });
-
-  // Show 3D viewer if requested
-  if (show3DViewer && selectedSlab) {
-    return (
-      <div className="min-h-screen bg-stone-900">
-        <SlabViewer3D 
-          slabData={convertSlabToSlabData(selectedSlab)}
-          onClose={close3DViewer}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -173,8 +121,7 @@ const Marketplace = () => {
               searchQuery={searchQuery}
               sortBy={sortBy}
               filters={filters}
-              onSlabClick={handleSlabClick}
-              on3DViewClick={handle3DViewClick}
+              onSlabClick={setSelectedSlab}
             />
           </div>
         </div>
@@ -200,12 +147,11 @@ const Marketplace = () => {
       </div>
 
       {/* Slab Detail Modal */}
-      {selectedSlab && !show3DViewer && (
+      {selectedSlab && (
         <SlabModal
           slab={selectedSlab}
           open={!!selectedSlab}
           onOpenChange={() => setSelectedSlab(null)}
-          on3DViewClick={() => handle3DViewClick(selectedSlab)}
         />
       )}
     </div>

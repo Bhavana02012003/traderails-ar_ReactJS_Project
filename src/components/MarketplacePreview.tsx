@@ -1,7 +1,7 @@
+
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Eye, Heart, Star, ArrowRight, ArrowLeft, Box } from 'lucide-react';
+import { Eye, Heart, Star, ArrowRight, ArrowLeft } from 'lucide-react';
 
 const MarketplacePreview = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -91,12 +91,10 @@ const MarketplacePreview = () => {
                         <button className="absolute top-4 right-4 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors">
                           <Heart className="w-5 h-5 text-stone-600" />
                         </button>
-                        <Link to="/slab-viewer">
-                          <button className="absolute bottom-4 right-4 glass-panel px-4 py-2 rounded-lg text-white hover:scale-105 transition-transform">
-                            <Box className="w-4 h-4 mr-2 inline" />
-                            3D View
-                          </button>
-                        </Link>
+                        <button className="absolute bottom-4 right-4 glass-panel px-4 py-2 rounded-lg text-white hover:scale-105 transition-transform">
+                          <Eye className="w-4 h-4 mr-2 inline" />
+                          AR View
+                        </button>
                       </div>
 
                       {/* Content */}
@@ -129,11 +127,9 @@ const MarketplacePreview = () => {
                           <Button className="flex-1 emerald-gradient text-white">
                             Request Quote
                           </Button>
-                          <Link to="/slab-viewer">
-                            <Button variant="outline" size="default" className="px-4">
-                              <Box className="w-4 h-4" />
-                            </Button>
-                          </Link>
+                          <Button variant="outline" size="default" className="px-4">
+                            <Eye className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -172,17 +168,11 @@ const MarketplacePreview = () => {
         </div>
 
         {/* Browse All CTA */}
-        <div className="text-center mt-12 space-y-4">
-          <Button size="lg" variant="outline" className="border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50 mr-4">
+        <div className="text-center mt-12">
+          <Button size="lg" variant="outline" className="border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50">
             Browse All Slabs
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
-          <Link to="/slab-viewer">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-              Try 3D Viewer
-              <Box className="w-5 h-5 ml-2" />
-            </Button>
-          </Link>
         </div>
       </div>
     </section>
