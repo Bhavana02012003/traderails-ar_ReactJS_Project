@@ -12,11 +12,15 @@ import PartnerHealthStatus from './PartnerHealthStatus';
 
 interface AdminDashboardProps {
   userRole?: 'admin' | 'buyer' | 'seller' | 'agent';
+  onLogout?: () => void;
+  onShowInviteFlow?: () => void;
 }
 
-const AdminDashboard = ({ userRole = 'admin' }: AdminDashboardProps) => {
+const AdminDashboard = ({ userRole = 'admin', onLogout, onShowInviteFlow }: AdminDashboardProps) => {
   const [currentView, setCurrentView] = useState<'dashboard' | 'dispute-resolution'>('dashboard');
   const [selectedDisputeId, setSelectedDisputeId] = useState<string | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [activeSection, setActiveSection] = useState('dashboard');
 
   const handleViewDispute = (disputeId: string) => {
     setSelectedDisputeId(disputeId);
@@ -40,7 +44,13 @@ const AdminDashboard = ({ userRole = 'admin' }: AdminDashboardProps) => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
+      <AdminSidebar 
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+        activeSection={activeSection}
+        onSectionChange={setActiveSection}
+        onLogout={onLogout || (() => {})}
+      />
       
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="bg-white shadow-sm border-b border-gray-200">
