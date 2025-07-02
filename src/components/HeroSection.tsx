@@ -59,7 +59,7 @@ const HeroSection = ({ onBrowseClick, onListClick }: HeroSectionProps) => {
         Positioned above background layers with proper z-index
         Uses container classes for responsive layout
       */}
-      <div className="relative z-10 container mx-auto px-4 lg:px-8 text-center">
+      <div className="relative z-10 container mx-auto px-6 lg:px-12 max-w-7xl text-center">
         <div className="max-w-4xl mx-auto animate-fade-in">
           
           {/* 
