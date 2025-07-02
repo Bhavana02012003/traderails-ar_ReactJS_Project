@@ -1,187 +1,96 @@
 
 import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
+import { BarChart3, Package, MessageSquare, MapPin, TrendingUp, Users, FileText, DollarSign } from 'lucide-react';
+import DashboardHeader from '@/components/exporter/DashboardHeader';
 import BuyerSummaryCards from './BuyerSummaryCards';
-import BuyerQuickActions from './BuyerQuickActions';
 import RecentOrders from './RecentOrders';
-import SlabBookmarks from './SlabBookmarks';
-import AssignedAgents from './AssignedAgents';
 import LocationMap from './LocationMap';
 import TrustBadges from './TrustBadges';
-import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
-import OrgDetailsPage from '@/components/org/OrgDetailsPage';
+import AssignedAgents from './AssignedAgents';
+import SlabBookmarks from './SlabBookmarks';
+import BuyerQuickActions from './BuyerQuickActions';
+import QuotesList from './QuotesList';
+import QuoteReviewPage from './QuoteReviewPage';
 import FinancialWorkflowTrigger from '@/components/finance/FinancialWorkflowTrigger';
+import InviteUserFlow from '@/components/invite/InviteUserFlow';
 
 interface BuyerDashboardProps {
   onShowInviteFlow?: () => void;
   userType?: 'buyer' | 'agent' | 'trader';
-  onOrgDetailsClick?: () => void;
 }
 
-// Mock organizations for demonstration
-const mockOrganizations = [
-  {
-    id: '1',
-    name: 'Shivani Granites Ltd.',
-    type: 'Factory' as const,
-    location: 'Jaipur, India',
-  },
-  {
-    id: '2',
-    name: 'Global Stone Exports',
-    type: 'Exporter' as const,
-    location: 'Mumbai, India',
-  },
-  {
-    id: '3',
-    name: 'Premium Marble Trading Co.',
-    type: 'Trader' as const,
-    location: 'Dubai, UAE',
-  },
-];
-
 const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboardProps) => {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [selectedOrderForWorkflow, setSelectedOrderForWorkflow] = useState<{
-    invoiceId: string;
-    amount: { inr: string; usd: string };
-    buyer: string;
-    status: 'approved' | 'pending' | 'rejected';
-  } | null>(null);
+  const [showInviteFlow, setShowInviteFlow] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
+  const [currentView, setCurrentView] = useState<'dashboard' | 'quote-review'>('dashboard');
+  const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(null);
 
-  const currentOrg = mockOrganizations[0]; // Default to first org
-
-  const handleOrganizationChange = (orgId: string) => {
-    console.log('Switching to organization:', orgId);
-    // In a real app, this would trigger a context switch
+  const handleInvoiceSelect = (invoice: any) => {
+    setSelectedInvoice(invoice);
   };
 
-  const handleFinancialWorkflow = (orderData: {
-    invoiceId: string;
-    amount: { inr: string; usd: string };
-    buyer: string;
-    status: 'approved' | 'pending' | 'rejected';
-  }) => {
-    setSelectedOrderForWorkflow(orderData);
+  const handleViewQuote = (quoteId: string) => {
+    setSelectedQuoteId(quoteId);
+    setCurrentView('quote-review');
   };
 
-  const handleBackToOrders = () => {
-    setSelectedOrderForWorkflow(null);
+  const handleBackToDashboard = () => {
+    setCurrentView('dashboard');
+    setSelectedQuoteId(null);
   };
 
-  // Only show organization switcher for traders and agents
-  const canSwitchOrganizations = userType === 'trader' || userType === 'agent';
-  // Only show organization details for buyers (not agents or traders)
-  const canManageOrganization = userType === 'buyer';
+  const handleShowInviteFlow = () => {
+    setShowInviteFlow(true);
+    onShowInviteFlow?.();
+  };
 
-  // If workflow is selected, show it in full width
-  if (selectedOrderForWorkflow) {
+  if (showInviteFlow) {
+    return <InviteUserFlow onBack={() => setShowInviteFlow(false)} />;
+  }
+
+  if (currentView === 'quote-review') {
+    return <QuoteReviewPage onBack={handleBackToDashboard} />;
+  }
+
+  // Render financial workflow if an invoice is selected
+  if (selectedInvoice) {
     return (
-      <div className="min-h-screen bg-stone-50">
-        <div className="container mx-auto px-4 lg:px-8 py-6">
-          <div className="flex items-center gap-4 mb-6">
-            <Button 
-              variant="outline" 
-              onClick={handleBackToOrders}
-            >
-              ← Back to Dashboard
-            </Button>
-            <h3 className="text-lg font-semibold text-stone-900">Financial Workflow - {selectedOrderForWorkflow.invoiceId}</h3>
-          </div>
-          <FinancialWorkflowTrigger
-            invoiceId={selectedOrderForWorkflow.invoiceId}
-            amount={selectedOrderForWorkflow.amount}
-            buyer={selectedOrderForWorkflow.buyer}
-            status={selectedOrderForWorkflow.status}
-          />
-        </div>
-      </div>
+      <FinancialWorkflowTrigger 
+        invoice={selectedInvoice}
+        onBack={() => setSelectedInvoice(null)}
+      />
     );
   }
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      <div className="container mx-auto px-4 lg:px-8 py-6">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-stone-900 mb-2">Buyer Dashboard</h1>
-              <p className="text-stone-600">Manage your orders, track shipments, and discover premium stone materials</p>
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-stone-100 font-['Inter']">
+      <DashboardHeader 
+        title={`${userType === 'agent' ? 'Agent' : userType === 'trader' ? 'Trader' : 'Buyer'} Dashboard`}
+        subtitle={userType === 'agent' ? 'Managing buyer relationships' : userType === 'trader' ? 'Trading opportunities' : 'Premium stone sourcing platform'}
+      />
+      
+      <div className="container mx-auto px-4 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-8">
+            <BuyerSummaryCards userType={userType} />
+            
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+              <QuotesList onViewQuote={handleViewQuote} />
+              <RecentOrders onInvoiceSelect={handleInvoiceSelect} />
             </div>
             
-            {/* Organization Switcher - Only for traders and agents */}
-            {canSwitchOrganizations && (
-              <div className="w-full sm:w-80">
-                <OrganizationSwitcher
-                  currentOrg={currentOrg}
-                  organizations={mockOrganizations}
-                  onOrganizationChange={handleOrganizationChange}
-                />
-              </div>
-            )}
+            <TrustBadges />
+          </div>
+          
+          {/* Sidebar */}
+          <div className="space-y-8">
+            <BuyerQuickActions onShowInviteFlow={handleShowInviteFlow} />
+            <SlabBookmarks />
+            {userType === 'buyer' && <AssignedAgents />}
+            <LocationMap />
           </div>
         </div>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-white/80 backdrop-blur-sm border border-stone-200 p-1 h-12">
-            <TabsTrigger value="overview" className="px-6 py-2 data-[state=active]:bg-emerald-500 data-[state=active]:text-white">
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="orders" className="px-6 py-2 data-[state=active]:bg-emerald-500 data-[state=active]:text-white">
-              Orders
-            </TabsTrigger>
-            <TabsTrigger value="bookmarks" className="px-6 py-2 data-[state=active]:bg-emerald-500 data-[state=active]:text-white">
-              Bookmarks
-            </TabsTrigger>
-            <TabsTrigger value="agents" className="px-6 py-2 data-[state=active]:bg-emerald-500 data-[state=active]:text-white">
-              Agents
-            </TabsTrigger>
-            {canManageOrganization && (
-              <TabsTrigger value="organization" className="px-6 py-2 data-[state=active]:bg-emerald-500 data-[state=active]:text-white">
-                Organization
-              </TabsTrigger>
-            )}
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-6">
-            {/* Summary Cards */}
-            <BuyerSummaryCards />
-            
-            {/* Quick Actions */}
-            <BuyerQuickActions onShowInviteFlow={onShowInviteFlow} />
-            
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              {/* Recent Orders */}
-              <RecentOrders onFinancialWorkflow={handleFinancialWorkflow} />
-              
-              {/* Location Map */}
-              <LocationMap />
-            </div>
-            
-            {/* Trust Badges */}
-            <TrustBadges />
-          </TabsContent>
-
-          <TabsContent value="orders">
-            <RecentOrders expanded={true} onFinancialWorkflow={handleFinancialWorkflow} />
-          </TabsContent>
-
-          <TabsContent value="bookmarks">
-            <SlabBookmarks />
-          </TabsContent>
-
-          <TabsContent value="agents">
-            <AssignedAgents />
-          </TabsContent>
-
-          {canManageOrganization && (
-            <TabsContent value="organization">
-              <OrgDetailsPage />
-            </TabsContent>
-          )}
-        </Tabs>
       </div>
     </div>
   );
