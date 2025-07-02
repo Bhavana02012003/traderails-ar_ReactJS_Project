@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import DashboardHeader from '@/components/exporter/DashboardHeader';
 import BuyerSummaryCards from './BuyerSummaryCards';
@@ -12,6 +11,7 @@ import QuotesList from './QuotesList';
 import QuoteReviewPage from './QuoteReviewPage';
 import FinancialWorkflowTrigger from '@/components/finance/FinancialWorkflowTrigger';
 import InviteUserFlow from '@/components/invite/InviteUserFlow';
+import ShipmentTrackingView from '@/components/shipment/ShipmentTrackingView';
 
 interface BuyerDashboardProps {
   onShowInviteFlow?: () => void;
@@ -21,8 +21,9 @@ interface BuyerDashboardProps {
 const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboardProps) => {
   const [showInviteFlow, setShowInviteFlow] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
-  const [currentView, setCurrentView] = useState<'dashboard' | 'quote-review'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'quote-review' | 'shipment-tracking'>('dashboard');
   const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(null);
+  const [selectedShipmentId, setSelectedShipmentId] = useState<string | null>(null);
 
   const handleFinancialWorkflow = (orderData: {
     invoiceId: string;
@@ -38,10 +39,16 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
     setCurrentView('quote-review');
   };
 
+  const handleTrackShipment = (shipmentId: string) => {
+    setSelectedShipmentId(shipmentId);
+    setCurrentView('shipment-tracking');
+  };
+
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
     setSelectedQuoteId(null);
     setSelectedInvoice(null);
+    setSelectedShipmentId(null);
   };
 
   const handleShowInviteFlow = () => {
@@ -55,6 +62,16 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
 
   if (currentView === 'quote-review') {
     return <QuoteReviewPage onBack={handleBackToDashboard} />;
+  }
+
+  if (currentView === 'shipment-tracking') {
+    return (
+      <ShipmentTrackingView 
+        shipmentId={selectedShipmentId || undefined}
+        userRole={userType}
+        onBack={handleBackToDashboard}
+      />
+    );
   }
 
   if (selectedInvoice) {
@@ -99,7 +116,10 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
           {/* Primary Sections */}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             <QuotesList onViewQuote={handleViewQuote} />
-            <RecentOrders onFinancialWorkflow={handleFinancialWorkflow} />
+            <RecentOrders 
+              onFinancialWorkflow={handleFinancialWorkflow} 
+              onTrackShipment={handleTrackShipment}
+            />
           </div>
 
           {/* Secondary Sections */}

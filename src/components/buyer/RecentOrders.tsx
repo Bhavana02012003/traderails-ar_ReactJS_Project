@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,9 +12,10 @@ interface RecentOrdersProps {
     buyer: string;
     status: 'approved' | 'pending' | 'rejected';
   }) => void;
+  onTrackShipment?: (shipmentId: string) => void;
 }
 
-const RecentOrders = ({ expanded = false, onFinancialWorkflow }: RecentOrdersProps) => {
+const RecentOrders = ({ expanded = false, onFinancialWorkflow, onTrackShipment }: RecentOrdersProps) => {
   const [expandedOrders, setExpandedOrders] = useState<string[]>([]);
 
   const orders = [
@@ -109,6 +109,12 @@ const RecentOrders = ({ expanded = false, onFinancialWorkflow }: RecentOrdersPro
     }
   };
 
+  const handleTrackClick = (orderId: string) => {
+    if (onTrackShipment) {
+      onTrackShipment(orderId);
+    }
+  };
+
   return (
     <Card className="bg-white/70 backdrop-blur-sm border border-stone-200">
       <CardHeader>
@@ -133,7 +139,11 @@ const RecentOrders = ({ expanded = false, onFinancialWorkflow }: RecentOrdersPro
                 <p className="text-sm text-stone-500">Delivery: {order.deliveryDate}</p>
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleTrackClick(order.id)}
+                >
                   <Eye className="w-4 h-4 mr-1" />
                   Track
                 </Button>
