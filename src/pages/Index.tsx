@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import Header from '@/components/Header';
@@ -13,6 +14,9 @@ import LoginModal from '@/components/LoginModal';
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer'>('home');
+  
+  // TODO: Replace with actual user type from authentication
+  const [userType] = useState<'exporter' | 'buyer'>('buyer'); // Default to buyer for demo
 
   const handleLoginClick = () => {
     setIsLoginModalOpen(true);
@@ -30,12 +34,9 @@ const Index = () => {
     setCurrentView('exporter');
   };
 
-  const handleExporterClick = () => {
-    setCurrentView('exporter');
-  };
-
-  const handleBuyerClick = () => {
-    setCurrentView('buyer');
+  const handleDashboardClick = () => {
+    // Show appropriate dashboard based on user type
+    setCurrentView(userType);
   };
 
   return (
@@ -44,8 +45,7 @@ const Index = () => {
         onLoginClick={handleLoginClick} 
         onMarketplaceClick={handleBrowseClick}
         onHomeClick={handleHomeClick}
-        onExporterClick={handleExporterClick}
-        onBuyerClick={handleBuyerClick}
+        onDashboardClick={handleDashboardClick}
         currentView={currentView}
       />
       

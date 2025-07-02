@@ -7,12 +7,11 @@ interface HeaderProps {
   onLoginClick: () => void;
   onMarketplaceClick?: () => void;
   onHomeClick?: () => void;
-  onExporterClick?: () => void;
-  onBuyerClick?: () => void;
+  onDashboardClick?: () => void;
   currentView?: 'home' | 'marketplace' | 'exporter' | 'buyer';
 }
 
-const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onExporterClick, onBuyerClick, currentView = 'home' }: HeaderProps) => {
+const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onDashboardClick, currentView = 'home' }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -50,24 +49,14 @@ const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onExporterClick
               Marketplace
             </button>
             <button 
-              onClick={onExporterClick}
+              onClick={onDashboardClick}
               className={`transition-colors ${
-                currentView === 'exporter' 
+                currentView === 'exporter' || currentView === 'buyer'
                   ? 'text-emerald-600 font-medium' 
                   : 'text-stone-600 hover:text-emerald-600'
               }`}
             >
-              Exporter
-            </button>
-            <button 
-              onClick={onBuyerClick}
-              className={`transition-colors ${
-                currentView === 'buyer' 
-                  ? 'text-emerald-600 font-medium' 
-                  : 'text-stone-600 hover:text-emerald-600'
-              }`}
-            >
-              Buyer
+              Dashboard
             </button>
             <a href="#features" className="text-stone-600 hover:text-emerald-600 transition-colors">
               Features
@@ -136,29 +125,16 @@ const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onExporterClick
               </button>
               <button 
                 onClick={() => {
-                  onExporterClick?.();
+                  onDashboardClick?.();
                   setIsMenuOpen(false);
                 }}
                 className={`text-left transition-colors ${
-                  currentView === 'exporter' 
+                  currentView === 'exporter' || currentView === 'buyer'
                     ? 'text-emerald-600 font-medium' 
                     : 'text-stone-600 hover:text-emerald-600'
                 }`}
               >
-                Exporter
-              </button>
-              <button 
-                onClick={() => {
-                  onBuyerClick?.();
-                  setIsMenuOpen(false);
-                }}
-                className={`text-left transition-colors ${
-                  currentView === 'buyer' 
-                    ? 'text-emerald-600 font-medium' 
-                    : 'text-stone-600 hover:text-emerald-600'
-                }`}
-              >
-                Buyer
+                Dashboard
               </button>
               <a href="#features" className="text-stone-600 hover:text-emerald-600 transition-colors">
                 Features
