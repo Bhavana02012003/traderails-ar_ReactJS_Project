@@ -1,9 +1,7 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { UserPlus, Eye, MapPin, Quote, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { UserPlus, Eye, MapPin, Quote, ExternalLink } from 'lucide-react';
 
 interface BuyerQuickActionsProps {
   onShowInviteFlow?: () => void;
@@ -12,7 +10,6 @@ interface BuyerQuickActionsProps {
 }
 
 const BuyerQuickActions = ({ onShowInviteFlow, onViewQuote, onFinancialWorkflow }: BuyerQuickActionsProps) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
 
   const mainActions = [
@@ -105,79 +102,62 @@ const BuyerQuickActions = ({ onShowInviteFlow, onViewQuote, onFinancialWorkflow 
 
   return (
     <Card className="bg-white/80 backdrop-blur-sm border border-stone-200 shadow-sm">
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <CollapsibleTrigger asChild>
-          <CardHeader className="pb-4 cursor-pointer hover:bg-stone-50 transition-colors">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-semibold text-stone-800">Quick Actions</CardTitle>
-              {isOpen ? (
-                <ChevronDown className="w-5 h-5 text-stone-600" />
-              ) : (
-                <ChevronRight className="w-5 h-5 text-stone-600" />
-              )}
-            </div>
-          </CardHeader>
-        </CollapsibleTrigger>
-        
-        <CollapsibleContent>
-          <CardContent className="space-y-6">
-            {/* Main Action Buttons - Just 4 tiles */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {mainActions.map((action) => (
-                <Button
-                  key={action.id}
-                  variant={selectedAction === action.id ? "default" : "outline"}
-                  className={`h-auto p-3 flex flex-col items-center space-y-2 min-h-[80px] text-center transition-all hover:scale-105 ${
-                    action.id === 'quotes' ? 'emerald-gradient text-white' : ''
-                  }`}
-                  onClick={() => handleActionClick(action)}
+      <CardContent className="p-6 space-y-6">
+        {/* Main Action Buttons - Always visible */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {mainActions.map((action) => (
+            <Button
+              key={action.id}
+              variant={selectedAction === action.id ? "default" : "outline"}
+              className={`h-auto p-3 flex flex-col items-center space-y-2 min-h-[80px] text-center transition-all hover:scale-105 ${
+                action.id === 'quotes' ? 'emerald-gradient text-white' : ''
+              }`}
+              onClick={() => handleActionClick(action)}
+            >
+              <action.icon className="w-4 h-4 flex-shrink-0" />
+              <div className="space-y-1">
+                <div className="font-medium text-xs leading-tight">{action.title}</div>
+                <div className="text-xs opacity-80 leading-tight">{action.description}</div>
+              </div>
+            </Button>
+          ))}
+        </div>
+
+        {/* Records Display */}
+        {selectedAction && (
+          <div className="border-t border-stone-200 pt-6">
+            <h3 className="text-sm font-medium text-stone-800 mb-4">
+              {mainActions.find(a => a.id === selectedAction)?.title} Records
+            </h3>
+            <div className="space-y-3">
+              {getRecordsForAction(selectedAction).map((record: any) => (
+                <div 
+                  key={record.id} 
+                  className="flex items-center justify-between p-3 bg-stone-50 rounded-lg hover:bg-stone-100 transition-colors cursor-pointer group"
+                  onClick={() => handleRecordClick(record, selectedAction)}
                 >
-                  <action.icon className="w-4 h-4 flex-shrink-0" />
-                  <div className="space-y-1">
-                    <div className="font-medium text-xs leading-tight">{action.title}</div>
-                    <div className="text-xs opacity-80 leading-tight">{action.description}</div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm text-stone-900 group-hover:text-emerald-700 transition-colors">
+                      {record.title || record.name}
+                    </p>
+                    <p className="text-xs text-stone-600">
+                      {record.exporter || record.location || record.address || record.date}
+                    </p>
                   </div>
-                </Button>
+                  <div className="flex items-center gap-2">
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-stone-900">
+                        {record.amount || record.status || record.type}
+                      </p>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-stone-400 group-hover:text-emerald-600 transition-colors" />
+                  </div>
+                </div>
               ))}
             </div>
-
-            {/* Records Display */}
-            {selectedAction && (
-              <div className="border-t border-stone-200 pt-6">
-                <h3 className="text-sm font-medium text-stone-800 mb-4">
-                  {mainActions.find(a => a.id === selectedAction)?.title} Records
-                </h3>
-                <div className="space-y-3">
-                  {getRecordsForAction(selectedAction).map((record: any) => (
-                    <div 
-                      key={record.id} 
-                      className="flex items-center justify-between p-3 bg-stone-50 rounded-lg hover:bg-stone-100 transition-colors cursor-pointer group"
-                      onClick={() => handleRecordClick(record, selectedAction)}
-                    >
-                      <div className="flex-1">
-                        <p className="font-medium text-sm text-stone-900 group-hover:text-emerald-700 transition-colors">
-                          {record.title || record.name}
-                        </p>
-                        <p className="text-xs text-stone-600">
-                          {record.exporter || record.location || record.address || record.date}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="text-right">
-                          <p className="text-sm font-medium text-stone-900">
-                            {record.amount || record.status || record.type}
-                          </p>
-                        </div>
-                        <ExternalLink className="w-4 h-4 text-stone-400 group-hover:text-emerald-600 transition-colors" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </CollapsibleContent>
-      </Collapsible>
+          </div>
+        )}
+      </CardContent>
     </Card>
   );
 };
