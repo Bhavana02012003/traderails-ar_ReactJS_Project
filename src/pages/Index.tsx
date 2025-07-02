@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Eye, Box } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,8 +16,8 @@ const Index = () => {
   };
 
   const handleBrowseClick = () => {
-    // Handle browse marketplace click
-    console.log("Browse marketplace clicked");
+    // Navigate to marketplace
+    navigate('/marketplace');
   };
 
   const handleListClick = () => {
@@ -27,9 +26,8 @@ const Index = () => {
   };
 
   const handleMarketplaceClick = () => {
-    // Navigate to marketplace page when it exists
-    console.log("Marketplace clicked");
-    // TODO: Navigate to marketplace when route is created
+    // Navigate to marketplace page
+    navigate('/marketplace');
   };
 
   const handleHomeClick = () => {
