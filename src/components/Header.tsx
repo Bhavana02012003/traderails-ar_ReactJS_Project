@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { User, Menu, X, Bell } from 'lucide-react';
@@ -42,15 +41,13 @@ const Header = ({
     <header className="relative z-50 bg-white/95 backdrop-blur-sm border-b border-stone-200">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Logo */}
+          {/* Logo - Use dark logo on light background */}
           <div className="flex items-center cursor-pointer" onClick={onHomeClick}>
-            <div className="bg-white p-3 rounded-xl shadow-lg border-2 border-emerald-100">
-              <img 
-                src="/lovable-uploads/3445b0da-b926-49fc-9f5e-9a14522b14fd.png" 
-                alt="Company Logo" 
-                className="h-12 w-auto object-contain"
-              />
-            </div>
+            <img 
+              src="/lovable-uploads/ab167848-cedd-4e49-86de-c1ad8208769d.png" 
+              alt="TradeRails - The Invisible Rails of Global Commerce" 
+              className="h-12 w-auto object-contain"
+            />
           </div>
 
           {/* Desktop Navigation */}

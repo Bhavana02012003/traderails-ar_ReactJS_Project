@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import Header from '@/components/Header';
@@ -122,17 +121,13 @@ const Index = () => {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                   <div className="flex items-center space-x-3 mb-6">
-                    <div className="bg-white p-3 rounded-xl shadow-lg">
-                      <img 
-                        src="/lovable-uploads/3445b0da-b926-49fc-9f5e-9a14522b14fd.png" 
-                        alt="Company Logo" 
-                        className="h-10 w-auto object-contain"
-                      />
-                    </div>
+                    {/* Use white logo on dark background */}
+                    <img 
+                      src="/lovable-uploads/fdcca4d5-78ab-4edc-a637-28ceec17c967.png" 
+                      alt="TradeRails - The Invisible Rails of Global Commerce" 
+                      className="h-16 w-auto object-contain"
+                    />
                   </div>
-                  <p className="text-emerald-400 text-sm font-medium">
-                    The Invisible Rails of Global Commerce
-                  </p>
                 </div>
                 
                 <div>
@@ -167,7 +162,7 @@ const Index = () => {
               </div>
               
               <div className="border-t border-stone-700 mt-8 pt-8 text-center text-sm text-stone-300">
-                <p>&copy; 2024 Global Commerce Platform. All rights reserved.</p>
+                <p>&copy; 2024 TradeRails. All rights reserved.</p>
               </div>
             </div>
           </footer>
