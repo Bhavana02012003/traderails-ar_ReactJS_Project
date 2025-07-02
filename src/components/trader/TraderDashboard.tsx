@@ -25,6 +25,7 @@ import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
 
 interface TraderDashboardProps {
   onShowInviteFlow?: () => void;
+  onOrgDetailsClick?: () => void;
 }
 
 // Mock data
