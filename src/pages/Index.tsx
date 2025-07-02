@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { ArrowRight, Eye, Cube } from "lucide-react";
+import { ArrowRight, Eye, Box } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
@@ -9,10 +9,25 @@ import MarketplacePreview from "@/components/MarketplacePreview";
 import TrustSection from "@/components/TrustSection";
 
 const Index = () => {
+  const handleLoginClick = () => {
+    // Handle login click
+    console.log("Login clicked");
+  };
+
+  const handleBrowseClick = () => {
+    // Handle browse marketplace click
+    console.log("Browse marketplace clicked");
+  };
+
+  const handleListClick = () => {
+    // Handle list inventory click
+    console.log("List inventory clicked");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 to-sage-50">
-      <Header />
-      <HeroSection />
+      <Header onLoginClick={handleLoginClick} />
+      <HeroSection onBrowseClick={handleBrowseClick} onListClick={handleListClick} />
       
       {/* Quick Actions Section */}
       <section className="py-16 bg-white">
@@ -40,7 +55,7 @@ const Index = () => {
             
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Cube className="w-8 h-8 text-blue-600" />
+                <Box className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">3D Slab Viewer</h3>
               <p className="text-stone-600 mb-4">Immersive 3D inspection of stone slabs with AR support</p>

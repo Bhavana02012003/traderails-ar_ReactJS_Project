@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Eye, Heart, Star, ArrowRight, ArrowLeft, Cube } from 'lucide-react';
+import { Eye, Heart, Star, ArrowRight, ArrowLeft, Box } from 'lucide-react';
 
 const MarketplacePreview = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -93,7 +93,7 @@ const MarketplacePreview = () => {
                         </button>
                         <Link to="/slab-viewer">
                           <button className="absolute bottom-4 right-4 glass-panel px-4 py-2 rounded-lg text-white hover:scale-105 transition-transform">
-                            <Cube className="w-4 h-4 mr-2 inline" />
+                            <Box className="w-4 h-4 mr-2 inline" />
                             3D View
                           </button>
                         </Link>
@@ -131,7 +131,7 @@ const MarketplacePreview = () => {
                           </Button>
                           <Link to="/slab-viewer">
                             <Button variant="outline" size="default" className="px-4">
-                              <Cube className="w-4 h-4" />
+                              <Box className="w-4 h-4" />
                             </Button>
                           </Link>
                         </div>
@@ -180,7 +180,7 @@ const MarketplacePreview = () => {
           <Link to="/slab-viewer">
             <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
               Try 3D Viewer
-              <Cube className="w-5 h-5 ml-2" />
+              <Box className="w-5 h-5 ml-2" />
             </Button>
           </Link>
         </div>
