@@ -24,9 +24,30 @@ const Index = () => {
     console.log("List inventory clicked");
   };
 
+  const handleMarketplaceClick = () => {
+    // Handle marketplace navigation
+    console.log("Marketplace clicked");
+  };
+
+  const handleHomeClick = () => {
+    // Handle home navigation - scroll to top or refresh
+    window.scrollTo(0, 0);
+  };
+
+  const handleDashboardClick = () => {
+    // Handle dashboard navigation
+    console.log("Dashboard clicked");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 to-sage-50">
-      <Header onLoginClick={handleLoginClick} />
+      <Header 
+        onLoginClick={handleLoginClick}
+        onMarketplaceClick={handleMarketplaceClick}
+        onHomeClick={handleHomeClick}
+        onDashboardClick={handleDashboardClick}
+        currentView="home"
+      />
       <HeroSection onBrowseClick={handleBrowseClick} onListClick={handleListClick} />
       
       {/* Quick Actions Section */}
