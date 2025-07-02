@@ -3,6 +3,7 @@ import { Heart, Eye, Star, MapPin, Clock, Verified } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Slab } from '@/types/marketplace';
+import { useNavigate } from 'react-router-dom';
 
 interface SlabCardProps {
   slab: Slab;
@@ -11,6 +12,8 @@ interface SlabCardProps {
 }
 
 const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
+  const navigate = useNavigate();
+
   const handleViewDetails = (e: React.MouseEvent) => {
     e.stopPropagation();
     onClick();
@@ -20,6 +23,11 @@ const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
     e.stopPropagation();
     // Handle quote request
     console.log('Request quote for:', slab.id);
+  };
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate('/payout');
   };
 
   const handleARView = (e: React.MouseEvent) => {
@@ -95,8 +103,11 @@ const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
                   <Eye className="w-4 h-4 mr-1" />
                   AR View
                 </Button>
-                <Button className="emerald-gradient text-white" onClick={handleRequestQuote}>
+                <Button variant="outline" size="sm" onClick={handleRequestQuote}>
                   Request Quote
+                </Button>
+                <Button className="emerald-gradient text-white" onClick={handleBuyNow}>
+                  Buy Now
                 </Button>
               </div>
             </div>
@@ -188,8 +199,11 @@ const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
           <Button variant="outline" className="flex-1 text-sm" onClick={handleViewDetails}>
             View Details
           </Button>
-          <Button className="flex-1 emerald-gradient text-white text-sm" onClick={handleRequestQuote}>
+          <Button variant="outline" className="flex-1 text-sm" onClick={handleRequestQuote}>
             Request Quote
+          </Button>
+          <Button className="flex-1 emerald-gradient text-white text-sm" onClick={handleBuyNow}>
+            Buy Now
           </Button>
         </div>
       </div>

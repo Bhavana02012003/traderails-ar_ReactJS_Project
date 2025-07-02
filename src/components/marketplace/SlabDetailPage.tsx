@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -39,6 +40,7 @@ interface SlabDetailPageProps {
 }
 
 const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
+  const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [view3D, setView3D] = useState(false);
   const [showAIGrading, setShowAIGrading] = useState(false);
@@ -56,6 +58,10 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
 
   const handleImageZoom = () => {
     setIsZoomed(!isZoomed);
+  };
+
+  const handleBuyNow = () => {
+    navigate('/payout');
   };
 
   const aiGradingData = {
@@ -414,7 +420,10 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
 
                   {/* Actions */}
                   <div className="space-y-3">
-                    <Button className="w-full emerald-gradient text-white h-12 text-lg font-semibold">
+                    <Button className="w-full emerald-gradient text-white h-12 text-lg font-semibold" onClick={handleBuyNow}>
+                      Buy Now
+                    </Button>
+                    <Button variant="outline" className="w-full h-12 text-lg font-semibold" onClick={() => console.log('Request quote for:', slab.id)}>
                       Request Quote
                     </Button>
                     <div className="grid grid-cols-2 gap-3">
