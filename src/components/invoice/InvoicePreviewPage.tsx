@@ -429,7 +429,7 @@ const InvoicePreviewPage = () => {
       </div>
 
       {/* Print Styles */}
-      <style jsx>{`
+      <style>{`
         @media print {
           body { background: white !important; }
           .container { max-width: none !important; padding: 0 !important; }
