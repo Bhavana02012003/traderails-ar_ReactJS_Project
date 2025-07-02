@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import Header from '@/components/Header';
@@ -14,11 +15,10 @@ import AgentDashboard from '@/components/agent/AgentDashboard';
 import LoginModal from '@/components/LoginModal';
 import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
 import InviteUserFlow from '@/components/invite/InviteUserFlow';
-import OrgDetailsPage from '@/components/org/OrgDetailsPage';
 
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin' | 'trader' | 'agent' | 'onboarding' | 'invite' | 'org-details'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin' | 'trader' | 'agent' | 'onboarding' | 'invite'>('home');
   const [userType, setUserType] = useState<'exporter' | 'buyer' | 'admin' | 'agent' | 'trader' | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -89,14 +89,10 @@ const Index = () => {
     setCurrentView('invite');
   };
 
-  const handleOrgDetailsClick = () => {
-    setCurrentView('org-details');
-  };
-
   return (
     <div className="min-h-screen bg-white">
       {/* Only show header if not in admin view, onboarding, or invite flow */}
-      {currentView !== 'admin' && currentView !== 'onboarding' && currentView !== 'invite' && currentView !== 'org-details' && (
+      {currentView !== 'admin' && currentView !== 'onboarding' && currentView !== 'invite' && (
         <Header 
           onLoginClick={handleLoginClick} 
           onMarketplaceClick={handleBrowseClick}
@@ -179,24 +175,20 @@ const Index = () => {
         <ExporterDashboard 
           onShowInviteFlow={handleShowInviteFlow} 
           userType={userType === 'trader' ? 'trader' : 'exporter'}
-          onOrgDetailsClick={handleOrgDetailsClick}
         />
       ) : currentView === 'buyer' ? (
         <BuyerDashboard 
           onShowInviteFlow={handleShowInviteFlow}
           userType={userType === 'agent' ? 'agent' : userType === 'trader' ? 'trader' : 'buyer'}
-          onOrgDetailsClick={handleOrgDetailsClick}
         />
       ) : currentView === 'trader' ? (
-        <TraderDashboard onShowInviteFlow={handleShowInviteFlow} onOrgDetailsClick={handleOrgDetailsClick} />
+        <TraderDashboard onShowInviteFlow={handleShowInviteFlow} />
       ) : currentView === 'agent' ? (
-        <AgentDashboard onShowInviteFlow={handleShowInviteFlow} onOrgDetailsClick={handleOrgDetailsClick} />
+        <AgentDashboard onShowInviteFlow={handleShowInviteFlow} />
       ) : currentView === 'admin' ? (
         <AdminDashboard onLogout={handleLogout} onShowInviteFlow={handleShowInviteFlow} />
       ) : currentView === 'invite' ? (
         <InviteUserFlow onBack={handleHomeClick} />
-      ) : currentView === 'org-details' ? (
-        <OrgDetailsPage onBack={handleHomeClick} />
       ) : (
         <OnboardingWizard />
       )}
