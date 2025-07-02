@@ -126,7 +126,7 @@ const Index = () => {
                     <img 
                       src="/lovable-uploads/3445b0da-b926-49fc-9f5e-9a14522b14fd.png" 
                       alt="TradeRails - The Invisible Rails of Global Commerce" 
-                      className="h-8 w-auto object-contain"
+                      className="h-12 w-auto object-contain"
                     />
                   </div>
                 </div>
