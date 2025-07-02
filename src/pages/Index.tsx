@@ -1,4 +1,3 @@
-
 /**
  * Main Index Page Component
  * 
@@ -39,11 +38,12 @@ import AgentDashboard from '@/components/agent/AgentDashboard';
 // Modal and flow components
 import LoginModal from '@/components/LoginModal';
 import InviteUserFlow from '@/components/invite/InviteUserFlow';
+import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
 
 /**
  * Type definitions for application state management
  */
-type ViewType = 'home' | 'marketplace' | 'about' | 'contact' | 'exporter' | 'buyer' | 'admin' | 'trader' | 'agent' | 'invite';
+type ViewType = 'home' | 'marketplace' | 'about' | 'contact' | 'onboarding' | 'exporter' | 'buyer' | 'admin' | 'trader' | 'agent' | 'invite';
 type UserType = 'exporter' | 'buyer' | 'admin' | 'agent' | 'trader' | null;
 
 /**
@@ -142,6 +142,13 @@ const Index = () => {
   };
 
   /**
+   * Navigates to create account overlay view
+   */
+  const handleCreateAccountClick = () => {
+    setCurrentView('onboarding');
+  };
+
+  /**
    * Navigates to exporter dashboard (for listing inventory)
    */
   const handleListClick = () => {
@@ -195,10 +202,10 @@ const Index = () => {
     <div className="min-h-screen bg-white">
       {/* 
         Conditional Header Rendering
-        Header is hidden for certain views (admin, invite) 
+        Header is hidden for certain views (admin, invite, onboarding) 
         that have their own navigation or are full-screen flows
       */}
-      {currentView !== 'admin' && currentView !== 'invite' && (
+      {currentView !== 'admin' && currentView !== 'invite' && currentView !== 'onboarding' && (
         <Header 
           onLoginClick={handleLoginClick} 
           onMarketplaceClick={handleBrowseClick}
@@ -525,6 +532,9 @@ const Index = () => {
       ) : currentView === 'contact' ? (
         /* Contact view for contact information and form */
         <ContactContent />
+      ) : currentView === 'onboarding' ? (
+        /* Onboarding view for creating new accounts */
+        <OnboardingWizard />
       ) : currentView === 'exporter' ? (
         /* Exporter dashboard for inventory management and quote creation */
         <ExporterDashboard 
@@ -553,13 +563,14 @@ const Index = () => {
 
       {/* 
         Login Modal
-        Overlay modal for user authentication and onboarding
+        Overlay modal for user authentication
         Conditionally rendered based on isLoginModalOpen state
       */}
       <LoginModal 
         open={isLoginModalOpen} 
         onOpenChange={setIsLoginModalOpen}
         onLoginSuccess={handleLoginSuccess}
+        onCreateAccount={handleCreateAccountClick}
       />
     </div>
   );

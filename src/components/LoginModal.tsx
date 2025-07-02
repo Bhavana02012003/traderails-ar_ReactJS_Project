@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Globe, Mail, Phone, Eye, EyeOff, User } from 'lucide-react';
 import OTPVerificationFlow, { ContactData } from './auth/OTPVerificationFlow';
 import ChooseOrganizationModal from './auth/ChooseOrganizationModal';
-import OnboardingWizard from './onboarding/OnboardingWizard';
 
 interface LoginModalProps {
   open: boolean;
@@ -52,7 +51,6 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
   const [showOtpFlow, setShowOtpFlow] = useState(false);
   const [selectedUserType, setSelectedUserType] = useState<'buyer' | 'exporter' | 'agent' | 'trader'>('buyer');
   const [showOrgChoice, setShowOrgChoice] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const getUserTypeConfig = (userType: string) => {
     switch (userType) {
@@ -140,20 +138,8 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
   };
 
   const handleCreateAccount = () => {
-    setShowOnboarding(true);
-  };
-
-  const handleOnboardingComplete = () => {
-    setShowOnboarding(false);
     onOpenChange(false);
-    // Optionally trigger login success after onboarding
-    // onLoginSuccess?.(selectedUserType);
-  };
-
-  const handleBackToLogin = () => {
-    setShowOnboarding(false);
-    setShowOtpFlow(false);
-    setShowOrgChoice(false);
+    onCreateAccount?.();
   };
 
   const canProceed = () => {
@@ -167,20 +153,6 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
       return phoneNumber;
     }
   };
-
-  // Onboarding Flow - Full screen within modal
-  if (showOnboarding) {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-7xl w-[95vw] h-[95vh] bg-white border-0 shadow-none p-0">
-          <DialogTitle className="sr-only">Create Account - Onboarding</DialogTitle>
-          <div className="w-full h-full">
-            <OnboardingWizard />
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
 
   // Choose Organization Modal
   if (showOrgChoice) {
