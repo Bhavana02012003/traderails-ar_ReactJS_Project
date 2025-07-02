@@ -33,8 +33,8 @@ const MarketplaceContent = () => {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      {/* Header */}
-      <div className="bg-white border-b border-stone-200 sticky top-16 z-40">
+      {/* Header - Fixed positioning */}
+      <div className="bg-white border-b border-stone-200 sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 lg:px-8 py-4">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold text-stone-900">Global Stone Marketplace</h1>
