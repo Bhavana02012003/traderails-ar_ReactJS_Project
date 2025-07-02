@@ -42,6 +42,7 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
     setSelectedQuoteId(null);
+    setSelectedInvoice(null);
   };
 
   const handleShowInviteFlow = () => {
@@ -65,7 +66,7 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
         amount={selectedInvoice.amount}
         buyer={selectedInvoice.buyer}
         status={selectedInvoice.status}
-        onBack={() => setSelectedInvoice(null)}
+        onBack={handleBackToDashboard}
       />
     );
   }
