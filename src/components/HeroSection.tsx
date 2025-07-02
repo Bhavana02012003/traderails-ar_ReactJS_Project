@@ -1,4 +1,3 @@
-
 /**
  * Hero Section Component
  * 
@@ -59,8 +58,8 @@ const HeroSection = ({ onBrowseClick, onListClick }: HeroSectionProps) => {
         Positioned above background layers with proper z-index
         Uses container classes for responsive layout
       */}
-      <div className="relative z-10 container mx-auto px-6 lg:px-12 max-w-7xl text-center">
-        <div className="max-w-4xl mx-auto animate-fade-in">
+      <div className="relative z-10 w-full mx-auto px-4 md:px-8 lg:px-16 xl:px-24 text-center">
+        <div className="max-w-6xl mx-auto animate-fade-in">
           
           {/* 
             Trust Badge
@@ -95,7 +94,7 @@ const HeroSection = ({ onBrowseClick, onListClick }: HeroSectionProps) => {
             Detailed explanation of platform benefits and features
             Highlights key differentiators: verification, security, AR technology
           */}
-          <p className="text-base md:text-lg text-stone-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-lg text-stone-600 mb-10 max-w-3xl mx-auto leading-relaxed">
             Connect with verified suppliers, secure transactions with escrow, and visualize stone slabs in AR. 
             The premium B2B platform for the global stone industry.
           </p>
