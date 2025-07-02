@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import TrustSection from '@/components/TrustSection';
@@ -10,14 +11,15 @@ import LoginModal from '@/components/LoginModal';
 
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleLoginClick = () => {
     setIsLoginModalOpen(true);
   };
 
   const handleBrowseClick = () => {
-    // For now, just scroll to marketplace section
-    document.getElementById('marketplace')?.scrollIntoView({ behavior: 'smooth' });
+    // Navigate to marketplace page
+    navigate('/marketplace');
   };
 
   const handleListClick = () => {
