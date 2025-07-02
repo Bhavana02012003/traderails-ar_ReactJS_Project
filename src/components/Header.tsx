@@ -8,7 +8,7 @@ interface HeaderProps {
   onMarketplaceClick?: () => void;
   onHomeClick?: () => void;
   onDashboardClick?: () => void;
-  currentView?: 'home' | 'marketplace' | 'exporter' | 'buyer';
+  currentView?: 'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin';
 }
 
 const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onDashboardClick, currentView = 'home' }: HeaderProps) => {
@@ -51,7 +51,7 @@ const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onDashboardClic
             <button 
               onClick={onDashboardClick}
               className={`transition-colors ${
-                currentView === 'exporter' || currentView === 'buyer'
+                currentView === 'exporter' || currentView === 'buyer' || currentView === 'admin'
                   ? 'text-emerald-600 font-medium' 
                   : 'text-stone-600 hover:text-emerald-600'
               }`}
@@ -129,7 +129,7 @@ const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onDashboardClic
                   setIsMenuOpen(false);
                 }}
                 className={`text-left transition-colors ${
-                  currentView === 'exporter' || currentView === 'buyer'
+                  currentView === 'exporter' || currentView === 'buyer' || currentView === 'admin'
                     ? 'text-emerald-600 font-medium' 
                     : 'text-stone-600 hover:text-emerald-600'
                 }`}
