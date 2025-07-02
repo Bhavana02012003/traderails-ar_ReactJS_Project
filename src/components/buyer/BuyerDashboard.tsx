@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import BuyerSummaryCards from './BuyerSummaryCards';
 import BuyerQuickActions from './BuyerQuickActions';
 import RecentOrders from './RecentOrders';
@@ -10,6 +11,7 @@ import LocationMap from './LocationMap';
 import TrustBadges from './TrustBadges';
 import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
 import OrgDetailsPage from '@/components/org/OrgDetailsPage';
+import FinancialWorkflowTrigger from '@/components/finance/FinancialWorkflowTrigger';
 
 interface BuyerDashboardProps {
   onShowInviteFlow?: () => void;
@@ -41,6 +43,12 @@ const mockOrganizations = [
 
 const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboardProps) => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [selectedOrderForWorkflow, setSelectedOrderForWorkflow] = useState<{
+    invoiceId: string;
+    amount: { inr: string; usd: string };
+    buyer: string;
+    status: 'approved' | 'pending' | 'rejected';
+  } | null>(null);
 
   const currentOrg = mockOrganizations[0]; // Default to first org
 
@@ -49,10 +57,48 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
     // In a real app, this would trigger a context switch
   };
 
+  const handleFinancialWorkflow = (orderData: {
+    invoiceId: string;
+    amount: { inr: string; usd: string };
+    buyer: string;
+    status: 'approved' | 'pending' | 'rejected';
+  }) => {
+    setSelectedOrderForWorkflow(orderData);
+  };
+
+  const handleBackToOrders = () => {
+    setSelectedOrderForWorkflow(null);
+  };
+
   // Only show organization switcher for traders and agents
   const canSwitchOrganizations = userType === 'trader' || userType === 'agent';
   // Only show organization details for buyers (not agents or traders)
   const canManageOrganization = userType === 'buyer';
+
+  // If workflow is selected, show it in full width
+  if (selectedOrderForWorkflow) {
+    return (
+      <div className="min-h-screen bg-stone-50">
+        <div className="container mx-auto px-4 lg:px-8 py-6">
+          <div className="flex items-center gap-4 mb-6">
+            <Button 
+              variant="outline" 
+              onClick={handleBackToOrders}
+            >
+              ← Back to Dashboard
+            </Button>
+            <h3 className="text-lg font-semibold text-stone-900">Financial Workflow - {selectedOrderForWorkflow.invoiceId}</h3>
+          </div>
+          <FinancialWorkflowTrigger
+            invoiceId={selectedOrderForWorkflow.invoiceId}
+            amount={selectedOrderForWorkflow.amount}
+            buyer={selectedOrderForWorkflow.buyer}
+            status={selectedOrderForWorkflow.status}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -108,7 +154,7 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
             
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               {/* Recent Orders */}
-              <RecentOrders />
+              <RecentOrders onFinancialWorkflow={handleFinancialWorkflow} />
               
               {/* Location Map */}
               <LocationMap />
@@ -119,7 +165,7 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
           </TabsContent>
 
           <TabsContent value="orders">
-            <RecentOrders expanded={true} />
+            <RecentOrders expanded={true} onFinancialWorkflow={handleFinancialWorkflow} />
           </TabsContent>
 
           <TabsContent value="bookmarks">

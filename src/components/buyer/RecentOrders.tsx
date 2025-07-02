@@ -4,15 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ChevronDown, ChevronRight, Eye, Truck, Shield, CreditCard } from 'lucide-react';
-import FinancialWorkflowTrigger from '@/components/finance/FinancialWorkflowTrigger';
 
 interface RecentOrdersProps {
   expanded?: boolean;
+  onFinancialWorkflow?: (orderData: {
+    invoiceId: string;
+    amount: { inr: string; usd: string };
+    buyer: string;
+    status: 'approved' | 'pending' | 'rejected';
+  }) => void;
 }
 
-const RecentOrders = ({ expanded = false }: RecentOrdersProps) => {
+const RecentOrders = ({ expanded = false, onFinancialWorkflow }: RecentOrdersProps) => {
   const [expandedOrders, setExpandedOrders] = useState<string[]>([]);
-  const [selectedOrderForWorkflow, setSelectedOrderForWorkflow] = useState<string | null>(null);
 
   const orders = [
     {
@@ -94,35 +98,16 @@ const RecentOrders = ({ expanded = false }: RecentOrdersProps) => {
     );
   };
 
-  const handleFinancialWorkflow = (orderId: string) => {
-    setSelectedOrderForWorkflow(orderId);
+  const handleFinancialWorkflowClick = (order: typeof orders[0]) => {
+    if (onFinancialWorkflow) {
+      onFinancialWorkflow({
+        invoiceId: order.id,
+        amount: order.amount,
+        buyer: order.buyer,
+        status: order.workflowStatus
+      });
+    }
   };
-
-  const selectedOrder = orders.find(order => order.id === selectedOrderForWorkflow);
-
-  if (selectedOrderForWorkflow && selectedOrder) {
-    return (
-      <div className="w-full space-y-6">
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="outline" 
-            onClick={() => setSelectedOrderForWorkflow(null)}
-          >
-            ← Back to Orders
-          </Button>
-          <h3 className="text-lg font-semibold text-stone-900">Financial Workflow - {selectedOrder.id}</h3>
-        </div>
-        <div className="w-full">
-          <FinancialWorkflowTrigger
-            invoiceId={selectedOrder.id}
-            amount={selectedOrder.amount}
-            buyer={selectedOrder.buyer}
-            status={selectedOrder.workflowStatus}
-          />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <Card className="bg-white/70 backdrop-blur-sm border border-stone-200">
@@ -155,7 +140,7 @@ const RecentOrders = ({ expanded = false }: RecentOrdersProps) => {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => handleFinancialWorkflow(order.id)}
+                  onClick={() => handleFinancialWorkflowClick(order)}
                   className="text-blue-600 border-blue-200 hover:bg-blue-50"
                 >
                   <CreditCard className="w-4 h-4 mr-1" />
