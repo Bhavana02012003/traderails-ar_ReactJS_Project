@@ -14,7 +14,9 @@ import {
   Send,
   FileText,
   Lock,
-  Building
+  Building,
+  Calendar,
+  Clock
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -85,6 +87,19 @@ const activeBuyers = [
   }
 ];
 
+const paymentHistory = [
+  { period: 'Last 1 Month', amount: '₹3,25,000', deals: 8 },
+  { period: 'Last 3 Months', amount: '₹8,75,000', deals: 24 },
+  { period: 'Last 6 Months', amount: '₹15,40,000', deals: 42 },
+  { period: 'Year to Date', amount: '₹28,90,000', deals: 78 }
+];
+
+const upcomingPayments = [
+  { buyer: 'Stone Craft LLC', amount: '₹2,45,000', dueDate: '15 Dec 2024', status: 'confirmed' },
+  { buyer: 'Premium Stones Ltd', amount: '₹1,95,000', dueDate: '22 Dec 2024', status: 'pending' },
+  { buyer: 'Global Marbles Inc', amount: '₹4,20,000', dueDate: '28 Dec 2024', status: 'confirmed' }
+];
+
 const mockOrganizations = [
   {
     id: '1',
@@ -120,6 +135,7 @@ const TraderDashboard = ({ onShowInviteFlow }: TraderDashboardProps) => {
       case 'pending': return 'bg-amber-100 text-amber-800';
       case 'approved': return 'bg-emerald-100 text-emerald-800';
       case 'escrow': return 'bg-purple-100 text-purple-800';
+      case 'confirmed': return 'bg-emerald-100 text-emerald-800';
       default: return 'bg-stone-100 text-stone-800';
     }
   };
@@ -216,37 +232,30 @@ const TraderDashboard = ({ onShowInviteFlow }: TraderDashboardProps) => {
             <TabsTrigger value="overview" className="px-6 py-3">Overview</TabsTrigger>
             <TabsTrigger value="slabs" className="px-6 py-3">Slabs for Sale</TabsTrigger>
             <TabsTrigger value="buyers" className="px-6 py-3">Active Buyers</TabsTrigger>
-            <TabsTrigger value="finance" className="px-6 py-3">Finance</TabsTrigger>
+            <TabsTrigger value="payments" className="px-6 py-3">Payments</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Financial Summary */}
+            {/* Payment Summary */}
             <Card className="glass-panel border-0">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <DollarSign className="w-5 h-5 text-emerald-600" />
-                  <span>Financial Summary</span>
+                  <span>Payment Summary</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex justify-between items-center p-3 bg-emerald-50 rounded-lg">
-                  <span className="text-sm font-medium">Credit Approved</span>
-                  <span className="font-bold text-emerald-700">₹8,50,000</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
-                  <span className="text-sm font-medium">Credit Pending</span>
-                  <span className="font-bold text-amber-700">₹2,45,000</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                  <span className="text-sm font-medium">FX Hedged</span>
-                  <span className="font-bold text-blue-700">₹6,20,000</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                  <span className="text-sm font-medium">Escrow Locked</span>
-                  <span className="font-bold text-purple-700">₹4,85,000</span>
-                </div>
+                {paymentHistory.map((period, index) => (
+                  <div key={index} className="flex justify-between items-center p-3 bg-emerald-50 rounded-lg">
+                    <div>
+                      <span className="text-sm font-medium">{period.period}</span>
+                      <p className="text-xs text-stone-600">{period.deals} deals</p>
+                    </div>
+                    <span className="font-bold text-emerald-700">{period.amount}</span>
+                  </div>
+                ))}
                 <Button className="w-full" variant="outline">
-                  Request Lender Approval
+                  View Detailed Reports
                 </Button>
               </CardContent>
             </Card>
@@ -270,14 +279,14 @@ const TraderDashboard = ({ onShowInviteFlow }: TraderDashboardProps) => {
                 <div className="flex items-center space-x-3 p-3 bg-white rounded-lg border">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">FX rate locked for NYC deal</p>
+                    <p className="text-sm font-medium">Payment received from Premium Stones</p>
                     <p className="text-xs text-stone-500">4 hours ago</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3 p-3 bg-white rounded-lg border">
                   <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">Escrow triggered for Premium Stones</p>
+                    <p className="text-sm font-medium">New slab inquiry from Dubai buyer</p>
                     <p className="text-xs text-stone-500">6 hours ago</p>
                   </div>
                 </div>
@@ -352,7 +361,6 @@ const TraderDashboard = ({ onShowInviteFlow }: TraderDashboardProps) => {
                           <p className="text-sm text-stone-600">{buyer.location}</p>
                           <div className="flex items-center space-x-4 mt-2">
                             <span className="text-sm">Quote: <strong>{buyer.quoteValue}</strong></span>
-                            <span className="text-sm">Credit: <strong>{buyer.creditRequested}</strong></span>
                             <Badge className={getStatusColor(buyer.status)}>
                               {buyer.status}
                             </Badge>
@@ -364,12 +372,12 @@ const TraderDashboard = ({ onShowInviteFlow }: TraderDashboardProps) => {
                             Invoice
                           </Button>
                           <Button size="sm" variant="outline">
-                            <DollarSign className="w-4 h-4 mr-1" />
-                            Lock FX
+                            <MessageCircle className="w-4 h-4 mr-1" />
+                            Contact
                           </Button>
                           <Button size="sm" className="emerald-gradient text-white">
                             <Lock className="w-4 h-4 mr-1" />
-                            Escrow
+                            Finalize
                           </Button>
                         </div>
                       </div>
@@ -380,56 +388,54 @@ const TraderDashboard = ({ onShowInviteFlow }: TraderDashboardProps) => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="finance">
+          <TabsContent value="payments">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="glass-panel border-0">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
-                    <CreditCard className="w-5 h-5 text-blue-600" />
-                    <span>Credit Management</span>
+                    <Calendar className="w-5 h-5 text-emerald-600" />
+                    <span>Payment History</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <h4 className="font-semibold text-blue-900">Total Credit Line</h4>
-                    <p className="text-2xl font-bold text-blue-700">₹15,00,000</p>
-                    <p className="text-sm text-blue-600">Available: ₹6,50,000</p>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Utilized</span>
-                      <span>₹8,50,000</span>
+                  {paymentHistory.map((period, index) => (
+                    <div key={index} className="p-4 bg-emerald-50 rounded-lg">
+                      <div className="flex justify-between items-center mb-2">
+                        <h4 className="font-semibold text-emerald-900">{period.period}</h4>
+                        <span className="text-lg font-bold text-emerald-700">{period.amount}</span>
+                      </div>
+                      <p className="text-sm text-emerald-600">{period.deals} completed deals</p>
                     </div>
-                    <div className="w-full bg-stone-200 rounded-full h-2">
-                      <div className="bg-blue-600 h-2 rounded-full" style={{ width: '57%' }}></div>
-                    </div>
-                  </div>
-                  <Button className="w-full">Request Credit Increase</Button>
+                  ))}
+                  <Button className="w-full">Download Payment Report</Button>
                 </CardContent>
               </Card>
 
               <Card className="glass-panel border-0">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
-                    <TrendingUp className="w-5 h-5 text-emerald-600" />
-                    <span>FX & Escrow</span>
+                    <Clock className="w-5 h-5 text-blue-600" />
+                    <span>Upcoming Payments</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="p-4 bg-emerald-50 rounded-lg">
-                    <h4 className="font-semibold text-emerald-900">FX Exposure</h4>
-                    <p className="text-sm text-emerald-600">USD exposure: $85,000</p>
-                    <p className="text-sm text-emerald-600">EUR exposure: €23,000</p>
-                  </div>
-                  <div className="p-4 bg-purple-50 rounded-lg">
-                    <h4 className="font-semibold text-purple-900">Escrow Status</h4>
-                    <p className="text-sm text-purple-600">Active: 3 transactions</p>
-                    <p className="text-sm text-purple-600">Pending release: ₹4,85,000</p>
-                  </div>
-                  <div className="flex space-x-2">
-                    <Button variant="outline" size="sm">Hedge FX</Button>
-                    <Button variant="outline" size="sm">Release Escrow</Button>
-                  </div>
+                  {upcomingPayments.map((payment, index) => (
+                    <div key={index} className="p-4 bg-blue-50 rounded-lg">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h4 className="font-semibold text-blue-900">{payment.buyer}</h4>
+                          <p className="text-sm text-blue-600">Due: {payment.dueDate}</p>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-lg font-bold text-blue-700">{payment.amount}</span>
+                          <Badge className={getStatusColor(payment.status)} size="sm">
+                            {payment.status}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <Button variant="outline" className="w-full">View All Pending Payments</Button>
                 </CardContent>
               </Card>
             </div>
