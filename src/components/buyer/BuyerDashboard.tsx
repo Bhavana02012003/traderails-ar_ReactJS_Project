@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import DashboardHeader from '@/components/exporter/DashboardHeader';
 import BuyerSummaryCards from './BuyerSummaryCards';
@@ -11,7 +10,8 @@ import TrustBadges from './TrustBadges';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText } from 'lucide-react';
+import { FileText, Download, Send } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface BuyerDashboardProps {
   onShowInviteFlow?: () => void;
@@ -24,6 +24,9 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
   const [currentView, setCurrentView] = useState<'dashboard' | 'quote-review' | 'shipment-tracking'>('dashboard');
   const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(null);
   const [selectedShipmentId, setSelectedShipmentId] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const { toast } = useToast();
 
   const handleFinancialWorkflow = (orderData: {
     invoiceId: string;
@@ -54,6 +57,54 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
   const handleShowInviteFlow = () => {
     setShowInviteFlow(true);
     onShowInviteFlow?.();
+  };
+
+  const handleDownloadPDF = async (invoiceId: string) => {
+    setIsDownloading(true);
+    try {
+      // Open invoice in new tab and trigger download
+      const invoiceWindow = window.open('/invoice/preview', '_blank');
+      if (invoiceWindow) {
+        // Wait for the page to load and trigger download
+        setTimeout(() => {
+          invoiceWindow.postMessage({ action: 'download' }, '*');
+        }, 2000);
+      }
+      
+      toast({
+        title: "Download Started",
+        description: `Invoice ${invoiceId} is being downloaded.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Download Failed",
+        description: "There was an error downloading the invoice.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleSendToBuyer = async (invoiceId: string) => {
+    setIsSending(true);
+    try {
+      // Simulate sending invoice
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      toast({
+        title: "Invoice Sent",
+        description: `Invoice ${invoiceId} has been sent to the buyer.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Send Failed",
+        description: "There was an error sending the invoice.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSending(false);
+    }
   };
 
   if (showInviteFlow) {
@@ -128,13 +179,36 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
                       <Badge className="bg-amber-100 text-amber-800 border-amber-200">
                         Pending Payment
                       </Badge>
-                      <Button 
-                        size="sm" 
-                        onClick={() => window.open('/invoice/preview', '_blank')}
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        View Invoice
-                      </Button>
+                      <div className="flex gap-1">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => window.open('/invoice/preview', '_blank')}
+                          className="bg-white hover:bg-stone-50"
+                        >
+                          <FileText className="w-4 h-4 mr-1" />
+                          View
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleDownloadPDF('INV-2024-00108')}
+                          disabled={isDownloading}
+                          className="bg-white hover:bg-stone-50"
+                        >
+                          <Download className="w-4 h-4 mr-1" />
+                          {isDownloading ? 'Downloading...' : 'Download'}
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          onClick={() => handleSendToBuyer('INV-2024-00108')}
+                          disabled={isSending}
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          <Send className="w-4 h-4 mr-1" />
+                          {isSending ? 'Sending...' : 'Send'}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
