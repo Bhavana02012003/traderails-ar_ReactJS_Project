@@ -13,6 +13,7 @@ import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
 interface BuyerDashboardProps {
   onShowInviteFlow?: () => void;
   userType?: 'buyer' | 'agent' | 'trader';
+  onOrgDetailsClick?: () => void;
 }
 
 // Mock organizations for demonstration

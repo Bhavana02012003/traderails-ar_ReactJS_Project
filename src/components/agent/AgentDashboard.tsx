@@ -24,6 +24,7 @@ import ChooseOrganizationModal from '@/components/auth/ChooseOrganizationModal';
 
 interface AgentDashboardProps {
   onShowInviteFlow: () => void;
+  onOrgDetailsClick?: () => void;
 }
 
 const AgentDashboard = ({ onShowInviteFlow }: AgentDashboardProps) => {

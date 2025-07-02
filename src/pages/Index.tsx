@@ -14,7 +14,7 @@ import AgentDashboard from '@/components/agent/AgentDashboard';
 import LoginModal from '@/components/LoginModal';
 import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
 import InviteUserFlow from '@/components/invite/InviteUserFlow';
-import OrgDetailsPage from '@/components/org-details/OrgDetailsPage';
+import OrgDetailsPage from '@/components/org/OrgDetailsPage';
 
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);

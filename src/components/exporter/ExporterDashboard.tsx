@@ -17,6 +17,7 @@ import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
 interface ExporterDashboardProps {
   onShowInviteFlow?: () => void;
   userType?: 'exporter' | 'trader';
+  onOrgDetailsClick?: () => void;
 }
 
 // Mock organizations for demonstration
