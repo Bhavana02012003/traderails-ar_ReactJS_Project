@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import Header from '@/components/Header';
@@ -8,11 +9,12 @@ import MarketplacePreview from '@/components/MarketplacePreview';
 import MarketplaceContent from '@/components/MarketplaceContent';
 import ExporterDashboard from '@/components/exporter/ExporterDashboard';
 import BuyerDashboard from '@/components/buyer/BuyerDashboard';
+import AdminDashboard from '@/components/admin/AdminDashboard';
 import LoginModal from '@/components/LoginModal';
 
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin'>('home');
   const [userType, setUserType] = useState<'exporter' | 'buyer' | 'admin' | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -29,9 +31,8 @@ const Index = () => {
       setCurrentView('buyer');
     } else if (type === 'exporter') {
       setCurrentView('exporter');
-    } else {
-      // Admin stays on home for now
-      setCurrentView('home');
+    } else if (type === 'admin') {
+      setCurrentView('admin');
     }
   };
 
@@ -58,6 +59,8 @@ const Index = () => {
       setCurrentView('buyer');
     } else if (userType === 'exporter') {
       setCurrentView('exporter');
+    } else if (userType === 'admin') {
+      setCurrentView('admin');
     }
   };
 
@@ -139,8 +142,10 @@ const Index = () => {
         <MarketplaceContent />
       ) : currentView === 'exporter' ? (
         <ExporterDashboard />
-      ) : (
+      ) : currentView === 'buyer' ? (
         <BuyerDashboard />
+      ) : (
+        <AdminDashboard />
       )}
 
       <LoginModal 
