@@ -41,8 +41,6 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
   const [showTraceability, setShowTraceability] = useState(false);
   const [showInfo, setShowInfo] = useState(true);
   const [showLightingControls, setShowLightingControls] = useState(false);
-  const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState({ x: 0, y: 0, z: 0 });
   const [autoRotate, setAutoRotate] = useState(true);
   const [lighting, setLighting] = useState({
     ambient: 0.4,
@@ -52,40 +50,24 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
   });
   const modelViewerRef = useRef<any>(null);
 
-  useEffect(() => {
-    if (modelViewerRef.current && autoRotate) {
-      const interval = setInterval(() => {
-        setRotation(prev => ({
-          ...prev,
-          y: (prev.y + 1) % 360
-        }));
-      }, 50);
-      return () => clearInterval(interval);
-    }
-  }, [autoRotate]);
-
   if (!slab) return null;
-
-  const handleZoomIn = () => setZoom(prev => Math.min(prev * 1.2, 4));
-  const handleZoomOut = () => setZoom(prev => Math.max(prev / 1.2, 0.5));
-  const handleRotateX = () => setRotation(prev => ({ ...prev, x: (prev.x + 90) % 360 }));
-  const handleRotateY = () => setRotation(prev => ({ ...prev, y: (prev.y + 90) % 360 }));
-  const handleRotateZ = () => setRotation(prev => ({ ...prev, z: (prev.z + 90) % 360 }));
-  
-  const handleReset = () => {
-    setZoom(1);
-    setRotation({ x: 0, y: 0, z: 0 });
-    setAutoRotate(true);
-  };
 
   const getSlabImage = () => {
     return slab.images[0] || slab.thumbnail;
   };
 
+  const handleReset = () => {
+    setAutoRotate(true);
+    if (modelViewerRef.current) {
+      modelViewerRef.current.resetTurntableRotation();
+      modelViewerRef.current.jumpCameraToGoal();
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={`p-0 border-0 ${isFullscreen ? 'max-w-full h-full' : 'max-w-7xl h-[90vh]'} overflow-hidden`}>
-        <div className="relative h-full bg-[#1c1c1c]">
+        <div className="relative h-full bg-gradient-to-br from-stone-900 to-stone-800">
           {/* Top Controls */}
           <div className="absolute top-6 left-6 right-6 z-20 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -137,10 +119,10 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
           </div>
 
           {/* Main 3D Viewer */}
-          <div className="h-full relative overflow-hidden flex items-center justify-center">
+          <div className="h-full relative overflow-hidden">
             <model-viewer
               ref={modelViewerRef}
-              src="/models/slab-plane.glb"
+              src="data:application/octet-stream;base64,Z0xURgIAAAAPAAAAKAAAAAgAAAABAAAAAAAAAAAAAAA="
               poster={getSlabImage()}
               alt={`3D view of ${slab.name}`}
               camera-controls
@@ -149,45 +131,45 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
               environment-image="neutral"
               exposure={lighting.exposure}
               shadow-intensity={lighting.shadowIntensity}
+              camera-orbit="0deg 75deg 2.5m"
+              min-camera-orbit="auto auto 1m"
+              max-camera-orbit="auto auto 10m"
               style={{
                 width: '100%',
                 height: '100%',
-                background: 'transparent'
-              }}
-              onLoad={() => {
-                // Apply custom texture with the slab image
-                if (modelViewerRef.current) {
-                  const modelViewer = modelViewerRef.current;
-                  modelViewer.addEventListener('load', () => {
-                    // Custom lighting setup
-                    const scene = modelViewer.model;
-                    if (scene) {
-                      // Apply the slab image as texture to the plane
-                      const material = scene.materials?.[0];
-                      if (material) {
-                        const texture = new Image();
-                        texture.crossOrigin = 'anonymous';
-                        texture.src = getSlabImage();
-                        texture.onload = () => {
-                          if (material.pbrMetallicRoughness) {
-                            material.pbrMetallicRoughness.baseColorTexture = {
-                              texture: { source: { uri: getSlabImage() } }
-                            };
-                          }
-                        };
-                      }
-                    }
-                  });
-                }
+                background: 'transparent',
+                '--poster-color': 'transparent'
               }}
             >
+              {/* Custom Plane Geometry with Texture */}
+              <div 
+                slot="default"
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: '60%',
+                  height: '40%',
+                  backgroundImage: `url(${getSlabImage()})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  border: '2px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                  filter: `brightness(${lighting.exposure}) contrast(1.1)`,
+                  transition: 'all 0.3s ease'
+                }}
+              />
+
               {/* Traceability Hotspots */}
               {showTraceability && (
                 <>
                   <button
                     className="bg-emerald-600 text-white px-3 py-2 rounded-full text-sm font-semibold font-[Inter] shadow-lg border-2 border-white"
                     slot="hotspot-1"
-                    data-position="0.2 0.3 0.1"
+                    data-position="0.5 0.2 0.5"
                     data-normal="0 0 1"
                   >
                     {slab.blockId}
@@ -195,7 +177,7 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
                   <button
                     className="bg-blue-600 text-white px-3 py-2 rounded-full text-xs font-[Inter] shadow-lg border-2 border-white"
                     slot="hotspot-2"
-                    data-position="-0.2 -0.3 0.1"
+                    data-position="-0.5 -0.2 0.5"
                     data-normal="0 0 1"
                   >
                     {slab.quarry.location}
@@ -310,7 +292,12 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={handleZoomIn}
+              onClick={() => {
+                if (modelViewerRef.current) {
+                  const currentOrbit = modelViewerRef.current.getCameraOrbit();
+                  modelViewerRef.current.cameraOrbit = `${currentOrbit.theta}rad ${currentOrbit.phi}rad ${Math.max(currentOrbit.radius * 0.8, 1)}m`;
+                }
+              }}
               className="bg-black/20 border-white/20 text-white hover:bg-black/40 backdrop-blur-sm w-10 h-10 p-0"
             >
               <ZoomIn className="w-4 h-4" />
@@ -318,7 +305,12 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={handleZoomOut}
+              onClick={() => {
+                if (modelViewerRef.current) {
+                  const currentOrbit = modelViewerRef.current.getCameraOrbit();
+                  modelViewerRef.current.cameraOrbit = `${currentOrbit.theta}rad ${currentOrbit.phi}rad ${Math.min(currentOrbit.radius * 1.2, 10)}m`;
+                }
+              }}
               className="bg-black/20 border-white/20 text-white hover:bg-black/40 backdrop-blur-sm w-10 h-10 p-0"
             >
               <ZoomOut className="w-4 h-4" />
@@ -326,7 +318,12 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={handleRotateY}
+              onClick={() => {
+                if (modelViewerRef.current) {
+                  const currentOrbit = modelViewerRef.current.getCameraOrbit();
+                  modelViewerRef.current.cameraOrbit = `${currentOrbit.theta + Math.PI/4}rad ${currentOrbit.phi}rad ${currentOrbit.radius}m`;
+                }
+              }}
               className="bg-black/20 border-white/20 text-white hover:bg-black/40 backdrop-blur-sm w-10 h-10 p-0"
             >
               <RotateCw className="w-4 h-4" />
