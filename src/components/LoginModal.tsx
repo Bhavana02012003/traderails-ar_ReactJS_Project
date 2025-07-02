@@ -172,7 +172,7 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
   if (showOnboarding) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-7xl w-[95vw] h-[95vh] bg-transparent border-0 shadow-none p-0">
+        <DialogContent className="max-w-7xl w-[95vw] h-[95vh] bg-white border-0 shadow-none p-0">
           <DialogTitle className="sr-only">Create Account - Onboarding</DialogTitle>
           <div className="w-full h-full">
             <OnboardingWizard />
