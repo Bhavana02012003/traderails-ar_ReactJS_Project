@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Globe, Mail, Phone, Eye, EyeOff, Building, User } from 'lucide-react';
+import { Globe, Mail, Phone, Eye, EyeOff, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginModalProps {
   open: boolean;
@@ -15,6 +16,7 @@ interface LoginModalProps {
 }
 
 const LoginModal = ({ open, onOpenChange, onLoginSuccess }: LoginModalProps) => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [otp, setOtp] = useState('');
@@ -29,6 +31,11 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess }: LoginModalProps) => 
     // Mock login - always succeed
     onLoginSuccess?.(selectedUserType);
     onOpenChange(false);
+  };
+
+  const handleCreateAccount = () => {
+    onOpenChange(false);
+    navigate('/onboarding');
   };
 
   return (
@@ -195,31 +202,16 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess }: LoginModalProps) => 
             </TabsContent>
           </Tabs>
 
-          {/* Organization Selection */}
-          <div className="mt-6 p-4 bg-stone-50 rounded-lg">
-            <Label className="text-sm font-medium text-stone-700 mb-2 block">
-              <Building className="w-4 h-4 inline mr-2" />
-              Select Organization (Optional)
-            </Label>
-            <Select>
-              <SelectTrigger className="bg-white border-stone-200">
-                <SelectValue placeholder="Choose your organization" />
-              </SelectTrigger>
-              <SelectContent className="bg-white border border-stone-200">
-                <SelectItem value="acme-stone">Acme Stone Co.</SelectItem>
-                <SelectItem value="premium-granite">Premium Granite Ltd.</SelectItem>
-                <SelectItem value="marble-masters">Marble Masters Inc.</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
           {/* Sign Up Link */}
           <div className="text-center mt-6 pt-4 border-t border-stone-200">
             <p className="text-stone-600">
               Don't have an account?{' '}
-              <a href="#" className="text-emerald-600 hover:text-emerald-700 font-medium">
+              <button 
+                onClick={handleCreateAccount}
+                className="text-emerald-600 hover:text-emerald-700 font-medium underline"
+              >
                 Create Account
-              </a>
+              </button>
             </p>
           </div>
         </div>
