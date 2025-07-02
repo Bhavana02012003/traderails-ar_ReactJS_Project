@@ -11,10 +11,11 @@ import BuyerDashboard from '@/components/buyer/BuyerDashboard';
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import LoginModal from '@/components/LoginModal';
 import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
+import InviteUserFlow from '@/components/invite/InviteUserFlow';
 
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin' | 'onboarding'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin' | 'onboarding' | 'invite'>('home');
   const [userType, setUserType] = useState<'exporter' | 'buyer' | 'admin' | 'agent' | 'trader' | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -78,10 +79,14 @@ const Index = () => {
     setIsLoginModalOpen(false);
   };
 
+  const handleShowInviteFlow = () => {
+    setCurrentView('invite');
+  };
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Only show header if not in admin view or onboarding */}
-      {currentView !== 'admin' && currentView !== 'onboarding' && (
+      {/* Only show header if not in admin view, onboarding, or invite flow */}
+      {currentView !== 'admin' && currentView !== 'onboarding' && currentView !== 'invite' && (
         <Header 
           onLoginClick={handleLoginClick} 
           onMarketplaceClick={handleBrowseClick}
@@ -104,6 +109,16 @@ const Index = () => {
             <TrustSection />
             <FeaturesSection />
             <MarketplacePreview />
+            
+            {/* Demo button to show invite flow */}
+            <div className="py-12 text-center">
+              <button
+                onClick={handleShowInviteFlow}
+                className="px-6 py-3 emerald-gradient text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
+              >
+                Demo: Invite User Flow
+              </button>
+            </div>
           </main>
 
           <footer className="bg-stone-900 text-white py-12">
@@ -166,6 +181,8 @@ const Index = () => {
         <BuyerDashboard />
       ) : currentView === 'admin' ? (
         <AdminDashboard onLogout={handleLogout} />
+      ) : currentView === 'invite' ? (
+        <InviteUserFlow onBack={handleHomeClick} />
       ) : (
         <OnboardingWizard />
       )}
