@@ -1,3 +1,4 @@
+
 /**
  * Main Index Page Component
  * 
@@ -27,6 +28,8 @@ import MarketplacePreview from '@/components/MarketplacePreview';
 import MarketplaceContent from '@/components/MarketplaceContent';
 import AboutContent from '@/components/AboutContent';
 import ContactContent from '@/components/ContactContent';
+import AboutOverlay from '@/components/AboutOverlay';
+import ContactOverlay from '@/components/ContactOverlay';
 
 // Dashboard components for different user roles
 import ExporterDashboard from '@/components/exporter/ExporterDashboard';
@@ -58,6 +61,8 @@ type UserType = 'exporter' | 'buyer' | 'admin' | 'agent' | 'trader' | null;
 const Index = () => {
   // Authentication and modal state management
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [showAboutOverlay, setShowAboutOverlay] = useState(false);
+  const [showContactOverlay, setShowContactOverlay] = useState(false);
   
   // Primary navigation state - determines which view/page is currently active
   const [currentView, setCurrentView] = useState<ViewType>('home');
@@ -128,17 +133,17 @@ const Index = () => {
   };
 
   /**
-   * Navigates to about overlay view
+   * Shows about overlay
    */
   const handleAboutClick = () => {
-    setCurrentView('about');
+    setShowAboutOverlay(true);
   };
 
   /**
-   * Navigates to contact overlay view
+   * Shows contact overlay
    */
   const handleContactClick = () => {
-    setCurrentView('contact');
+    setShowContactOverlay(true);
   };
 
   /**
@@ -146,6 +151,13 @@ const Index = () => {
    */
   const handleCreateAccountClick = () => {
     setCurrentView('onboarding');
+  };
+
+  /**
+   * Navigates back to home from onboarding
+   */
+  const handleCancelOnboarding = () => {
+    setCurrentView('home');
   };
 
   /**
@@ -242,224 +254,6 @@ const Index = () => {
             
             {/* Preview of marketplace functionality */}
             <MarketplacePreview />
-
-            {/* About Section - Accessible via anchor link */}
-            <section id="about" className="py-20 bg-gradient-to-br from-stone-50 to-emerald-50">
-              <div className="container mx-auto px-4 lg:px-8">
-                <div className="max-w-4xl mx-auto text-center mb-16">
-                  <h2 className="text-4xl md:text-5xl font-bold text-stone-900 mb-6">
-                    About TradeRails
-                  </h2>
-                  <p className="text-lg text-stone-600 leading-relaxed mb-8">
-                    TradeRails revolutionizes the global stone trading industry by providing 
-                    a secure, transparent, and efficient B2B platform that connects exporters, 
-                    buyers, agents, and traders worldwide.
-                  </p>
-                </div>
-                
-                {/* Mission, Vision, and Values Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-                  {/* Mission Card */}
-                  <div className="glass-panel p-8 rounded-xl text-center">
-                    <Shield className="w-12 h-12 text-emerald-600 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-stone-900 mb-4">Our Mission</h3>
-                    <p className="text-stone-600">
-                      To create the most trusted and efficient marketplace for stone trading, 
-                      ensuring secure transactions and quality assurance for all participants.
-                    </p>
-                  </div>
-                  
-                  {/* Vision Card */}
-                  <div className="glass-panel p-8 rounded-xl text-center">
-                    <TrendingUp className="w-12 h-12 text-emerald-600 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-stone-900 mb-4">Our Vision</h3>
-                    <p className="text-stone-600">
-                      To become the invisible rails that power global stone commerce, 
-                      making international trade as simple as local transactions.
-                    </p>
-                  </div>
-                  
-                  {/* Values Card */}
-                  <div className="glass-panel p-8 rounded-xl text-center">
-                    <Users className="w-12 h-12 text-emerald-600 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-stone-900 mb-4">Our Values</h3>
-                    <p className="text-stone-600">
-                      Transparency, security, and innovation drive everything we do. 
-                      We believe in empowering our community with cutting-edge technology.
-                    </p>
-                  </div>
-                </div>
-                
-                {/* Company Statistics */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                  <div>
-                    <div className="text-3xl font-bold text-emerald-600 mb-2">500+</div>
-                    <div className="text-stone-600">Active Traders</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-emerald-600 mb-2">50+</div>
-                    <div className="text-stone-600">Countries</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-emerald-600 mb-2">$10M+</div>
-                    <div className="text-stone-600">Trade Volume</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-emerald-600 mb-2">99.9%</div>
-                    <div className="text-stone-600">Uptime</div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Contact Section - Accessible via anchor link */}
-            <section id="contact" className="py-20 bg-white">
-              <div className="container mx-auto px-4 lg:px-8">
-                <div className="max-w-4xl mx-auto">
-                  <div className="text-center mb-16">
-                    <h2 className="text-4xl md:text-5xl font-bold text-stone-900 mb-6">
-                      Contact Us
-                    </h2>
-                    <p className="text-lg text-stone-600 leading-relaxed">
-                      Ready to transform your stone trading business? Get in touch with our team 
-                      and discover how TradeRails can help you connect with global markets.
-                    </p>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    {/* Contact Information */}
-                    <div className="space-y-8">
-                      <h3 className="text-2xl font-semibold text-stone-900 mb-6">Get in Touch</h3>
-                      
-                      <div className="space-y-6">
-                        <div className="flex items-start space-x-4">
-                          <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <MapPin className="w-6 h-6 text-emerald-600" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-stone-900 mb-2">Office Address</h4>
-                            <p className="text-stone-600">
-                              TradeRails Global HQ<br />
-                              123 Business District<br />
-                              Mumbai, Maharashtra 400001<br />
-                              India
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-start space-x-4">
-                          <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Phone className="w-6 h-6 text-emerald-600" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-stone-900 mb-2">Phone</h4>
-                            <p className="text-stone-600">
-                              +91 98765 43210<br />
-                              +1 (555) 123-4567
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-start space-x-4">
-                          <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Mail className="w-6 h-6 text-emerald-600" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-stone-900 mb-2">Email</h4>
-                            <p className="text-stone-600">
-                              hello@traderails.com<br />
-                              support@traderails.com
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-start space-x-4">
-                          <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Globe className="w-6 h-6 text-emerald-600" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-stone-900 mb-2">Global Presence</h4>
-                            <p className="text-stone-600">
-                              Serving 50+ countries worldwide<br />
-                              24/7 customer support
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Contact Form */}
-                    <div className="glass-panel p-8 rounded-xl">
-                      <h3 className="text-2xl font-semibold text-stone-900 mb-6">Send us a Message</h3>
-                      <form className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-stone-700 mb-2">
-                              First Name
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                              placeholder="John"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-stone-700 mb-2">
-                              Last Name
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                              placeholder="Doe"
-                            />
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium text-stone-700 mb-2">
-                            Email Address
-                          </label>
-                          <input
-                            type="email"
-                            className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                            placeholder="john@company.com"
-                          />
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium text-stone-700 mb-2">
-                            Company
-                          </label>
-                          <input
-                            type="text"
-                            className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                            placeholder="Your Company Name"
-                          />
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium text-stone-700 mb-2">
-                            Message
-                          </label>
-                          <textarea
-                            rows={4}
-                            className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                            placeholder="Tell us about your stone trading needs..."
-                          ></textarea>
-                        </div>
-                        
-                        <button
-                          type="submit"
-                          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-                        >
-                          Send Message
-                        </button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
           </main>
 
           {/* 
@@ -487,7 +281,7 @@ const Index = () => {
                   <h3 className="font-semibold mb-4 text-white text-lg">Platform</h3>
                   <ul className="space-y-2 text-sm text-slate-300">
                     <li><button onClick={handleBrowseClick} className="hover:text-emerald-400 transition-colors">Marketplace</button></li>
-                    <li><a href="#about" className="hover:text-emerald-400 transition-colors">About</a></li>
+                    <li><button onClick={handleAboutClick} className="hover:text-emerald-400 transition-colors">About</button></li>
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Pricing</a></li>
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">API</a></li>
                   </ul>
@@ -498,7 +292,7 @@ const Index = () => {
                   <h3 className="font-semibold mb-4 text-white text-lg">Support</h3>
                   <ul className="space-y-2 text-sm text-slate-300">
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Help Center</a></li>
-                    <li><a href="#contact" className="hover:text-emerald-400 transition-colors">Contact Us</a></li>
+                    <li><button onClick={handleContactClick} className="hover:text-emerald-400 transition-colors">Contact Us</button></li>
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Status</a></li>
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Security</a></li>
                   </ul>
@@ -508,7 +302,7 @@ const Index = () => {
                 <div>
                   <h3 className="font-semibold mb-4 text-white text-lg">Company</h3>
                   <ul className="space-y-2 text-sm text-slate-300">
-                    <li><a href="#about" className="hover:text-emerald-400 transition-colors">About</a></li>
+                    <li><button onClick={handleAboutClick} className="hover:text-emerald-400 transition-colors">About</button></li>
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Careers</a></li>
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Privacy</a></li>
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Terms</a></li>
@@ -534,7 +328,7 @@ const Index = () => {
         <ContactContent />
       ) : currentView === 'onboarding' ? (
         /* Onboarding view for creating new accounts */
-        <OnboardingWizard />
+        <OnboardingWizard onCancel={handleCancelOnboarding} />
       ) : currentView === 'exporter' ? (
         /* Exporter dashboard for inventory management and quote creation */
         <ExporterDashboard 
@@ -559,6 +353,16 @@ const Index = () => {
       ) : (
         /* User invitation flow for onboarding new platform members */
         <InviteUserFlow onBack={handleHomeClick} />
+      )}
+
+      {/* About Overlay */}
+      {showAboutOverlay && (
+        <AboutOverlay onClose={() => setShowAboutOverlay(false)} />
+      )}
+
+      {/* Contact Overlay */}
+      {showContactOverlay && (
+        <ContactOverlay onClose={() => setShowContactOverlay(false)} />
       )}
 
       {/* 
