@@ -23,15 +23,20 @@ const HeroSection = ({ onBrowseClick, onListClick }: HeroSectionProps) => {
             <span className="text-sm font-medium text-stone-700">Trusted by 500+ stone traders globally</span>
           </div>
 
-          {/* Main Headline */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-stone-900 mb-6 leading-tight">
+          {/* Main Headline - Reduced size */}
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-stone-900 mb-4 leading-tight">
             Trade Stone on
             <br />
             <span className="text-gradient">TradeRails</span>
           </h1>
 
+          {/* Company Tagline */}
+          <p className="text-lg md:text-xl text-emerald-600 font-medium mb-6 italic">
+            The Invisible Rails of Global Commerce
+          </p>
+
           {/* Subtitle */}
-          <p className="text-lg md:text-xl text-stone-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-lg text-stone-600 mb-10 max-w-2xl mx-auto leading-relaxed">
             Connect with verified suppliers, secure transactions with escrow, and visualize stone slabs in AR. 
             The premium B2B platform for the global stone industry.
           </p>

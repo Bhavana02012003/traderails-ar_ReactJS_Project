@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import Header from '@/components/Header';
@@ -127,8 +126,11 @@ const Index = () => {
                     </div>
                     <span className="text-xl font-bold">TradeRails</span>
                   </div>
-                  <p className="text-stone-400 text-sm">
+                  <p className="text-stone-400 text-sm mb-2">
                     The premium B2B platform for global stone trading.
+                  </p>
+                  <p className="text-emerald-400 text-xs italic">
+                    The Invisible Rails of Global Commerce
                   </p>
                 </div>
                 

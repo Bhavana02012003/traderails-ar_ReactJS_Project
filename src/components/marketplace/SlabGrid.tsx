@@ -35,7 +35,6 @@ const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabG
           "https://images.unsplash.com/photo-1615529182904-14819c35db37?w=800&h=600&fit=crop"
         ],
         featured: true,
-        thickness: "2cm",
         finish: "polished",
         material: "granite",
         color: "white",
@@ -68,7 +67,6 @@ const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabG
           "https://images.unsplash.com/photo-1565192692634-4b4f3e5bf2e4?w=800&h=600&fit=crop"
         ],
         featured: false,
-        thickness: "3cm",
         finish: "honed",
         material: "granite",
         color: "black",
@@ -101,7 +99,6 @@ const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabG
           "https://images.unsplash.com/photo-1541123356219-284ebe98ae3b?w=800&h=600&fit=crop"
         ],
         featured: true,
-        thickness: "2cm",
         finish: "polished",
         material: "quartz",
         color: "white",
@@ -133,7 +130,6 @@ const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabG
           "https://images.unsplash.com/photo-1565192692634-4b4f3e5bf2e4?w=800&h=600&fit=crop"
         ],
         featured: false,
-        thickness: "2cm",
         finish: "polished",
         material: "granite",
         color: "brown",
@@ -165,7 +161,6 @@ const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabG
           "https://images.unsplash.com/photo-1578499370339-e3e5f17b45e5?w=800&h=600&fit=crop"
         ],
         featured: false,
-        thickness: "3cm",
         finish: "flamed",
         material: "granite",
         color: "green",
@@ -197,7 +192,6 @@ const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabG
           "https://images.unsplash.com/photo-1565366915513-3a0b2b8ab5c9?w=800&h=600&fit=crop"
         ],
         featured: false,
-        thickness: "2cm",
         finish: "honed",
         material: "quartz",
         color: "beige",

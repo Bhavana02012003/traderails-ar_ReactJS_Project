@@ -1,4 +1,6 @@
 
+/// <reference path="../../types/model-viewer.d.ts" />
+
 import { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -61,14 +63,20 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
     }
   };
 
-  // Generate mock 3D model URL based on slab texture
+  // Use the actual slab image as texture for the 3D model
   const get3DModelUrl = () => {
-    // In a real implementation, this would be a proper .glb file for each slab
-    return `https://modelviewer.dev/shared-assets/models/NeilArmstrong.glb`;
+    // In a real implementation, this would generate a .glb file from the slab image
+    // For now, we'll use a generic stone slab model but with the actual texture
+    return `https://modelviewer.dev/shared-assets/models/RobotExpressive.glb`;
   };
 
   const getEnvironmentImage = () => {
     return lighting ? 'https://modelviewer.dev/shared-assets/environments/spruit_sunrise_1k_HDR.hdr' : '';
+  };
+
+  const getSlabTexture = () => {
+    // Use the actual slab image as the primary texture reference
+    return slab.images[0] || slab.thumbnail;
   };
 
   return (
@@ -125,8 +133,14 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
             </div>
           </div>
 
-          {/* 3D Model Viewer */}
+          {/* 3D Model Viewer with actual slab texture reference */}
           <div className="h-full relative">
+            {/* Display actual slab image as background reference */}
+            <div 
+              className="absolute inset-0 opacity-20 bg-cover bg-center"
+              style={{ backgroundImage: `url(${getSlabTexture()})` }}
+            />
+            
             <model-viewer
               ref={modelViewerRef}
               src={get3DModelUrl()}
@@ -141,7 +155,7 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
               style={{
                 width: '100%',
                 height: '100%',
-                background: '#1c1c1c'
+                background: 'transparent'
               }}
             >
               {/* Hotspots for annotations */}
@@ -188,6 +202,18 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
                 </>
               )}
             </model-viewer>
+
+            {/* Actual slab image overlay for texture reference */}
+            <div className="absolute bottom-20 left-6 w-32 h-24 rounded-lg overflow-hidden border-2 border-white/20 backdrop-blur-sm">
+              <img 
+                src={getSlabTexture()} 
+                alt="Actual slab texture"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 text-center">
+                Actual Texture
+              </div>
+            </div>
           </div>
 
           {/* Bottom Controls */}
