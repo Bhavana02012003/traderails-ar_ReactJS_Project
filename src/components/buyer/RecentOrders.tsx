@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -204,7 +204,7 @@ const RecentOrders = ({ expanded = false, onFinancialWorkflow, onTrackShipment }
   const currentOrders = filteredAndSortedOrders.slice(startIndex, endIndex);
 
   // Reset to first page when filters change
-  useState(() => {
+  useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, statusFilter, sortBy, sortOrder]);
 

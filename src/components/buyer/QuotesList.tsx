@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Eye, Clock, CheckCircle, XCircle, AlertTriangle, Search, Filter, ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -155,7 +155,7 @@ const QuotesList = ({ onViewQuote }: QuotesListProps) => {
   const currentQuotes = filteredAndSortedQuotes.slice(startIndex, endIndex);
 
   // Reset to first page when filters change
-  useState(() => {
+  useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, statusFilter, sortBy, sortOrder]);
 
