@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Globe, User, Menu, X, Bell } from 'lucide-react';
+import { User, Menu, X, Bell } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -43,11 +43,12 @@ const Header = ({
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-2 cursor-pointer" onClick={onHomeClick}>
-            <div className="w-8 h-8 emerald-gradient rounded-lg flex items-center justify-center">
-              <Globe className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-stone-900">TradeRails</span>
+          <div className="flex items-center cursor-pointer" onClick={onHomeClick}>
+            <img 
+              src="/lovable-uploads/3445b0da-b926-49fc-9f5e-9a14522b14fd.png" 
+              alt="TradeRails" 
+              className="h-8"
+            />
           </div>
 
           {/* Desktop Navigation */}

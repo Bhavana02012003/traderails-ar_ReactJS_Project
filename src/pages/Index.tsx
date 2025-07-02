@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import Header from '@/components/Header';
@@ -121,10 +122,11 @@ const Index = () => {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                   <div className="flex items-center space-x-2 mb-4">
-                    <div className="w-8 h-8 emerald-gradient rounded-lg flex items-center justify-center">
-                      <Globe className="w-5 h-5 text-white" />
-                    </div>
-                    <span className="text-xl font-bold">TradeRails</span>
+                    <img 
+                      src="/lovable-uploads/3445b0da-b926-49fc-9f5e-9a14522b14fd.png" 
+                      alt="TradeRails" 
+                      className="h-8 brightness-0 invert"
+                    />
                   </div>
                   <p className="text-emerald-400 text-xs italic">
                     The Invisible Rails of Global Commerce
