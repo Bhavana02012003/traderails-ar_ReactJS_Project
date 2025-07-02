@@ -11,25 +11,25 @@ interface DisputePanelProps {
 const DisputePanel = ({ onViewDispute }: DisputePanelProps) => {
   const activeDisputes = [
     {
-      id: 'DSP-001',
-      type: 'Quality Issue',
-      parties: 'Stone Craft Co. vs Marble Masters Ltd.',
-      amount: '$45,000',
+      id: 'DPT-1049',
+      type: 'Slab mismatch',
+      parties: 'Stone Craft International vs Rajasthan Marble Exports',
+      amount: '$45,600',
       priority: 'High',
       age: '3 days',
       status: 'Under Review'
     },
     {
-      id: 'DSP-002',
+      id: 'DPT-1048',
       type: 'Shipping Delay',
       parties: 'Granite World vs Premium Stone Inc.',
       amount: '$28,500',
       priority: 'Medium',
       age: '1 day',
-      status: 'Awaiting Response'
+      status: 'Pending Buyer Evidence'
     },
     {
-      id: 'DSP-003',
+      id: 'DPT-1047',
       type: 'Payment Issue',
       parties: 'Stone Plus vs Marble Export Co.',
       amount: '$67,200',
@@ -52,8 +52,9 @@ const DisputePanel = ({ onViewDispute }: DisputePanelProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Under Review': return 'bg-blue-100 text-blue-800';
-      case 'Awaiting Response': return 'bg-yellow-100 text-yellow-800';
+      case 'Pending Buyer Evidence': return 'bg-amber-100 text-amber-800';
       case 'Escalated': return 'bg-red-100 text-red-800';
+      case 'Resolved': return 'bg-green-100 text-green-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -103,7 +104,7 @@ const DisputePanel = ({ onViewDispute }: DisputePanelProps) => {
                   View Details
                 </Button>
                 <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-                  Resolve Dispute
+                  Take Action
                 </Button>
               </div>
             </div>
