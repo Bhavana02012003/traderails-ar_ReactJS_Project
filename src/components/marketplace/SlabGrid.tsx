@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from 'react';
 import { Slab } from '@/types/marketplace';
 import SlabCard from './SlabCard';
@@ -8,7 +9,7 @@ const mockSlabs: Slab[] = [
     id: 'SLB-001',
     name: 'Carrara White Marble',
     blockId: 'BLK-4521',
-    material: 'granite',
+    material: 'marble',
     finish: 'polished',
     color: ['white', 'gray'],
     dimensions: { length: 320, width: 160, thickness: 2 },
@@ -71,7 +72,7 @@ const mockSlabs: Slab[] = [
     id: 'SLB-003',
     name: 'Calacatta Gold Marble',
     blockId: 'BLK-9142',
-    material: 'quartz',
+    material: 'marble',
     finish: 'polished',
     color: ['white', 'gold'],
     dimensions: { length: 280, width: 140, thickness: 2 },

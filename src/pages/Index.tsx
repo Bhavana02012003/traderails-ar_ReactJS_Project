@@ -12,15 +12,18 @@ import SlabGrid from "@/components/marketplace/SlabGrid";
 import MarketplaceFilters from "@/components/marketplace/MarketplaceFilters";
 import SlabModal from "@/components/marketplace/SlabModal";
 import SlabViewer3D from "@/components/slab-viewer/SlabViewer3D";
+import TraderDashboard from "@/components/trader/TraderDashboard";
+import LoginModal from "@/components/LoginModal";
 import { Slab } from "@/types/marketplace";
 import { Search, SlidersHorizontal, Grid3X3, List } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 const Index = () => {
   const navigate = useNavigate();
-  const [currentView, setCurrentView] = useState<'home' | 'marketplace'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'dashboard' | 'login'>('home');
   const [selectedSlab, setSelectedSlab] = useState<Slab | null>(null);
   const [show3DViewer, setShow3DViewer] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   
   // Marketplace state
   const [searchQuery, setSearchQuery] = useState('');
@@ -37,7 +40,7 @@ const Index = () => {
   });
 
   const handleLoginClick = () => {
-    console.log("Login clicked");
+    setShowLoginModal(true);
   };
 
   const handleBrowseClick = () => {
@@ -58,7 +61,7 @@ const Index = () => {
   };
 
   const handleDashboardClick = () => {
-    console.log("Dashboard clicked");
+    setCurrentView('dashboard');
   };
 
   const handleSlabClick = (slab: Slab) => {
@@ -114,6 +117,22 @@ const Index = () => {
           slabData={convertSlabToSlabData(selectedSlab)}
           onClose={close3DViewer}
         />
+      </div>
+    );
+  }
+
+  // Show dashboard view
+  if (currentView === 'dashboard') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-slate-50 to-emerald-50">
+        <Header 
+          onLoginClick={handleLoginClick}
+          onMarketplaceClick={handleMarketplaceClick}
+          onHomeClick={handleHomeClick}
+          onDashboardClick={handleDashboardClick}
+          currentView="trader"
+        />
+        <TraderDashboard />
       </div>
     );
   }
@@ -320,6 +339,12 @@ const Index = () => {
       <FeaturesSection />
       <MarketplacePreview />
       <TrustSection />
+
+      {/* Login Modal */}
+      <LoginModal
+        open={showLoginModal}
+        onOpenChange={setShowLoginModal}
+      />
     </div>
   );
 };
