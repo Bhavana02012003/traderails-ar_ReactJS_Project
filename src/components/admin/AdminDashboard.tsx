@@ -17,6 +17,7 @@ interface AdminDashboardProps {
 const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
   const [activeSection, setActiveSection] = useState('overview');
   const [selectedDisputeId, setSelectedDisputeId] = useState<string | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const handleSectionChange = (section: string) => {
     setActiveSection(section);
@@ -29,6 +30,10 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
 
   const handleBackFromDispute = () => {
     setSelectedDisputeId(null);
+  };
+
+  const handleSidebarToggle = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
   };
 
   // If viewing a specific dispute, show the resolution screen
@@ -45,12 +50,14 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
     <div className="min-h-screen bg-slate-50">
       <div className="flex">
         <AdminSidebar 
+          collapsed={sidebarCollapsed}
+          onToggle={handleSidebarToggle}
           activeSection={activeSection} 
           onSectionChange={handleSectionChange}
           onLogout={onLogout}
         />
         
-        <main className="flex-1 p-6 ml-64">
+        <main className={`flex-1 p-6 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
           {activeSection === 'overview' && (
             <div className="space-y-6">
               <div>
