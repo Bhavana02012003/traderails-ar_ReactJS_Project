@@ -37,7 +37,7 @@ const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabG
         featured: true,
         thickness: "2cm",
         finish: "polished",
-        material: "marble",
+        material: "granite",
         color: "white",
         dimensions: { length: 320, width: 160, thickness: 2 },
         quarry: { name: 'Carrara Quarry', location: 'Tuscany, Italy' },
@@ -85,7 +85,7 @@ const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabG
       },
       {
         id: '3',
-        name: "Calacatta Gold Marble",
+        name: "Calacatta Gold Quartz",
         supplier: {
           name: "Premium Stone Co.",
           location: "Tuscany, Italy",
@@ -103,7 +103,7 @@ const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabG
         featured: true,
         thickness: "2cm",
         finish: "polished",
-        material: "marble",
+        material: "quartz",
         color: "white",
         dimensions: { length: 310, width: 155, thickness: 2 },
         quarry: { name: 'Calacatta Quarry', location: 'Tuscany, Italy' },
@@ -118,7 +118,7 @@ const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabG
       },
       {
         id: '4',
-        name: "Emperador Dark Marble",
+        name: "Emperador Dark Granite",
         supplier: {
           name: "Spanish Stone Exports",
           location: "Valencia, Spain",
@@ -135,7 +135,7 @@ const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabG
         featured: false,
         thickness: "2cm",
         finish: "polished",
-        material: "marble",
+        material: "granite",
         color: "brown",
         dimensions: { length: 280, width: 140, thickness: 2 },
         quarry: { name: 'Valencia Quarry', location: 'Valencia, Spain' },
@@ -182,7 +182,7 @@ const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabG
       },
       {
         id: '6',
-        name: "Travertine Classic",
+        name: "Classic Beige Quartz",
         supplier: {
           name: "Turkish Natural Stone",
           location: "Denizli, Turkey",
@@ -199,7 +199,7 @@ const SlabGrid = ({ viewMode, searchQuery, sortBy, filters, onSlabClick }: SlabG
         featured: false,
         thickness: "2cm",
         finish: "honed",
-        material: "travertine",
+        material: "quartz",
         color: "beige",
         dimensions: { length: 240, width: 120, thickness: 2 },
         quarry: { name: 'Denizli Quarry', location: 'Denizli, Turkey' },
