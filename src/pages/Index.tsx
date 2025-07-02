@@ -9,13 +9,14 @@ import MarketplaceContent from '@/components/MarketplaceContent';
 import ExporterDashboard from '@/components/exporter/ExporterDashboard';
 import BuyerDashboard from '@/components/buyer/BuyerDashboard';
 import AdminDashboard from '@/components/admin/AdminDashboard';
+import TraderDashboard from '@/components/trader/TraderDashboard';
 import LoginModal from '@/components/LoginModal';
 import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
 import InviteUserFlow from '@/components/invite/InviteUserFlow';
 
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin' | 'onboarding' | 'invite'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin' | 'trader' | 'onboarding' | 'invite'>('home');
   const [userType, setUserType] = useState<'exporter' | 'buyer' | 'admin' | 'agent' | 'trader' | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -28,10 +29,12 @@ const Index = () => {
     setIsLoggedIn(true);
     setIsLoginModalOpen(false);
     // Redirect to appropriate dashboard after login
-    if (type === 'buyer' || type === 'agent' || type === 'trader') {
+    if (type === 'buyer' || type === 'agent') {
       setCurrentView('buyer');
     } else if (type === 'exporter') {
       setCurrentView('exporter');
+    } else if (type === 'trader') {
+      setCurrentView('trader');
     }
   };
 
@@ -60,10 +63,12 @@ const Index = () => {
     }
     
     // Show appropriate dashboard based on user type
-    if (userType === 'buyer' || userType === 'agent' || userType === 'trader') {
+    if (userType === 'buyer' || userType === 'agent') {
       setCurrentView('buyer');
     } else if (userType === 'exporter') {
       setCurrentView('exporter');
+    } else if (userType === 'trader') {
+      setCurrentView('trader');
     } else if (userType === 'admin') {
       setCurrentView('admin');
     }
@@ -170,6 +175,8 @@ const Index = () => {
           onShowInviteFlow={handleShowInviteFlow}
           userType={userType === 'agent' ? 'agent' : userType === 'trader' ? 'trader' : 'buyer'}
         />
+      ) : currentView === 'trader' ? (
+        <TraderDashboard onShowInviteFlow={handleShowInviteFlow} />
       ) : currentView === 'admin' ? (
         <AdminDashboard onLogout={handleLogout} onShowInviteFlow={handleShowInviteFlow} />
       ) : currentView === 'invite' ? (
