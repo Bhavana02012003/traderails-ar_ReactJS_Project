@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import Header from '@/components/Header';
@@ -7,11 +6,12 @@ import TrustSection from '@/components/TrustSection';
 import FeaturesSection from '@/components/FeaturesSection';
 import MarketplacePreview from '@/components/MarketplacePreview';
 import MarketplaceContent from '@/components/MarketplaceContent';
+import ExporterDashboard from '@/components/exporter/ExporterDashboard';
 import LoginModal from '@/components/LoginModal';
 
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<'home' | 'marketplace'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter'>('home');
 
   const handleLoginClick = () => {
     setIsLoginModalOpen(true);
@@ -26,7 +26,11 @@ const Index = () => {
   };
 
   const handleListClick = () => {
-    setIsLoginModalOpen(true);
+    setCurrentView('exporter');
+  };
+
+  const handleExporterClick = () => {
+    setCurrentView('exporter');
   };
 
   return (
@@ -35,6 +39,7 @@ const Index = () => {
         onLoginClick={handleLoginClick} 
         onMarketplaceClick={handleBrowseClick}
         onHomeClick={handleHomeClick}
+        onExporterClick={handleExporterClick}
         currentView={currentView}
       />
       
@@ -102,8 +107,10 @@ const Index = () => {
             </div>
           </footer>
         </>
-      ) : (
+      ) : currentView === 'marketplace' ? (
         <MarketplaceContent />
+      ) : (
+        <ExporterDashboard />
       )}
 
       <LoginModal 
