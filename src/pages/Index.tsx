@@ -66,13 +66,16 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header 
-        onLoginClick={handleLoginClick} 
-        onMarketplaceClick={handleBrowseClick}
-        onHomeClick={handleHomeClick}
-        onDashboardClick={handleDashboardClick}
-        currentView={currentView}
-      />
+      {/* Only show header if not in admin view */}
+      {currentView !== 'admin' && (
+        <Header 
+          onLoginClick={handleLoginClick} 
+          onMarketplaceClick={handleBrowseClick}
+          onHomeClick={handleHomeClick}
+          onDashboardClick={handleDashboardClick}
+          currentView={currentView}
+        />
+      )}
       
       {currentView === 'home' ? (
         <>
@@ -145,7 +148,11 @@ const Index = () => {
       ) : currentView === 'buyer' ? (
         <BuyerDashboard />
       ) : (
-        <AdminDashboard />
+        <AdminDashboard onLogout={() => {
+          setCurrentView('home');
+          setIsLoggedIn(false);
+          setUserType(null);
+        }} />
       )}
 
       <LoginModal 

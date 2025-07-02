@@ -1,5 +1,7 @@
 
 import { useState } from 'react';
+import { Globe, LogOut, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import AdminSidebar from './AdminSidebar';
 import AdminMetrics from './AdminMetrics';
 import KYCReviewQueue from './KYCReviewQueue';
@@ -9,22 +11,57 @@ import DisputePanel from './DisputePanel';
 import PartnerHealthStatus from './PartnerHealthStatus';
 import ComplianceAlerts from './ComplianceAlerts';
 
-const AdminDashboard = () => {
+interface AdminDashboardProps {
+  onLogout: () => void;
+}
+
+const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex">
       <AdminSidebar 
         collapsed={sidebarCollapsed} 
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
       />
       
       <main className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+        {/* Top Header Bar */}
+        <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                <Globe className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold text-slate-900">TradeRails Admin</h1>
+                <p className="text-sm text-slate-600">Platform Administration Console</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 text-sm text-slate-600">
+                <User className="w-4 h-4" />
+                <span>Admin User</span>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onLogout}
+                className="flex items-center space-x-2"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Logout</span>
+              </Button>
+            </div>
+          </div>
+        </div>
+
         <div className="p-6 space-y-6">
-          {/* Header */}
-          <div className="bg-white rounded-xl p-6 border border-slate-200">
-            <h1 className="text-2xl font-semibold text-slate-900 mb-2">Platform Administration</h1>
-            <p className="text-slate-600">Manage platform operations, compliance, and user activities</p>
+          {/* Welcome Section */}
+          <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl p-6 text-white">
+            <h2 className="text-2xl font-bold mb-2">Good morning, Admin</h2>
+            <p className="text-slate-300">Monitor and manage your global B2B stone trading platform</p>
           </div>
 
           {/* Top Metrics */}
