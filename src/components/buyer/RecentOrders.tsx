@@ -102,7 +102,7 @@ const RecentOrders = ({ expanded = false }: RecentOrdersProps) => {
 
   if (selectedOrderForWorkflow && selectedOrder) {
     return (
-      <div className="space-y-4">
+      <div className="w-full space-y-6">
         <div className="flex items-center gap-4">
           <Button 
             variant="outline" 
@@ -112,12 +112,14 @@ const RecentOrders = ({ expanded = false }: RecentOrdersProps) => {
           </Button>
           <h3 className="text-lg font-semibold text-stone-900">Financial Workflow - {selectedOrder.id}</h3>
         </div>
-        <FinancialWorkflowTrigger
-          invoiceId={selectedOrder.id}
-          amount={selectedOrder.amount}
-          buyer={selectedOrder.buyer}
-          status={selectedOrder.workflowStatus}
-        />
+        <div className="w-full">
+          <FinancialWorkflowTrigger
+            invoiceId={selectedOrder.id}
+            amount={selectedOrder.amount}
+            buyer={selectedOrder.buyer}
+            status={selectedOrder.workflowStatus}
+          />
+        </div>
       </div>
     );
   }
