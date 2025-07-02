@@ -1,6 +1,7 @@
 
-import { BarChart3, Users, Shield, AlertTriangle, CreditCard, FileCheck, Settings, Menu, LogOut } from 'lucide-react';
+import { BarChart3, Users, Shield, AlertTriangle, CreditCard, FileCheck, Settings, Menu, LogOut, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useEffect } from 'react';
 
 interface AdminSidebarProps {
   collapsed: boolean;
@@ -21,58 +22,82 @@ const AdminSidebar = ({ collapsed, onToggle, activeSection, onSectionChange, onL
     { id: 'settings', icon: Settings, label: 'Platform Settings' },
   ];
 
+  // Close sidebar on mobile when section changes
+  useEffect(() => {
+    if (window.innerWidth < 1024) {
+      // Auto-collapse on mobile after section change
+      const timer = setTimeout(() => {
+        if (!collapsed) {
+          onToggle();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [activeSection]);
+
   return (
-    <aside className={`fixed left-0 top-0 h-full bg-gradient-to-b from-slate-900 to-slate-800 text-white transition-all duration-300 z-50 shadow-2xl ${
-      collapsed ? 'w-16' : 'w-64'
-    }`}>
-      <div className="p-4 flex flex-col h-full">
-        <div className="flex items-center justify-between mb-8">
-          {!collapsed && (
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg">
-                <Shield className="w-5 h-5" />
+    <>
+      {/* Mobile Overlay */}
+      {!collapsed && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden" 
+          onClick={onToggle}
+        />
+      )}
+      
+      <aside className={`fixed left-0 top-0 h-full bg-gradient-to-b from-slate-900 to-slate-800 text-white transition-all duration-300 z-50 shadow-2xl ${
+        collapsed ? 'w-16 -translate-x-full lg:translate-x-0' : 'w-64 translate-x-0'
+      }`}>
+        <div className="p-4 flex flex-col h-full">
+          <div className="flex items-center justify-between mb-6 sm:mb-8">
+            {!collapsed && (
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg">
+                  <Shield className="w-5 h-5" />
+                </div>
+                <span className="text-lg font-semibold">Admin Panel</span>
               </div>
-              <span className="text-lg font-semibold">Admin Panel</span>
-            </div>
-          )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onToggle}
-            className="text-white hover:bg-slate-700/50 transition-colors"
-          >
-            <Menu className="w-5 h-5" />
-          </Button>
-        </div>
-
-        <nav className="space-y-2 flex-1">
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => onSectionChange(item.id)}
-              className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 text-left ${
-                activeSection === item.id
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg' 
-                  : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
-              }`}
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onToggle}
+              className="text-white hover:bg-slate-700/50 transition-colors"
             >
-              <item.icon className="w-5 h-5 flex-shrink-0" />
-              {!collapsed && <span className="text-sm font-medium">{item.label}</span>}
-            </button>
-          ))}
-        </nav>
+              {collapsed ? <Menu className="w-5 h-5" /> : <X className="w-5 h-5 lg:hidden" />}
+              {collapsed && <Menu className="w-5 h-5 hidden lg:block" />}
+            </Button>
+          </div>
 
-        <div className="border-t border-slate-700 pt-4">
-          <button
-            onClick={onLogout}
-            className="w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 text-left text-slate-300 hover:bg-red-600/20 hover:text-red-300"
-          >
-            <LogOut className="w-5 h-5 flex-shrink-0" />
-            {!collapsed && <span className="text-sm font-medium">Logout</span>}
-          </button>
+          <nav className="space-y-1 sm:space-y-2 flex-1 overflow-y-auto">
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => onSectionChange(item.id)}
+                className={`w-full flex items-center space-x-3 px-3 py-2 sm:py-3 rounded-lg transition-all duration-200 text-left ${
+                  activeSection === item.id
+                    ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg' 
+                    : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
+                }`}
+              >
+                <item.icon className="w-5 h-5 flex-shrink-0" />
+                {!collapsed && <span className="text-sm font-medium truncate">{item.label}</span>}
+              </button>
+            ))}
+          </nav>
+
+          <div className="border-t border-slate-700 pt-4">
+            <button
+              onClick={onLogout}
+              className="w-full flex items-center space-x-3 px-3 py-2 sm:py-3 rounded-lg transition-all duration-200 text-left text-slate-300 hover:bg-red-600/20 hover:text-red-300"
+            >
+              <LogOut className="w-5 h-5 flex-shrink-0" />
+              {!collapsed && <span className="text-sm font-medium">Logout</span>}
+            </button>
+          </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 };
 

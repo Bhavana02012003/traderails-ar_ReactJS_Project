@@ -57,49 +57,51 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
           onLogout={onLogout}
         />
         
-        <main className={`flex-1 p-6 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+        <main className={`flex-1 p-4 sm:p-6 transition-all duration-300 ${
+          sidebarCollapsed ? 'ml-16' : 'ml-0 lg:ml-64'
+        }`}>
           {activeSection === 'overview' && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <h1 className="text-2xl font-bold text-slate-900 mb-2">Platform Overview</h1>
-                <p className="text-slate-600">Monitor key metrics and platform health</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Platform Overview</h1>
+                <p className="text-slate-600 text-sm sm:text-base">Monitor key metrics and platform health</p>
               </div>
               
               <AdminMetrics />
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
                 <TransactionMonitor />
                 <DisputePanel onViewDispute={handleViewDispute} />
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
                 <UserOnboardingFeed />
                 <ComplianceAlerts />
               </div>
               
-              <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 gap-4 sm:gap-6">
                 <PartnerHealthStatus />
               </div>
             </div>
           )}
 
           {activeSection === 'users' && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <h1 className="text-2xl font-bold text-slate-900 mb-2">User Management</h1>
-                <p className="text-slate-600">Manage user accounts and verification</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">User Management</h1>
+                <p className="text-slate-600 text-sm sm:text-base">Manage user accounts and verification</p>
               </div>
               <KYCReviewQueue />
             </div>
           )}
 
           {activeSection === 'kyc' && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <h1 className="text-2xl font-bold text-slate-900 mb-2">KYC & Compliance</h1>
-                <p className="text-slate-600">Review KYC applications and monitor compliance</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">KYC & Compliance</h1>
+                <p className="text-slate-600 text-sm sm:text-base">Review KYC applications and monitor compliance</p>
               </div>
-              <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 gap-4 sm:gap-6">
                 <KYCReviewQueue />
                 <ComplianceAlerts />
               </div>
@@ -107,42 +109,42 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
           )}
 
           {activeSection === 'transactions' && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <h1 className="text-2xl font-bold text-slate-900 mb-2">Transaction Monitoring</h1>
-                <p className="text-slate-600">Track all platform transactions and payments</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Transaction Monitoring</h1>
+                <p className="text-slate-600 text-sm sm:text-base">Track all platform transactions and payments</p>
               </div>
               <TransactionMonitor />
             </div>
           )}
 
           {activeSection === 'disputes' && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <h1 className="text-2xl font-bold text-slate-900 mb-2">Dispute Management</h1>
-                <p className="text-slate-600">Review and resolve marketplace disputes</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Dispute Management</h1>
+                <p className="text-slate-600 text-sm sm:text-base">Review and resolve marketplace disputes</p>
               </div>
               <DisputePanel onViewDispute={handleViewDispute} />
             </div>
           )}
 
           {activeSection === 'partners' && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <h1 className="text-2xl font-bold text-slate-900 mb-2">Partner Health Status</h1>
-                <p className="text-slate-600">Monitor partner API health and performance</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Partner Health Status</h1>
+                <p className="text-slate-600 text-sm sm:text-base">Monitor partner API health and performance</p>
               </div>
               <PartnerHealthStatus />
             </div>
           )}
 
           {activeSection === 'settings' && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <h1 className="text-2xl font-bold text-slate-900 mb-2">Platform Settings</h1>
-                <p className="text-slate-600">Configure platform parameters and preferences</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Platform Settings</h1>
+                <p className="text-slate-600 text-sm sm:text-base">Configure platform parameters and preferences</p>
               </div>
-              <div className="bg-white rounded-lg border border-slate-200 p-6">
+              <div className="bg-white rounded-lg border border-slate-200 p-4 sm:p-6">
                 <h3 className="text-lg font-semibold text-slate-900 mb-4">System Configuration</h3>
                 <p className="text-slate-600">Platform settings panel coming soon...</p>
               </div>
