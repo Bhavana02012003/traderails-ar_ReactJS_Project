@@ -75,7 +75,7 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
     <div className="min-h-screen bg-gradient-to-br from-stone-50 to-stone-100 font-['Inter']">
       <DashboardHeader />
       
-      <div className="container mx-auto px-4 lg:px-8 py-8">
+      <div className="container mx-auto px-4 lg:px-8 py-8 max-w-7xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-stone-900 mb-2">
             {userType === 'agent' ? 'Agent' : userType === 'trader' ? 'Trader' : 'Buyer'} Dashboard
@@ -85,26 +85,39 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            <BuyerSummaryCards />
-            
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-              <QuotesList onViewQuote={handleViewQuote} />
-              <RecentOrders onFinancialWorkflow={handleFinancialWorkflow} />
-            </div>
-            
-            <TrustBadges />
+        {/* Summary Cards - Full Width */}
+        <div className="mb-8">
+          <BuyerSummaryCards />
+        </div>
+
+        {/* Quick Actions - Full Width */}
+        <div className="mb-8">
+          <BuyerQuickActions onShowInviteFlow={handleShowInviteFlow} />
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
+          {/* Left Column - Quotes and Orders */}
+          <div className="xl:col-span-2 space-y-8">
+            <QuotesList onViewQuote={handleViewQuote} />
+            <RecentOrders onFinancialWorkflow={handleFinancialWorkflow} />
           </div>
           
-          {/* Sidebar */}
+          {/* Right Column - Sidebar */}
           <div className="space-y-8">
-            <BuyerQuickActions onShowInviteFlow={handleShowInviteFlow} />
-            <SlabBookmarks />
             {userType === 'buyer' && <AssignedAgents />}
             <LocationMap />
           </div>
+        </div>
+
+        {/* Slab Bookmarks - Full Width */}
+        <div className="mb-8">
+          <SlabBookmarks />
+        </div>
+
+        {/* Trust Badges - Full Width */}
+        <div className="mb-8">
+          <TrustBadges />
         </div>
       </div>
     </div>

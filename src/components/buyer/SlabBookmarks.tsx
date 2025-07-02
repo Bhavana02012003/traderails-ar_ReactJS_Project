@@ -50,9 +50,9 @@ const SlabBookmarks = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {bookmarkedSlabs.map((slab) => (
-            <div key={slab.id} className="border border-stone-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+            <div key={slab.id} className="border border-stone-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white">
               <div className="aspect-video bg-stone-100 relative">
                 <img 
                   src={slab.image} 
@@ -70,14 +70,14 @@ const SlabBookmarks = () => {
               
               <div className="p-4 space-y-3">
                 <div>
-                  <h3 className="font-semibold text-stone-900">{slab.name}</h3>
-                  <p className="text-sm text-stone-600">{slab.id} · {slab.material}</p>
+                  <h3 className="font-semibold text-stone-900 truncate">{slab.name}</h3>
+                  <p className="text-sm text-stone-600 truncate">{slab.id} · {slab.material}</p>
                 </div>
                 
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-stone-600">Dimensions:</span>
-                    <span className="font-medium">{slab.dimensions}</span>
+                    <span className="font-medium text-right truncate ml-2">{slab.dimensions}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-stone-600">Price:</span>
@@ -92,13 +92,13 @@ const SlabBookmarks = () => {
                 </div>
                 
                 <div className="pt-2 border-t border-stone-200">
-                  <p className="text-sm text-stone-600 mb-3">{slab.supplier} · {slab.location}</p>
+                  <p className="text-sm text-stone-600 mb-3 truncate">{slab.supplier} · {slab.location}</p>
                   <div className="flex gap-2">
                     <Button size="sm" className="flex-1 emerald-gradient text-white">
                       <MessageSquare className="w-4 h-4 mr-1" />
                       Quote
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="flex-shrink-0">
                       <Eye className="w-4 h-4" />
                     </Button>
                   </div>
