@@ -1,7 +1,14 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Globe, User, Menu, X, Settings } from 'lucide-react';
+import { Globe, User, Menu, X, Bell } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface HeaderProps {
   onLoginClick: () => void;
@@ -25,11 +32,6 @@ const Header = ({
   onLogout
 }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const handleAccountClick = () => {
-    // For now, just show dashboard - could be expanded to show account settings
-    onDashboardClick?.();
-  };
 
   const handleLogout = () => {
     onLogout?.();
@@ -95,16 +97,33 @@ const Header = ({
           <div className="hidden md:flex items-center space-x-4">
             {isLoggedIn && (userType === 'buyer' || userType === 'exporter') ? (
               <>
-                <Button variant="ghost" onClick={handleAccountClick} className="text-stone-600">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Account
+                {/* Notifications */}
+                <Button variant="ghost" className="relative">
+                  <Bell className="w-5 h-5" />
+                  <Badge className="absolute -top-1 -right-1 w-5 h-5 p-0 bg-emerald-500 text-white text-xs flex items-center justify-center">
+                    3
+                  </Badge>
                 </Button>
-                <Button onClick={onDashboardClick} className="emerald-gradient text-white">
-                  Dashboard
-                </Button>
-                <Button variant="outline" onClick={handleLogout} className="text-stone-600">
-                  Logout
-                </Button>
+                
+                {/* Account Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                        <User className="w-4 h-4 text-emerald-600" />
+                      </div>
+                      <span className="hidden sm:block">Account</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem onClick={onDashboardClick}>
+                      Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleLogout}>
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </>
             ) : (
               <>
@@ -187,17 +206,20 @@ const Header = ({
               <div className="flex flex-col space-y-2 pt-4 border-t border-stone-200">
                 {isLoggedIn && (userType === 'buyer' || userType === 'exporter') ? (
                   <>
-                    <Button variant="ghost" onClick={handleAccountClick} className="justify-start text-stone-600">
-                      <Settings className="w-4 h-4 mr-2" />
-                      Account
+                    <Button variant="ghost" className="justify-start relative">
+                      <Bell className="w-4 h-4 mr-2" />
+                      Notifications
+                      <Badge className="ml-auto w-5 h-5 p-0 bg-emerald-500 text-white text-xs flex items-center justify-center">
+                        3
+                      </Badge>
                     </Button>
                     <Button onClick={() => {
                       onDashboardClick?.();
                       setIsMenuOpen(false);
-                    }} className="emerald-gradient text-white">
+                    }} variant="ghost" className="justify-start text-stone-600">
                       Dashboard
                     </Button>
-                    <Button variant="outline" onClick={handleLogout} className="justify-start text-stone-600">
+                    <Button variant="ghost" onClick={handleLogout} className="justify-start text-stone-600">
                       Logout
                     </Button>
                   </>
