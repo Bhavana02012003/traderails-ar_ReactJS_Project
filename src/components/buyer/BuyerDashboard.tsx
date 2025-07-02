@@ -87,13 +87,6 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
       <DashboardHeader />
       
       <div className="container mx-auto px-4 lg:px-8 py-8 max-w-7xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-stone-900 mb-2">
-            {userType === 'agent' ? 'Agent' : userType === 'trader' ? 'Trader' : 'Buyer'} Dashboard
-          </h1>
-        </div>
-
         {/* Summary Cards */}
         <div className="mb-8">
           <BuyerSummaryCards />
