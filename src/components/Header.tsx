@@ -1,4 +1,3 @@
-
 /**
  * Header Component
  * 
@@ -19,6 +18,8 @@
  * @param {Function} props.onMarketplaceClick - Navigation to marketplace
  * @param {Function} props.onHomeClick - Navigation to home
  * @param {Function} props.onDashboardClick - Navigation to user dashboard
+ * @param {Function} props.onAboutClick - Navigation to about overlay
+ * @param {Function} props.onContactClick - Navigation to contact overlay
  * @param {string} props.currentView - Current active view/page
  * @param {boolean} props.isLoggedIn - User authentication status
  * @param {string} props.userType - User role type
@@ -48,8 +49,12 @@ interface HeaderProps {
   onHomeClick?: () => void;
   /** Optional function to navigate to user dashboard */
   onDashboardClick?: () => void;
+  /** Optional function to navigate to about overlay */
+  onAboutClick?: () => void;
+  /** Optional function to navigate to contact overlay */
+  onContactClick?: () => void;
   /** Current active view for navigation highlighting */
-  currentView?: 'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin' | 'trader' | 'agent';
+  currentView?: 'home' | 'marketplace' | 'about' | 'contact' | 'exporter' | 'buyer' | 'admin' | 'trader' | 'agent';
   /** User authentication status */
   isLoggedIn?: boolean;
   /** User role type for role-based features */
@@ -73,6 +78,8 @@ const Header = ({
   onMarketplaceClick, 
   onHomeClick, 
   onDashboardClick, 
+  onAboutClick,
+  onContactClick,
   currentView = 'home',
   isLoggedIn = false,
   userType,
@@ -153,15 +160,29 @@ const Header = ({
               </button>
             )}
             
-            {/* About Navigation Link - Using hash link for anchor navigation */}
-            <a href="#about" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
+            {/* About Navigation Link - Using onClick for overlay navigation */}
+            <button 
+              onClick={onAboutClick}
+              className={`transition-colors font-medium ${
+                currentView === 'about' 
+                  ? 'text-emerald-600 font-semibold' 
+                  : 'text-stone-700 hover:text-emerald-600'
+              }`}
+            >
               About
-            </a>
+            </button>
             
-            {/* Contact Navigation Link - Using hash link for anchor navigation */}
-            <a href="#contact" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
+            {/* Contact Navigation Link - Using onClick for overlay navigation */}
+            <button 
+              onClick={onContactClick}
+              className={`transition-colors font-medium ${
+                currentView === 'contact' 
+                  ? 'text-emerald-600 font-semibold' 
+                  : 'text-stone-700 hover:text-emerald-600'
+              }`}
+            >
               Contact
-            </a>
+            </button>
           </nav>
 
           {/* 
@@ -293,22 +314,34 @@ const Header = ({
               )}
               
               {/* About Link - Closes mobile menu on click */}
-              <a 
-                href="#about" 
-                className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
-                onClick={() => setIsMenuOpen(false)}
+              <button 
+                onClick={() => {
+                  onAboutClick?.();
+                  setIsMenuOpen(false);
+                }}
+                className={`text-left transition-colors font-medium ${
+                  currentView === 'about' 
+                    ? 'text-emerald-600 font-semibold' 
+                    : 'text-stone-700 hover:text-emerald-600'
+                }`}
               >
                 About
-              </a>
+              </button>
               
               {/* Contact Link - Closes mobile menu on click */}
-              <a 
-                href="#contact" 
-                className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
-                onClick={() => setIsMenuOpen(false)}
+              <button 
+                onClick={() => {
+                  onContactClick?.();
+                  setIsMenuOpen(false);
+                }}
+                className={`text-left transition-colors font-medium ${
+                  currentView === 'contact' 
+                    ? 'text-emerald-600 font-semibold' 
+                    : 'text-stone-700 hover:text-emerald-600'
+                }`}
               >
                 Contact
-              </a>
+              </button>
               
               {/* 
                 Mobile User Controls Section
