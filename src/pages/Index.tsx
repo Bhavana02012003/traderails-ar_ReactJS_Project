@@ -7,11 +7,12 @@ import FeaturesSection from '@/components/FeaturesSection';
 import MarketplacePreview from '@/components/MarketplacePreview';
 import MarketplaceContent from '@/components/MarketplaceContent';
 import ExporterDashboard from '@/components/exporter/ExporterDashboard';
+import BuyerDashboard from '@/components/buyer/BuyerDashboard';
 import LoginModal from '@/components/LoginModal';
 
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer'>('home');
 
   const handleLoginClick = () => {
     setIsLoginModalOpen(true);
@@ -33,6 +34,10 @@ const Index = () => {
     setCurrentView('exporter');
   };
 
+  const handleBuyerClick = () => {
+    setCurrentView('buyer');
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Header 
@@ -40,6 +45,7 @@ const Index = () => {
         onMarketplaceClick={handleBrowseClick}
         onHomeClick={handleHomeClick}
         onExporterClick={handleExporterClick}
+        onBuyerClick={handleBuyerClick}
         currentView={currentView}
       />
       
@@ -109,8 +115,10 @@ const Index = () => {
         </>
       ) : currentView === 'marketplace' ? (
         <MarketplaceContent />
-      ) : (
+      ) : currentView === 'exporter' ? (
         <ExporterDashboard />
+      ) : (
+        <BuyerDashboard />
       )}
 
       <LoginModal 

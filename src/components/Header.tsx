@@ -8,10 +8,11 @@ interface HeaderProps {
   onMarketplaceClick?: () => void;
   onHomeClick?: () => void;
   onExporterClick?: () => void;
-  currentView?: 'home' | 'marketplace' | 'exporter';
+  onBuyerClick?: () => void;
+  currentView?: 'home' | 'marketplace' | 'exporter' | 'buyer';
 }
 
-const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onExporterClick, currentView = 'home' }: HeaderProps) => {
+const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onExporterClick, onBuyerClick, currentView = 'home' }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -57,6 +58,16 @@ const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onExporterClick
               }`}
             >
               Exporter
+            </button>
+            <button 
+              onClick={onBuyerClick}
+              className={`transition-colors ${
+                currentView === 'buyer' 
+                  ? 'text-emerald-600 font-medium' 
+                  : 'text-stone-600 hover:text-emerald-600'
+              }`}
+            >
+              Buyer
             </button>
             <a href="#features" className="text-stone-600 hover:text-emerald-600 transition-colors">
               Features
@@ -135,6 +146,19 @@ const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onExporterClick
                 }`}
               >
                 Exporter
+              </button>
+              <button 
+                onClick={() => {
+                  onBuyerClick?.();
+                  setIsMenuOpen(false);
+                }}
+                className={`text-left transition-colors ${
+                  currentView === 'buyer' 
+                    ? 'text-emerald-600 font-medium' 
+                    : 'text-stone-600 hover:text-emerald-600'
+                }`}
+              >
+                Buyer
               </button>
               <a href="#features" className="text-stone-600 hover:text-emerald-600 transition-colors">
                 Features
