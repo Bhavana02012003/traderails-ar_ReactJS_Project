@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Plus, Upload, Download, Bell, TrendingUp, Package, Truck, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +14,7 @@ import BuyerInquiries from './BuyerInquiries';
 import CompliancePanel from './CompliancePanel';
 import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
 import OrgDetailsPage from '@/components/org/OrgDetailsPage';
+import QuoteCreationFlow from '@/components/quotes/QuoteCreationFlow';
 
 interface ExporterDashboardProps {
   onShowInviteFlow?: () => void;
@@ -44,6 +46,7 @@ const mockOrganizations = [
 
 const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: ExporterDashboardProps) => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [showQuoteCreation, setShowQuoteCreation] = useState(false);
 
   const currentOrg = mockOrganizations[0]; // Default to first org
 
@@ -52,10 +55,23 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
     // In a real app, this would trigger a context switch
   };
 
+  const handleCreateQuote = () => {
+    setShowQuoteCreation(true);
+  };
+
+  const handleCloseQuoteCreation = () => {
+    setShowQuoteCreation(false);
+  };
+
   // Only show organization switcher for traders
   const canSwitchOrganizations = userType === 'trader';
   // Only show organization details for exporters (not traders)
   const canManageOrganization = userType === 'exporter';
+
+  // If quote creation is active, show it full screen
+  if (showQuoteCreation) {
+    return <QuoteCreationFlow onClose={handleCloseQuoteCreation} />;
+  }
 
   const summaryMetrics = [
     {
@@ -129,7 +145,7 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
           })}
         </div>
 
-        <QuickActionsPanel onShowInviteFlow={onShowInviteFlow} />
+        <QuickActionsPanel onShowInviteFlow={onShowInviteFlow} onCreateQuote={handleCreateQuote} />
 
         {/* Main Dashboard Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">

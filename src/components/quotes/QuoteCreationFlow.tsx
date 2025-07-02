@@ -11,7 +11,11 @@ import FinanceOptionsStep from './steps/FinanceOptionsStep';
 import ReviewSendStep from './steps/ReviewSendStep';
 import QuoteSentConfirmation from './QuoteSentConfirmation';
 
-const QuoteCreationFlow = () => {
+interface QuoteCreationFlowProps {
+  onClose?: () => void;
+}
+
+const QuoteCreationFlow = ({ onClose }: QuoteCreationFlowProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isComplete, setIsComplete] = useState(false);
 
@@ -37,13 +41,19 @@ const QuoteCreationFlow = () => {
     }
   };
 
+  const handleClose = () => {
+    setCurrentStep(1);
+    setIsComplete(false);
+    onClose?.();
+  };
+
   const CurrentStepComponent = steps[currentStep - 1]?.component;
 
   if (isComplete) {
     return <QuoteSentConfirmation onCreateNew={() => {
       setCurrentStep(1);
       setIsComplete(false);
-    }} />;
+    }} onClose={handleClose} />;
   }
 
   return (
@@ -55,12 +65,11 @@ const QuoteCreationFlow = () => {
             <div className="flex items-center gap-4 mb-6">
               <Button 
                 variant="ghost" 
-                onClick={handleStepBack}
-                disabled={currentStep === 1}
+                onClick={currentStep === 1 ? handleClose : handleStepBack}
                 className="text-stone-600 hover:text-stone-900"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
+                {currentStep === 1 ? 'Close' : 'Back'}
               </Button>
               <h1 className="text-3xl font-bold text-stone-900">Create Quote</h1>
             </div>
@@ -108,7 +117,6 @@ const QuoteCreationFlow = () => {
                 <CurrentStepComponent 
                   onNext={handleStepComplete}
                   onBack={handleStepBack}
-                  isLastStep={currentStep === steps.length}
                 />
               )}
             </CardContent>

@@ -1,18 +1,28 @@
 
-import { Plus, Upload, Download, UserPlus } from 'lucide-react';
+import { Plus, Upload, Download, UserPlus, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface QuickActionsPanelProps {
   onShowInviteFlow?: () => void;
+  onCreateQuote?: () => void;
 }
 
-const QuickActionsPanel = ({ onShowInviteFlow }: QuickActionsPanelProps) => {
+const QuickActionsPanel = ({ onShowInviteFlow, onCreateQuote }: QuickActionsPanelProps) => {
   return (
     <Card className="glass-panel border-0">
       <CardContent className="p-6">
         <h3 className="text-lg font-semibold text-stone-900 mb-4">Quick Actions</h3>
         <div className="flex flex-wrap gap-3">
+          {onCreateQuote && (
+            <Button 
+              onClick={onCreateQuote}
+              className="emerald-gradient text-white hover:shadow-lg transition-all duration-300"
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Create Quote
+            </Button>
+          )}
           <Button className="emerald-gradient text-white hover:shadow-lg transition-all duration-300">
             <Plus className="w-4 h-4 mr-2" />
             Add New Listing
