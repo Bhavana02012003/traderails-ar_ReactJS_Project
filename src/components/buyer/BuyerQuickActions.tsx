@@ -2,8 +2,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Search, UserPlus, Eye, MapPin, Heart, Quote, ClipboardList, Users, Building2, Shield } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Search, UserPlus, Eye, MapPin, Heart, Quote, ClipboardList, Users, Building2, Shield, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface BuyerQuickActionsProps {
   onShowInviteFlow?: () => void;
@@ -12,125 +12,210 @@ interface BuyerQuickActionsProps {
 }
 
 const BuyerQuickActions = ({ onShowInviteFlow, onViewQuote, onFinancialWorkflow }: BuyerQuickActionsProps) => {
-  const mainActions = [
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedAction, setSelectedAction] = useState<string | null>(null);
+
+  const allActions = [
     {
+      id: 'browse',
       title: 'Browse Marketplace',
       description: 'Discover premium slabs',
       icon: Search,
-      variant: 'default' as const,
-      className: 'emerald-gradient text-white'
+      category: 'main'
     },
     {
+      id: 'invite',
       title: 'Invite Team Member',
       description: 'Add agents or partners',
       icon: UserPlus,
-      variant: 'outline' as const,
+      category: 'main',
       onClick: onShowInviteFlow
     },
     {
+      id: 'inspection',
       title: 'Request Inspection',
       description: 'Schedule shipment check',
       icon: Eye,
-      variant: 'outline' as const
+      category: 'main'
     },
     {
+      id: 'locations',
       title: 'Manage Locations',
       description: 'Update delivery ports',
       icon: MapPin,
-      variant: 'outline' as const
-    }
-  ];
-
-  const quickAccessActions = [
+      category: 'main'
+    },
     {
+      id: 'quotes',
       title: 'Review Quotes',
       description: 'Check new pricing proposals',
       icon: Quote,
-      action: () => onViewQuote?.('sample-quote-id')
+      category: 'access'
     },
     {
+      id: 'orders',
       title: 'Track Orders',
       description: 'Monitor shipment status',
       icon: ClipboardList,
-      action: () => onFinancialWorkflow?.({ invoiceId: 'sample-invoice', amount: { inr: '₹8,50,000', usd: '$10,200' }, buyer: 'Premium Stones LLC', status: 'pending' as const })
+      category: 'access'
     },
     {
+      id: 'bookmarks',
       title: 'View Bookmarks',
       description: 'Saved slab collections',
       icon: Heart,
-      action: () => console.log('View bookmarks')
+      category: 'access'
     },
     {
+      id: 'agents',
       title: 'My Agents',
       description: 'Assigned representatives',
       icon: Users,
-      action: () => console.log('View agents')
+      category: 'access'
     },
     {
+      id: 'addresses',
       title: 'Locations',
       description: 'Delivery addresses',
       icon: Building2,
-      action: () => console.log('View locations')
+      category: 'access'
     },
     {
+      id: 'trust',
       title: 'Trust & Safety',
       description: 'Compliance status',
       icon: Shield,
-      action: () => console.log('View trust badges')
+      category: 'access'
     }
   ];
 
+  const handleActionClick = (action: any) => {
+    if (action.onClick) {
+      action.onClick();
+      return;
+    }
+    
+    setSelectedAction(action.id);
+    
+    // Handle specific actions
+    if (action.id === 'quotes') {
+      onViewQuote?.('sample-quote-id');
+    } else if (action.id === 'orders') {
+      onFinancialWorkflow?.({ 
+        invoiceId: 'sample-invoice', 
+        amount: { inr: '₹8,50,000', usd: '$10,200' }, 
+        buyer: 'Premium Stones LLC', 
+        status: 'pending' as const 
+      });
+    }
+  };
+
+  const getRecordsForAction = (actionId: string) => {
+    switch (actionId) {
+      case 'quotes':
+        return [
+          { id: 'Q-001', title: 'Carrara White Marble - 24 slabs', exporter: 'StoneX International', amount: '$42,500', status: 'Pending Review' },
+          { id: 'Q-002', title: 'Nero Marquina Granite - 18 slabs', exporter: 'Granite Masters Ltd', amount: '$31,200', status: 'Approved' },
+          { id: 'Q-003', title: 'Calacatta Gold Marble - 36 slabs', exporter: 'Premium Stone Co', amount: '$78,900', status: 'Under Negotiation' }
+        ];
+      case 'orders':
+        return [
+          { id: 'INV-2024-0156', title: 'Carrara White Quartz - 24 slabs', status: 'In Transit', eta: 'Dec 15, 2024' },
+          { id: 'INV-2024-0148', title: 'Nero Marquina Granite - 18 slabs', status: 'Delivered', date: 'Nov 12, 2024' },
+          { id: 'INV-2024-0142', title: 'Calacatta Gold Marble - 36 slabs', status: 'Booked', eta: 'Jan 10, 2025' }
+        ];
+      case 'bookmarks':
+        return [
+          { id: 'BM-001', title: 'Premium Carrara Collection', slabs: 12, saved: '2 days ago' },
+          { id: 'BM-002', title: 'Granite Specialty Mix', slabs: 8, saved: '1 week ago' },
+          { id: 'BM-003', title: 'Luxury Marble Selection', slabs: 15, saved: '2 weeks ago' }
+        ];
+      case 'agents':
+        return [
+          { id: 'AG-001', name: 'Sarah Chen', location: 'Dubai, UAE', orders: 12, rating: 4.9 },
+          { id: 'AG-002', name: 'Marco Rodriguez', location: 'Barcelona, Spain', orders: 8, rating: 4.8 },
+          { id: 'AG-003', name: 'Priya Sharma', location: 'Mumbai, India', orders: 15, rating: 5.0 }
+        ];
+      case 'addresses':
+        return [
+          { id: 'LOC-001', name: 'New York Warehouse', address: '123 Industrial Ave, Brooklyn, NY', type: 'Primary' },
+          { id: 'LOC-002', name: 'Miami Distribution Center', address: '456 Port Blvd, Miami, FL', type: 'Secondary' },
+          { id: 'LOC-003', name: 'Los Angeles Facility', address: '789 Commerce St, LA, CA', type: 'Backup' }
+        ];
+      default:
+        return [];
+    }
+  };
+
   return (
     <Card className="bg-white/80 backdrop-blur-sm border border-stone-200 shadow-sm">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-lg font-semibold text-stone-800">Quick Actions</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Main Quick Actions */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {mainActions.map((action, index) => (
-            <Button
-              key={index}
-              variant={action.variant}
-              className={`h-auto p-4 flex flex-col items-center space-y-2 min-h-[90px] text-center transition-all hover:scale-105 ${action.className || ''}`}
-              onClick={action.onClick}
-            >
-              <action.icon className="w-5 h-5 flex-shrink-0" />
-              <div className="space-y-1">
-                <div className="font-medium text-sm leading-tight">{action.title}</div>
-                <div className="text-xs opacity-80 leading-tight">{action.description}</div>
-              </div>
-            </Button>
-          ))}
-        </div>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <CollapsibleTrigger asChild>
+          <CardHeader className="pb-4 cursor-pointer hover:bg-stone-50 transition-colors">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-semibold text-stone-800">Quick Actions & Access</CardTitle>
+              {isOpen ? (
+                <ChevronDown className="w-5 h-5 text-stone-600" />
+              ) : (
+                <ChevronRight className="w-5 h-5 text-stone-600" />
+              )}
+            </div>
+          </CardHeader>
+        </CollapsibleTrigger>
+        
+        <CollapsibleContent>
+          <CardContent className="space-y-6">
+            {/* Action Buttons Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+              {allActions.map((action) => (
+                <Button
+                  key={action.id}
+                  variant={selectedAction === action.id ? "default" : "outline"}
+                  className={`h-auto p-3 flex flex-col items-center space-y-2 min-h-[80px] text-center transition-all hover:scale-105 ${
+                    action.id === 'browse' ? 'emerald-gradient text-white' : ''
+                  }`}
+                  onClick={() => handleActionClick(action)}
+                >
+                  <action.icon className="w-4 h-4 flex-shrink-0" />
+                  <div className="space-y-1">
+                    <div className="font-medium text-xs leading-tight">{action.title}</div>
+                    <div className="text-xs opacity-80 leading-tight">{action.description}</div>
+                  </div>
+                </Button>
+              ))}
+            </div>
 
-        {/* Quick Access Accordion */}
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="quick-access" className="border border-stone-200 rounded-lg">
-            <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-stone-50 rounded-lg">
-              <span className="text-sm font-medium text-stone-700">Quick Access Menu</span>
-            </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-2">
-                {quickAccessActions.map((action, index) => (
-                  <Button
-                    key={index}
-                    variant="ghost"
-                    className="h-auto p-3 flex flex-col items-center space-y-2 min-h-[80px] text-center border border-stone-200 hover:bg-stone-50 transition-colors"
-                    onClick={action.action}
-                  >
-                    <action.icon className="w-4 h-4 flex-shrink-0 text-stone-600" />
-                    <div className="space-y-1">
-                      <div className="font-medium text-xs leading-tight text-stone-900">{action.title}</div>
-                      <div className="text-xs text-stone-600 leading-tight">{action.description}</div>
+            {/* Records Display */}
+            {selectedAction && (
+              <div className="border-t border-stone-200 pt-6">
+                <h3 className="text-sm font-medium text-stone-800 mb-4">
+                  {allActions.find(a => a.id === selectedAction)?.title} Records
+                </h3>
+                <div className="space-y-3">
+                  {getRecordsForAction(selectedAction).map((record: any) => (
+                    <div key={record.id} className="flex items-center justify-between p-3 bg-stone-50 rounded-lg hover:bg-stone-100 transition-colors">
+                      <div className="flex-1">
+                        <p className="font-medium text-sm text-stone-900">{record.title || record.name}</p>
+                        <p className="text-xs text-stone-600">
+                          {record.exporter || record.location || record.address || record.slabs + ' slabs' || record.orders + ' orders'}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-stone-900">
+                          {record.amount || record.status || record.saved || record.rating || record.type}
+                        </p>
+                        {record.eta && (
+                          <p className="text-xs text-stone-500">{record.eta}</p>
+                        )}
+                      </div>
                     </div>
-                  </Button>
-                ))}
+                  ))}
+                </div>
               </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </CardContent>
+            )}
+          </CardContent>
+        </CollapsibleContent>
+      </Collapsible>
     </Card>
   );
 };
