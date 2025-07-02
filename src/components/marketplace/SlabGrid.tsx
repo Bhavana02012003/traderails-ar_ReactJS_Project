@@ -8,9 +8,9 @@ const mockSlabs: Slab[] = [
     id: 'SLB-001',
     name: 'Carrara White Marble',
     blockId: 'BLK-4521',
-    material: 'marble',
+    material: 'granite',
     finish: 'polished',
-    colors: ['white', 'gray'],
+    color: ['white', 'gray'],
     dimensions: { length: 320, width: 160, thickness: 2 },
     price: 145,
     priceUnit: 'sqft',
@@ -23,9 +23,9 @@ const mockSlabs: Slab[] = [
       'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=500&h=600&fit=crop'
     ],
     supplier: {
-      id: 'SUP-001',
       name: 'Marble Masters Italy',
       location: 'Carrara, Italy',
+      country: 'Italy',
       verified: true,
       rating: 4.8
     },
@@ -42,7 +42,7 @@ const mockSlabs: Slab[] = [
     blockId: 'BLK-7831',
     material: 'granite',
     finish: 'honed',
-    colors: ['black'],
+    color: ['black'],
     dimensions: { length: 300, width: 150, thickness: 3 },
     price: 89,
     priceUnit: 'sqft',
@@ -54,9 +54,9 @@ const mockSlabs: Slab[] = [
       'https://images.unsplash.com/photo-1493397212122-2b85dda8106b?w=500&h=600&fit=crop'
     ],
     supplier: {
-      id: 'SUP-002',
       name: 'Granite World India',
       location: 'Karnataka, India',
+      country: 'India',
       verified: true,
       rating: 4.6
     },
@@ -71,9 +71,9 @@ const mockSlabs: Slab[] = [
     id: 'SLB-003',
     name: 'Calacatta Gold Marble',
     blockId: 'BLK-9142',
-    material: 'marble',
+    material: 'quartz',
     finish: 'polished',
-    colors: ['white', 'gold'],
+    color: ['white', 'gold'],
     dimensions: { length: 280, width: 140, thickness: 2 },
     price: 289,
     priceUnit: 'sqft',
@@ -85,9 +85,9 @@ const mockSlabs: Slab[] = [
       'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=500&h=600&fit=crop'
     ],
     supplier: {
-      id: 'SUP-003',
       name: 'Premium Stone Co.',
       location: 'Tuscany, Italy',
+      country: 'Italy',
       verified: true,
       rating: 4.9
     },
@@ -152,7 +152,7 @@ const SlabGrid = ({
       // Colors filter
       if (filters.colors.length > 0) {
         const hasMatchingColor = filters.colors.some(color => 
-          slab.colors.includes(color)
+          slab.color.includes(color)
         );
         if (!hasMatchingColor) return false;
       }
