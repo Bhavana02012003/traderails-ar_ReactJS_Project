@@ -122,11 +122,11 @@ const Index = () => {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                   <div className="flex items-center space-x-3 mb-6">
-                    {/* Use transparent logo on dark background with same size as header */}
+                    {/* Use transparent logo on dark background with larger size for visibility */}
                     <img 
                       src="/lovable-uploads/3445b0da-b926-49fc-9f5e-9a14522b14fd.png" 
                       alt="TradeRails - The Invisible Rails of Global Commerce" 
-                      className="h-12 w-auto object-contain"
+                      className="h-24 w-auto object-contain"
                     />
                   </div>
                 </div>
