@@ -1,10 +1,14 @@
 
-import { AlertTriangle, Clock, DollarSign } from 'lucide-react';
+import { AlertTriangle, Clock, DollarSign, Eye } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-const DisputePanel = () => {
+interface DisputePanelProps {
+  onViewDispute?: (disputeId: string) => void;
+}
+
+const DisputePanel = ({ onViewDispute }: DisputePanelProps) => {
   const activeDisputes = [
     {
       id: 'DSP-001',
@@ -88,9 +92,20 @@ const DisputePanel = () => {
                   {dispute.status}
                 </Badge>
               </div>
-              <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-                Resolve Dispute
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => onViewDispute?.(dispute.id)}
+                  className="flex items-center gap-2"
+                >
+                  <Eye className="w-4 h-4" />
+                  View Details
+                </Button>
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                  Resolve Dispute
+                </Button>
+              </div>
             </div>
           ))}
         </div>
