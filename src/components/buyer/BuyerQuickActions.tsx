@@ -2,16 +2,16 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Search, UserPlus, Eye, MapPin, ChevronDown, ChevronRight } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Search, UserPlus, Eye, MapPin, Heart, Quote, ClipboardList, Users, Building2, Shield } from 'lucide-react';
 
 interface BuyerQuickActionsProps {
   onShowInviteFlow?: () => void;
+  onViewQuote?: (quoteId: string) => void;
+  onFinancialWorkflow?: (orderData: any) => void;
 }
 
-const BuyerQuickActions = ({ onShowInviteFlow }: BuyerQuickActionsProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
+const BuyerQuickActions = ({ onShowInviteFlow, onViewQuote, onFinancialWorkflow }: BuyerQuickActionsProps) => {
   const mainActions = [
     {
       title: 'Browse Marketplace',
@@ -41,6 +41,45 @@ const BuyerQuickActions = ({ onShowInviteFlow }: BuyerQuickActionsProps) => {
     }
   ];
 
+  const quickAccessActions = [
+    {
+      title: 'Review Quotes',
+      description: 'Check new pricing proposals',
+      icon: Quote,
+      action: () => onViewQuote?.('sample-quote-id')
+    },
+    {
+      title: 'Track Orders',
+      description: 'Monitor shipment status',
+      icon: ClipboardList,
+      action: () => onFinancialWorkflow?.({ invoiceId: 'sample-invoice', amount: { inr: '₹8,50,000', usd: '$10,200' }, buyer: 'Premium Stones LLC', status: 'pending' as const })
+    },
+    {
+      title: 'View Bookmarks',
+      description: 'Saved slab collections',
+      icon: Heart,
+      action: () => console.log('View bookmarks')
+    },
+    {
+      title: 'My Agents',
+      description: 'Assigned representatives',
+      icon: Users,
+      action: () => console.log('View agents')
+    },
+    {
+      title: 'Locations',
+      description: 'Delivery addresses',
+      icon: Building2,
+      action: () => console.log('View locations')
+    },
+    {
+      title: 'Trust & Safety',
+      description: 'Compliance status',
+      icon: Shield,
+      action: () => console.log('View trust badges')
+    }
+  ];
+
   return (
     <Card className="bg-white/80 backdrop-blur-sm border border-stone-200 shadow-sm">
       <CardHeader className="pb-4">
@@ -65,28 +104,32 @@ const BuyerQuickActions = ({ onShowInviteFlow }: BuyerQuickActionsProps) => {
           ))}
         </div>
 
-        {/* Collapsible More Actions */}
-        <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-          <CollapsibleTrigger asChild>
-            <Button
-              variant="ghost"
-              className="w-full justify-between p-3 h-auto border border-stone-200 hover:bg-stone-50 transition-colors"
-            >
-              <span className="text-sm font-medium text-stone-700">More Dashboard Sections</span>
-              {isExpanded ? (
-                <ChevronDown className="w-4 h-4 text-stone-500" />
-              ) : (
-                <ChevronRight className="w-4 h-4 text-stone-500" />
-              )}
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="space-y-0">
-            <div className="pt-4 text-center">
-              <p className="text-sm text-stone-600 mb-2">Additional sections will appear below</p>
-              <div className="w-12 h-px bg-stone-300 mx-auto"></div>
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
+        {/* Quick Access Accordion */}
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="quick-access" className="border border-stone-200 rounded-lg">
+            <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-stone-50 rounded-lg">
+              <span className="text-sm font-medium text-stone-700">Quick Access Menu</span>
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-2">
+                {quickAccessActions.map((action, index) => (
+                  <Button
+                    key={index}
+                    variant="ghost"
+                    className="h-auto p-3 flex flex-col items-center space-y-2 min-h-[80px] text-center border border-stone-200 hover:bg-stone-50 transition-colors"
+                    onClick={action.action}
+                  >
+                    <action.icon className="w-4 h-4 flex-shrink-0 text-stone-600" />
+                    <div className="space-y-1">
+                      <div className="font-medium text-xs leading-tight text-stone-900">{action.title}</div>
+                      <div className="text-xs text-stone-600 leading-tight">{action.description}</div>
+                    </div>
+                  </Button>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </CardContent>
     </Card>
   );
