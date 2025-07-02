@@ -21,6 +21,7 @@ import { Globe, MapPin, Phone, Mail, Shield, Users, TrendingUp } from 'lucide-re
 // Component imports for different sections and views
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
+import NavigationSection from '@/components/NavigationSection';
 import TrustSection from '@/components/TrustSection';
 import FeaturesSection from '@/components/FeaturesSection';
 import MarketplacePreview from '@/components/MarketplacePreview';
@@ -217,11 +218,8 @@ const Index = () => {
       {currentView !== 'admin' && currentView !== 'invite' && currentView !== 'onboarding' && (
         <Header 
           onLoginClick={handleLoginClick} 
-          onMarketplaceClick={handleBrowseClick}
           onHomeClick={handleHomeClick}
           onDashboardClick={handleDashboardClick}
-          onAboutClick={handleAboutClick}
-          onContactClick={handleContactClick}
           currentView={currentView}
           isLoggedIn={isLoggedIn}
           userType={userType}
@@ -241,6 +239,15 @@ const Index = () => {
             <HeroSection 
               onBrowseClick={handleBrowseClick}
               onListClick={handleListClick}
+            />
+            
+            {/* Professional Navigation Section */}
+            <NavigationSection
+              onHomeClick={handleHomeClick}
+              onMarketplaceClick={handleBrowseClick}
+              onAboutClick={handleAboutClick}
+              onContactClick={handleContactClick}
+              currentView={currentView}
             />
             
             {/* Trust indicators and social proof */}

@@ -6,7 +6,6 @@
  * 
  * Key Features:
  * - Responsive design with mobile hamburger menu
- * - Dynamic navigation highlighting based on current view
  * - User authentication state management
  * - Role-based navigation and controls
  * - Notification system integration
@@ -15,15 +14,11 @@
  * @component
  * @param {Object} props - Component props
  * @param {Function} props.onLoginClick - Callback for login modal
- * @param {Function} props.onMarketplaceClick - Navigation to marketplace
- * @param {Function} props.onHomeClick - Navigation to home
- * @param {Function} props.onDashboardClick - Navigation to user dashboard
- * @param {Function} props.onAboutClick - Navigation to about overlay
- * @param {Function} props.onContactClick - Navigation to contact overlay
- * @param {string} props.currentView - Current active view/page
  * @param {boolean} props.isLoggedIn - User authentication status
  * @param {string} props.userType - User role type
  * @param {Function} props.onLogout - Logout callback
+ * @param {Function} props.onHomeClick - Navigation to home
+ * @param {Function} props.onDashboardClick - Navigation to user dashboard
  */
 
 import { useState } from 'react';
@@ -43,16 +38,10 @@ import {
 interface HeaderProps {
   /** Function to handle login modal opening */
   onLoginClick: () => void;
-  /** Optional function to navigate to marketplace */
-  onMarketplaceClick?: () => void;
   /** Optional function to navigate to home page */
   onHomeClick?: () => void;
   /** Optional function to navigate to user dashboard */
   onDashboardClick?: () => void;
-  /** Optional function to navigate to about overlay */
-  onAboutClick?: () => void;
-  /** Optional function to navigate to contact overlay */
-  onContactClick?: () => void;
   /** Current active view for navigation highlighting */
   currentView?: 'home' | 'marketplace' | 'about' | 'contact' | 'exporter' | 'buyer' | 'admin' | 'trader' | 'agent';
   /** User authentication status */
@@ -68,18 +57,14 @@ interface HeaderProps {
  * 
  * Renders the main navigation header with:
  * - Company logo and branding
- * - Primary navigation menu
  * - User authentication controls
  * - Mobile responsive menu
  * - Notification system
  */
 const Header = ({ 
   onLoginClick, 
-  onMarketplaceClick, 
   onHomeClick, 
   onDashboardClick, 
-  onAboutClick,
-  onContactClick,
   currentView = 'home',
   isLoggedIn = false,
   userType,
@@ -102,11 +87,7 @@ const Header = ({
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
-          {/* 
-            Logo Section
-            Company branding with click handler for home navigation
-            Uses dark logo variant for light background
-          */}
+          {/* Logo Section */}
           <div className="flex items-center cursor-pointer" onClick={onHomeClick}>
             <img 
               src="/lovable-uploads/ab167848-cedd-4e49-86de-c1ad8208769d.png" 
@@ -115,89 +96,23 @@ const Header = ({
             />
           </div>
 
-          {/* 
-            Desktop Navigation Menu
-            Hidden on mobile devices, visible on medium screens and up
-            Includes dynamic highlighting based on current view
-          */}
-          <nav className="hidden md:flex items-center space-x-8">
-            
-            {/* Home Navigation Link */}
-            <button 
-              onClick={onHomeClick}
-              className={`transition-colors font-medium ${
-                currentView === 'home' 
-                  ? 'text-emerald-600 font-semibold' 
-                  : 'text-stone-700 hover:text-emerald-600'
-              }`}
-            >
-              Home
-            </button>
-            
-            {/* Marketplace Navigation Link */}
-            <button 
-              onClick={onMarketplaceClick}
-              className={`transition-colors font-medium ${
-                currentView === 'marketplace' 
-                  ? 'text-emerald-600 font-semibold' 
-                  : 'text-stone-700 hover:text-emerald-600'
-              }`}
-            >
-              Marketplace
-            </button>
-            
-            {/* Dashboard Navigation Link - Only visible when user is logged in */}
-            {isLoggedIn && (
-              <button 
-                onClick={onDashboardClick}
-                className={`transition-colors font-medium ${
-                  currentView === 'exporter' || currentView === 'buyer' || currentView === 'admin' || currentView === 'trader' || currentView === 'agent'
-                    ? 'text-emerald-600 font-semibold' 
-                    : 'text-stone-700 hover:text-emerald-600'
-                }`}
-              >
-                Dashboard
-              </button>
-            )}
-            
-            {/* About Navigation Link - Using onClick for overlay navigation */}
-            <button 
-              onClick={onAboutClick}
-              className={`transition-colors font-medium ${
-                currentView === 'about' 
-                  ? 'text-emerald-600 font-semibold' 
-                  : 'text-stone-700 hover:text-emerald-600'
-              }`}
-            >
-              About
-            </button>
-            
-            {/* Contact Navigation Link - Using onClick for overlay navigation */}
-            <button 
-              onClick={onContactClick}
-              className={`transition-colors font-medium ${
-                currentView === 'contact' 
-                  ? 'text-emerald-600 font-semibold' 
-                  : 'text-stone-700 hover:text-emerald-600'
-              }`}
-            >
-              Contact
-            </button>
-          </nav>
-
-          {/* 
-            Desktop User Controls Section
-            Conditional rendering based on user authentication status
-            Hidden on mobile devices
-          */}
+          {/* Desktop User Controls Section */}
           <div className="hidden md:flex items-center space-x-4">
             {/* Authenticated User Controls */}
             {isLoggedIn && (userType === 'buyer' || userType === 'exporter' || userType === 'agent' || userType === 'trader') ? (
               <>
+                {/* Dashboard Button */}
+                <Button 
+                  variant="ghost" 
+                  onClick={onDashboardClick}
+                  className="text-stone-700 hover:text-emerald-600 font-medium"
+                >
+                  Dashboard
+                </Button>
+                
                 {/* Notification Bell with Badge */}
                 <Button variant="ghost" className="relative">
                   <Bell className="w-5 h-5" />
-                  {/* Notification count badge */}
                   <Badge className="absolute -top-1 -right-1 w-5 h-5 p-0 bg-emerald-500 text-white text-xs flex items-center justify-center">
                     3
                   </Badge>
@@ -207,7 +122,6 @@ const Header = ({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center gap-2">
-                      {/* User Avatar */}
                       <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
                         <User className="w-4 h-4 text-emerald-600" />
                       </div>
@@ -227,12 +141,10 @@ const Header = ({
             ) : (
               /* Unauthenticated User Controls */
               <>
-                {/* Login Button */}
                 <Button variant="ghost" onClick={onLoginClick} className="text-stone-700 font-medium">
                   <User className="w-4 h-4 mr-2" />
                   Login
                 </Button>
-                {/* Primary CTA Button */}
                 <Button onClick={onLoginClick} className="emerald-gradient text-white font-medium">
                   Get Started
                 </Button>
@@ -240,11 +152,7 @@ const Header = ({
             )}
           </div>
 
-          {/* 
-            Mobile Menu Toggle Button
-            Visible only on mobile devices
-            Toggles between hamburger and X icon based on menu state
-          */}
+          {/* Mobile Menu Toggle Button */}
           <button
             className="md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -257,44 +165,10 @@ const Header = ({
           </button>
         </div>
 
-        {/* 
-          Mobile Menu Panel
-          Conditional rendering based on menu state
-          Includes all navigation options and user controls
-          Animated appearance with fade-in effect
-        */}
+        {/* Mobile Menu Panel */}
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-stone-200 animate-fade-in">
             <nav className="flex flex-col space-y-4">
-              
-              {/* Mobile Navigation Links */}
-              <button 
-                onClick={() => {
-                  onHomeClick?.();
-                  setIsMenuOpen(false);
-                }}
-                className={`text-left transition-colors font-medium ${
-                  currentView === 'home' 
-                    ? 'text-emerald-600 font-semibold' 
-                    : 'text-stone-700 hover:text-emerald-600'
-                }`}
-              >
-                Home
-              </button>
-              
-              <button 
-                onClick={() => {
-                  onMarketplaceClick?.();
-                  setIsMenuOpen(false);
-                }}
-                className={`text-left transition-colors font-medium ${
-                  currentView === 'marketplace' 
-                    ? 'text-emerald-600 font-semibold' 
-                    : 'text-stone-700 hover:text-emerald-600'
-                }`}
-              >
-                Marketplace
-              </button>
               
               {/* Dashboard Navigation Link - Only visible when user is logged in */}
               {isLoggedIn && (
@@ -303,55 +177,17 @@ const Header = ({
                     onDashboardClick?.();
                     setIsMenuOpen(false);
                   }}
-                  className={`text-left transition-colors font-medium ${
-                    currentView === 'exporter' || currentView === 'buyer' || currentView === 'admin' || currentView === 'trader' || currentView === 'agent'
-                      ? 'text-emerald-600 font-semibold' 
-                      : 'text-stone-700 hover:text-emerald-600'
-                  }`}
+                  className="text-left transition-colors font-medium text-stone-700 hover:text-emerald-600"
                 >
                   Dashboard
                 </button>
               )}
               
-              {/* About Link - Closes mobile menu on click */}
-              <button 
-                onClick={() => {
-                  onAboutClick?.();
-                  setIsMenuOpen(false);
-                }}
-                className={`text-left transition-colors font-medium ${
-                  currentView === 'about' 
-                    ? 'text-emerald-600 font-semibold' 
-                    : 'text-stone-700 hover:text-emerald-600'
-                }`}
-              >
-                About
-              </button>
-              
-              {/* Contact Link - Closes mobile menu on click */}
-              <button 
-                onClick={() => {
-                  onContactClick?.();
-                  setIsMenuOpen(false);
-                }}
-                className={`text-left transition-colors font-medium ${
-                  currentView === 'contact' 
-                    ? 'text-emerald-600 font-semibold' 
-                    : 'text-stone-700 hover:text-emerald-600'
-                }`}
-              >
-                Contact
-              </button>
-              
-              {/* 
-                Mobile User Controls Section
-                Separated by border, includes authentication-specific options
-              */}
+              {/* Mobile User Controls Section */}
               <div className="flex flex-col space-y-2 pt-4 border-t border-stone-200">
                 {isLoggedIn && (userType === 'buyer' || userType === 'exporter' || userType === 'agent' || userType === 'trader') ? (
                   /* Authenticated Mobile User Options */
                   <>
-                    {/* Mobile Notifications */}
                     <Button variant="ghost" className="justify-start relative">
                       <Bell className="w-4 h-4 mr-2" />
                       Notifications
@@ -360,7 +196,6 @@ const Header = ({
                       </Badge>
                     </Button>
                     
-                    {/* Mobile Dashboard Link */}
                     <Button onClick={() => {
                       onDashboardClick?.();
                       setIsMenuOpen(false);
@@ -368,7 +203,6 @@ const Header = ({
                       Dashboard
                     </Button>
                     
-                    {/* Mobile Logout Button */}
                     <Button variant="ghost" onClick={handleLogout} className="justify-start text-stone-700">
                       Logout
                     </Button>
@@ -376,13 +210,11 @@ const Header = ({
                 ) : (
                   /* Unauthenticated Mobile User Options */
                   <>
-                    {/* Mobile Login Button */}
                     <Button variant="ghost" onClick={onLoginClick} className="justify-start text-stone-700">
                       <User className="w-4 h-4 mr-2" />
                       Login
                     </Button>
                     
-                    {/* Mobile Get Started Button */}
                     <Button onClick={onLoginClick} className="emerald-gradient text-white">
                       Get Started
                     </Button>
