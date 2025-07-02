@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Plus, Upload, Download, Bell, TrendingUp, Package, Truck, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +11,7 @@ import ShipmentTracker from './ShipmentTracker';
 import PayoutSummary from './PayoutSummary';
 import BuyerInquiries from './BuyerInquiries';
 import CompliancePanel from './CompliancePanel';
+import MyQuotes from './MyQuotes';
 import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
 import OrgDetailsPage from '@/components/org/OrgDetailsPage';
 import QuoteCreationFlow from '@/components/quotes/QuoteCreationFlow';
@@ -61,6 +61,16 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
 
   const handleCloseQuoteCreation = () => {
     setShowQuoteCreation(false);
+  };
+
+  const handleViewQuote = (quoteId: string) => {
+    console.log('Viewing quote:', quoteId);
+    // Navigate to quote details
+  };
+
+  const handleEditQuote = (quoteId: string) => {
+    console.log('Editing quote:', quoteId);
+    // Navigate to quote edit
   };
 
   // Only show organization switcher for traders
@@ -151,6 +161,7 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="glass-panel border-0 p-1 h-auto">
             <TabsTrigger value="overview" className="px-6 py-3">Overview</TabsTrigger>
+            <TabsTrigger value="quotes" className="px-6 py-3">My Quotes</TabsTrigger>
             <TabsTrigger value="inventory" className="px-6 py-3">Inventory</TabsTrigger>
             <TabsTrigger value="shipments" className="px-6 py-3">Shipments</TabsTrigger>
             <TabsTrigger value="payouts" className="px-6 py-3">Payouts</TabsTrigger>
@@ -171,6 +182,14 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
               </div>
               <CompliancePanel />
             </div>
+          </TabsContent>
+
+          <TabsContent value="quotes">
+            <MyQuotes 
+              onCreateQuote={handleCreateQuote}
+              onViewQuote={handleViewQuote}
+              onEditQuote={handleEditQuote}
+            />
           </TabsContent>
 
           <TabsContent value="inventory">
