@@ -2,6 +2,7 @@
 import { BarChart3, Users, Shield, AlertTriangle, CreditCard, FileCheck, Settings, Menu, LogOut, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect } from 'react';
+import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
 
 interface AdminSidebarProps {
   collapsed: boolean;
@@ -10,6 +11,28 @@ interface AdminSidebarProps {
   onSectionChange: (section: string) => void;
   onLogout: () => void;
 }
+
+// Mock organizations for demonstration
+const mockOrganizations = [
+  {
+    id: '1',
+    name: 'Shivani Granites Ltd.',
+    type: 'Factory' as const,
+    location: 'Jaipur, India',
+  },
+  {
+    id: '2',
+    name: 'Global Stone Exports',
+    type: 'Exporter' as const,
+    location: 'Mumbai, India',
+  },
+  {
+    id: '3',
+    name: 'Premium Marble Trading Co.',
+    type: 'Trader' as const,
+    location: 'Dubai, UAE',
+  },
+];
 
 const AdminSidebar = ({ collapsed, onToggle, activeSection, onSectionChange, onLogout }: AdminSidebarProps) => {
   const menuItems = [
@@ -21,6 +44,13 @@ const AdminSidebar = ({ collapsed, onToggle, activeSection, onSectionChange, onL
     { id: 'partners', icon: FileCheck, label: 'Partner Health' },
     { id: 'settings', icon: Settings, label: 'Platform Settings' },
   ];
+
+  const currentOrg = mockOrganizations[0]; // Default to first org
+
+  const handleOrganizationChange = (orgId: string) => {
+    console.log('Switching to organization:', orgId);
+    // In a real app, this would trigger a context switch
+  };
 
   // Close sidebar on mobile when section changes
   useEffect(() => {
@@ -68,6 +98,18 @@ const AdminSidebar = ({ collapsed, onToggle, activeSection, onSectionChange, onL
               {collapsed && <Menu className="w-5 h-5 hidden lg:block" />}
             </Button>
           </div>
+
+          {/* Organization Switcher */}
+          {!collapsed && (
+            <div className="mb-6">
+              <OrganizationSwitcher
+                currentOrg={currentOrg}
+                organizations={mockOrganizations}
+                onOrganizationChange={handleOrganizationChange}
+                className="text-white border-slate-600 hover:bg-slate-700/50"
+              />
+            </div>
+          )}
 
           <nav className="space-y-1 sm:space-y-2 flex-1 overflow-y-auto">
             {menuItems.map((item) => (
