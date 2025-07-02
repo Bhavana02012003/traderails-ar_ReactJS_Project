@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import Header from '@/components/Header';
@@ -61,7 +60,7 @@ const Index = () => {
     }
     
     // Show appropriate dashboard based on user type
-    if (userType === 'buyer') {
+    if (userType === 'buyer' || userType === 'agent' || userType === 'trader') {
       setCurrentView('buyer');
     } else if (userType === 'exporter') {
       setCurrentView('exporter');

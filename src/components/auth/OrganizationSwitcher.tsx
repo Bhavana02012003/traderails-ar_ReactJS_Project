@@ -34,6 +34,8 @@ const OrganizationSwitcher = ({
   onOrganizationChange,
   className = ""
 }: OrganizationSwitcherProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const getOrgTypeColor = (type: string) => {
     switch (type) {
       case 'Factory':
@@ -60,18 +62,20 @@ const OrganizationSwitcher = ({
 
   const handleOrgSwitch = (orgId: string) => {
     if (orgId !== currentOrg.id) {
+      console.log('Switching to organization:', orgId);
       // Update localStorage preference
       localStorage.setItem('preferredOrganization', orgId);
       onOrganizationChange(orgId);
+      setIsOpen(false);
     }
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button 
           variant="outline" 
-          className={`w-full justify-between bg-white/80 backdrop-blur-sm border-stone-200 hover:bg-white/90 ${className}`}
+          className={`w-full justify-between bg-white/80 backdrop-blur-sm border-stone-200 hover:bg-white/90 transition-all duration-200 ${className}`}
         >
           <div className="flex items-center space-x-3 min-w-0">
             <Avatar className="w-8 h-8 border border-stone-200">
@@ -96,7 +100,7 @@ const OrganizationSwitcher = ({
             </div>
           </div>
           
-          <ChevronDown className="w-4 h-4 text-stone-500 flex-shrink-0" />
+          <ChevronDown className={`w-4 h-4 text-stone-500 flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
         </Button>
       </DropdownMenuTrigger>
       
@@ -113,7 +117,7 @@ const OrganizationSwitcher = ({
           <DropdownMenuItem
             key={org.id}
             onClick={() => handleOrgSwitch(org.id)}
-            className="p-3 cursor-pointer hover:bg-stone-50 focus:bg-stone-50"
+            className="p-3 cursor-pointer hover:bg-stone-50 focus:bg-stone-50 transition-colors duration-150"
           >
             <div className="flex items-center space-x-3 w-full">
               <Avatar className="w-10 h-10 border border-stone-200">
