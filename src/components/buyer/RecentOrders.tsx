@@ -3,6 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ChevronDown, ChevronRight, Eye, Truck, Shield, CreditCard } from 'lucide-react';
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from '@/components/ui/pagination';
 
 interface RecentOrdersProps {
   expanded?: boolean;
@@ -17,6 +25,8 @@ interface RecentOrdersProps {
 
 const RecentOrders = ({ expanded = false, onFinancialWorkflow, onTrackShipment }: RecentOrdersProps) => {
   const [expandedOrders, setExpandedOrders] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
 
   const orders = [
     {
@@ -87,8 +97,59 @@ const RecentOrders = ({ expanded = false, onFinancialWorkflow, onTrackShipment }
         { step: 'In Transit', completed: false, date: 'Dec 28' },
         { step: 'Delivered', completed: false, date: 'Jan 10' }
       ]
+    },
+    {
+      id: 'INV-2024-0141',
+      exporter: 'Marble World Ltd',
+      slabSummary: '12x Statuario Marble',
+      status: 'Processing',
+      statusColor: 'bg-orange-100 text-orange-800',
+      deliveryDate: 'Jan 20, 2025',
+      escrowAmount: '$178,000',
+      fxLocked: true,
+      buyer: 'Luxury Stone Co (London, UK)',
+      amount: {
+        inr: "₹24,50,000",
+        usd: "USD $29,400"
+      },
+      workflowStatus: 'pending' as const,
+      timeline: [
+        { step: 'Order Placed', completed: true, date: 'Nov 28' },
+        { step: 'Factory QC', completed: false, date: 'Dec 10' },
+        { step: 'Shipped', completed: false, date: 'Dec 18' },
+        { step: 'In Transit', completed: false, date: 'Dec 26' },
+        { step: 'Delivered', completed: false, date: 'Jan 20' }
+      ]
+    },
+    {
+      id: 'INV-2024-0140',
+      exporter: 'Stone Craft International',
+      slabSummary: '30x Black Galaxy Granite',
+      status: 'Shipped',
+      statusColor: 'bg-purple-100 text-purple-800',
+      deliveryDate: 'Dec 28, 2024',
+      escrowAmount: '$198,000',
+      fxLocked: true,
+      buyer: 'Modern Stone Inc (Toronto, Canada)',
+      amount: {
+        inr: "₹28,75,000",
+        usd: "USD $34,500"
+      },
+      workflowStatus: 'approved' as const,
+      timeline: [
+        { step: 'Order Placed', completed: true, date: 'Nov 15' },
+        { step: 'Factory QC', completed: true, date: 'Nov 22' },
+        { step: 'Shipped', completed: true, date: 'Nov 30' },
+        { step: 'In Transit', completed: false, date: 'Dec 8' },
+        { step: 'Delivered', completed: false, date: 'Dec 28' }
+      ]
     }
   ];
+
+  const totalPages = Math.ceil(orders.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentOrders = orders.slice(startIndex, endIndex);
 
   const toggleOrderExpansion = (orderId: string) => {
     setExpandedOrders(prev => 
@@ -118,10 +179,10 @@ const RecentOrders = ({ expanded = false, onFinancialWorkflow, onTrackShipment }
   return (
     <Card className="bg-white/70 backdrop-blur-sm border border-stone-200">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold text-stone-900">Recent Orders</CardTitle>
+        <CardTitle className="text-lg font-semibold text-stone-900">Orders ({orders.length})</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {orders.slice(0, expanded ? orders.length : 3).map((order) => (
+        {currentOrders.map((order) => (
           <div key={order.id} className="border border-stone-200 rounded-lg p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex-1">
@@ -205,10 +266,49 @@ const RecentOrders = ({ expanded = false, onFinancialWorkflow, onTrackShipment }
           </div>
         ))}
         
-        {!expanded && orders.length > 3 && (
-          <Button variant="outline" className="w-full">
-            View All Orders ({orders.length})
-          </Button>
+        {totalPages > 1 && (
+          <div className="mt-6">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage > 1) setCurrentPage(currentPage - 1);
+                    }}
+                    className={currentPage <= 1 ? 'opacity-50 pointer-events-none' : ''}
+                  />
+                </PaginationItem>
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(page);
+                      }}
+                      isActive={currentPage === page}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                
+                <PaginationItem>
+                  <PaginationNext 
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                    }}
+                    className={currentPage >= totalPages ? 'opacity-50 pointer-events-none' : ''}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
         )}
       </CardContent>
     </Card>

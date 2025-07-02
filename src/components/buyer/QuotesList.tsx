@@ -1,18 +1,28 @@
-
 import { useState } from 'react';
 import { Eye, Clock, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationEllipsis, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from '@/components/ui/pagination';
 
 interface QuotesListProps {
   onViewQuote: (quoteId: string) => void;
 }
 
 const QuotesList = ({ onViewQuote }: QuotesListProps) => {
-  // Mock quotes data
-  const quotes = [
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // Mock quotes data - expanded for pagination demo
+  const allQuotes = [
     {
       id: 'Q-01824',
       seller: 'Shivani Granites',
@@ -56,8 +66,46 @@ const QuotesList = ({ onViewQuote }: QuotesListProps) => {
       totalValue: 9800.00,
       slabCount: 4,
       urgent: false
+    },
+    {
+      id: 'Q-01820',
+      seller: 'Elite Stone Works',
+      location: 'Karnataka, India',
+      sentDate: '2025-06-22',
+      validTill: '2025-06-30',
+      status: 'expired' as const,
+      totalValue: 7500.00,
+      slabCount: 3,
+      urgent: false
+    },
+    {
+      id: 'Q-01819',
+      seller: 'Royal Marble Co',
+      location: 'Odisha, India',
+      sentDate: '2025-06-20',
+      validTill: '2025-06-28',
+      status: 'pending' as const,
+      totalValue: 11200.00,
+      slabCount: 6,
+      urgent: false
+    },
+    {
+      id: 'Q-01818',
+      seller: 'Heritage Stones',
+      location: 'Madhya Pradesh, India',
+      sentDate: '2025-06-18',
+      validTill: '2025-06-26',
+      status: 'accepted' as const,
+      totalValue: 15800.00,
+      slabCount: 8,
+      urgent: false
     }
   ];
+
+  const totalPages = Math.ceil(allQuotes.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentQuotes = allQuotes.slice(startIndex, endIndex);
 
   const getStatusBadge = (status: string, urgent: boolean) => {
     const baseClasses = "text-xs font-medium";
@@ -123,11 +171,11 @@ const QuotesList = ({ onViewQuote }: QuotesListProps) => {
   return (
     <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
       <CardHeader>
-        <CardTitle className="text-stone-900">Recent Quotes</CardTitle>
+        <CardTitle className="text-stone-900">Quotes ({allQuotes.length})</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {quotes.map((quote) => (
+          {currentQuotes.map((quote) => (
             <div 
               key={quote.id}
               className={`p-4 rounded-lg border transition-all hover:shadow-md ${
@@ -175,6 +223,51 @@ const QuotesList = ({ onViewQuote }: QuotesListProps) => {
             </div>
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="mt-6">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage > 1) setCurrentPage(currentPage - 1);
+                    }}
+                    className={currentPage <= 1 ? 'opacity-50 pointer-events-none' : ''}
+                  />
+                </PaginationItem>
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(page);
+                      }}
+                      isActive={currentPage === page}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                
+                <PaginationItem>
+                  <PaginationNext 
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                    }}
+                    className={currentPage >= totalPages ? 'opacity-50 pointer-events-none' : ''}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

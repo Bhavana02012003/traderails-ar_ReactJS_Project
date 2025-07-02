@@ -27,13 +27,13 @@ const BuyerQuickActions = ({
   const tabs = [
     {
       id: 'quotes',
-      title: 'Recent Quotes',
+      title: 'Quotes',
       icon: Quote,
       component: <QuotesList onViewQuote={onViewQuote || (() => {})} />
     },
     {
       id: 'orders',
-      title: 'Recent Orders',
+      title: 'Orders',
       icon: Package,
       component: <RecentOrders onFinancialWorkflow={onFinancialWorkflow} onTrackShipment={onTrackShipment} />
     },
