@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import Header from '@/components/Header';
@@ -14,12 +13,26 @@ import LoginModal from '@/components/LoginModal';
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer'>('home');
-  
-  // TODO: Replace with actual user type from authentication
-  const [userType] = useState<'exporter' | 'buyer'>('buyer'); // Default to buyer for demo
+  const [userType, setUserType] = useState<'exporter' | 'buyer' | 'admin' | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLoginClick = () => {
     setIsLoginModalOpen(true);
+  };
+
+  const handleLoginSuccess = (type: 'buyer' | 'exporter' | 'admin') => {
+    setUserType(type);
+    setIsLoggedIn(true);
+    setIsLoginModalOpen(false);
+    // Redirect to appropriate dashboard after login
+    if (type === 'buyer') {
+      setCurrentView('buyer');
+    } else if (type === 'exporter') {
+      setCurrentView('exporter');
+    } else {
+      // Admin stays on home for now
+      setCurrentView('home');
+    }
   };
 
   const handleBrowseClick = () => {
@@ -35,8 +48,17 @@ const Index = () => {
   };
 
   const handleDashboardClick = () => {
+    if (!isLoggedIn || !userType) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+    
     // Show appropriate dashboard based on user type
-    setCurrentView(userType);
+    if (userType === 'buyer') {
+      setCurrentView('buyer');
+    } else if (userType === 'exporter') {
+      setCurrentView('exporter');
+    }
   };
 
   return (
@@ -123,7 +145,8 @@ const Index = () => {
 
       <LoginModal 
         open={isLoginModalOpen} 
-        onOpenChange={setIsLoginModalOpen} 
+        onOpenChange={setIsLoginModalOpen}
+        onLoginSuccess={handleLoginSuccess}
       />
     </div>
   );

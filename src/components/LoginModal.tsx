@@ -6,21 +6,29 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Globe, Mail, Phone, Eye, EyeOff, Building } from 'lucide-react';
+import { Globe, Mail, Phone, Eye, EyeOff, Building, User } from 'lucide-react';
 
 interface LoginModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onLoginSuccess?: (userType: 'buyer' | 'exporter' | 'admin') => void;
 }
 
-const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
+const LoginModal = ({ open, onOpenChange, onLoginSuccess }: LoginModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [otp, setOtp] = useState('');
   const [showOtpInput, setShowOtpInput] = useState(false);
+  const [selectedUserType, setSelectedUserType] = useState<'buyer' | 'exporter' | 'admin'>('buyer');
 
   const handleSendOtp = () => {
     setShowOtpInput(true);
+  };
+
+  const handleLogin = () => {
+    // Mock login - always succeed
+    onLoginSuccess?.(selectedUserType);
+    onOpenChange(false);
   };
 
   return (
@@ -32,8 +40,26 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
             <div className="w-12 h-12 emerald-gradient rounded-xl flex items-center justify-center mx-auto mb-4">
               <Globe className="w-6 h-6 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-stone-900">Welcome to StoneFlow</h2>
+            <h2 className="text-2xl font-bold text-stone-900">Welcome to TradeRails</h2>
             <p className="text-stone-600 mt-2">Sign in to your account</p>
+          </div>
+
+          {/* User Type Selection */}
+          <div className="mb-6 p-4 bg-stone-50 rounded-lg">
+            <Label className="text-sm font-medium text-stone-700 mb-3 block">
+              <User className="w-4 h-4 inline mr-2" />
+              Login as
+            </Label>
+            <Select value={selectedUserType} onValueChange={(value: 'buyer' | 'exporter' | 'admin') => setSelectedUserType(value)}>
+              <SelectTrigger className="bg-white border-stone-200">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-white border border-stone-200">
+                <SelectItem value="buyer">Buyer / Importer</SelectItem>
+                <SelectItem value="exporter">Exporter / Seller</SelectItem>
+                <SelectItem value="admin">Administrator</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Login Tabs */}
@@ -90,8 +116,8 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
                 </a>
               </div>
 
-              <Button className="w-full h-12 emerald-gradient text-white font-semibold">
-                Sign In
+              <Button onClick={handleLogin} className="w-full h-12 emerald-gradient text-white font-semibold">
+                Sign In as {selectedUserType === 'buyer' ? 'Buyer' : selectedUserType === 'exporter' ? 'Exporter' : 'Admin'}
               </Button>
             </TabsContent>
 
@@ -151,10 +177,10 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
                   </div>
 
                   <Button 
+                    onClick={handleLogin}
                     className="w-full h-12 emerald-gradient text-white font-semibold"
-                    disabled={otp.length !== 6}
                   >
-                    Verify & Sign In
+                    Sign In as {selectedUserType === 'buyer' ? 'Buyer' : selectedUserType === 'exporter' ? 'Exporter' : 'Admin'}
                   </Button>
 
                   <Button 
