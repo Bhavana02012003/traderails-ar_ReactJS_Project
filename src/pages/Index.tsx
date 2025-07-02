@@ -121,23 +121,23 @@ const Index = () => {
             <div className="container mx-auto px-4 lg:px-8">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
-                  <div className="flex items-center space-x-2 mb-4">
-                    <div className="bg-white p-2 rounded-lg">
+                  <div className="flex items-center space-x-3 mb-6">
+                    <div className="bg-white p-3 rounded-xl shadow-lg">
                       <img 
                         src="/lovable-uploads/3445b0da-b926-49fc-9f5e-9a14522b14fd.png" 
                         alt="Company Logo" 
-                        className="h-8 w-auto"
+                        className="h-10 w-auto object-contain"
                       />
                     </div>
                   </div>
-                  <p className="text-emerald-400 text-xs italic">
+                  <p className="text-emerald-400 text-sm font-medium">
                     The Invisible Rails of Global Commerce
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-semibold mb-4">Platform</h3>
-                  <ul className="space-y-2 text-sm text-stone-400">
+                  <h3 className="font-semibold mb-4 text-white text-lg">Platform</h3>
+                  <ul className="space-y-2 text-sm text-stone-300">
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Marketplace</a></li>
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Features</a></li>
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Pricing</a></li>
@@ -146,8 +146,8 @@ const Index = () => {
                 </div>
                 
                 <div>
-                  <h3 className="font-semibold mb-4">Support</h3>
-                  <ul className="space-y-2 text-sm text-stone-400">
+                  <h3 className="font-semibold mb-4 text-white text-lg">Support</h3>
+                  <ul className="space-y-2 text-sm text-stone-300">
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Help Center</a></li>
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Contact Us</a></li>
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Status</a></li>
@@ -156,8 +156,8 @@ const Index = () => {
                 </div>
                 
                 <div>
-                  <h3 className="font-semibold mb-4">Company</h3>
-                  <ul className="space-y-2 text-sm text-stone-400">
+                  <h3 className="font-semibold mb-4 text-white text-lg">Company</h3>
+                  <ul className="space-y-2 text-sm text-stone-300">
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">About</a></li>
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Careers</a></li>
                     <li><a href="#" className="hover:text-emerald-400 transition-colors">Privacy</a></li>
@@ -166,8 +166,8 @@ const Index = () => {
                 </div>
               </div>
               
-              <div className="border-t border-stone-800 mt-8 pt-8 text-center text-sm text-stone-400">
-                <p>&copy; 2024 TradeRails. All rights reserved.</p>
+              <div className="border-t border-stone-700 mt-8 pt-8 text-center text-sm text-stone-300">
+                <p>&copy; 2024 Global Commerce Platform. All rights reserved.</p>
               </div>
             </div>
           </footer>

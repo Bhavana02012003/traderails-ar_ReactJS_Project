@@ -41,14 +41,14 @@ const Header = ({
   return (
     <header className="relative z-50 bg-white/95 backdrop-blur-sm border-b border-stone-200">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex items-center cursor-pointer" onClick={onHomeClick}>
-            <div className="bg-white p-2 rounded-lg shadow-sm border border-stone-200">
+            <div className="bg-white p-3 rounded-xl shadow-lg border-2 border-emerald-100">
               <img 
                 src="/lovable-uploads/3445b0da-b926-49fc-9f5e-9a14522b14fd.png" 
                 alt="Company Logo" 
-                className="h-8 w-auto"
+                className="h-12 w-auto object-contain"
               />
             </div>
           </div>
@@ -57,41 +57,41 @@ const Header = ({
           <nav className="hidden md:flex items-center space-x-8">
             <button 
               onClick={onHomeClick}
-              className={`transition-colors ${
+              className={`transition-colors font-medium ${
                 currentView === 'home' 
-                  ? 'text-emerald-600 font-medium' 
-                  : 'text-stone-600 hover:text-emerald-600'
+                  ? 'text-emerald-600 font-semibold' 
+                  : 'text-stone-700 hover:text-emerald-600'
               }`}
             >
               Home
             </button>
             <button 
               onClick={onMarketplaceClick}
-              className={`transition-colors ${
+              className={`transition-colors font-medium ${
                 currentView === 'marketplace' 
-                  ? 'text-emerald-600 font-medium' 
-                  : 'text-stone-600 hover:text-emerald-600'
+                  ? 'text-emerald-600 font-semibold' 
+                  : 'text-stone-700 hover:text-emerald-600'
               }`}
             >
               Marketplace
             </button>
             <button 
               onClick={onDashboardClick}
-              className={`transition-colors ${
+              className={`transition-colors font-medium ${
                 currentView === 'exporter' || currentView === 'buyer' || currentView === 'admin' || currentView === 'trader' || currentView === 'agent'
-                  ? 'text-emerald-600 font-medium' 
-                  : 'text-stone-600 hover:text-emerald-600'
+                  ? 'text-emerald-600 font-semibold' 
+                  : 'text-stone-700 hover:text-emerald-600'
               }`}
             >
               Dashboard
             </button>
-            <a href="#features" className="text-stone-600 hover:text-emerald-600 transition-colors">
+            <a href="#features" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
               Features
             </a>
-            <a href="#about" className="text-stone-600 hover:text-emerald-600 transition-colors">
+            <a href="#about" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
               About
             </a>
-            <a href="#contact" className="text-stone-600 hover:text-emerald-600 transition-colors">
+            <a href="#contact" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
               Contact
             </a>
           </nav>
@@ -130,11 +130,11 @@ const Header = ({
               </>
             ) : (
               <>
-                <Button variant="ghost" onClick={onLoginClick} className="text-stone-600">
+                <Button variant="ghost" onClick={onLoginClick} className="text-stone-700 font-medium">
                   <User className="w-4 h-4 mr-2" />
                   Login
                 </Button>
-                <Button onClick={onLoginClick} className="emerald-gradient text-white">
+                <Button onClick={onLoginClick} className="emerald-gradient text-white font-medium">
                   Get Started
                 </Button>
               </>
@@ -147,9 +147,9 @@ const Header = ({
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? (
-              <X className="w-6 h-6 text-stone-600" />
+              <X className="w-6 h-6 text-stone-700" />
             ) : (
-              <Menu className="w-6 h-6 text-stone-600" />
+              <Menu className="w-6 h-6 text-stone-700" />
             )}
           </button>
         </div>
@@ -163,10 +163,10 @@ const Header = ({
                   onHomeClick?.();
                   setIsMenuOpen(false);
                 }}
-                className={`text-left transition-colors ${
+                className={`text-left transition-colors font-medium ${
                   currentView === 'home' 
-                    ? 'text-emerald-600 font-medium' 
-                    : 'text-stone-600 hover:text-emerald-600'
+                    ? 'text-emerald-600 font-semibold' 
+                    : 'text-stone-700 hover:text-emerald-600'
                 }`}
               >
                 Home
@@ -176,10 +176,10 @@ const Header = ({
                   onMarketplaceClick?.();
                   setIsMenuOpen(false);
                 }}
-                className={`text-left transition-colors ${
+                className={`text-left transition-colors font-medium ${
                   currentView === 'marketplace' 
-                    ? 'text-emerald-600 font-medium' 
-                    : 'text-stone-600 hover:text-emerald-600'
+                    ? 'text-emerald-600 font-semibold' 
+                    : 'text-stone-700 hover:text-emerald-600'
                 }`}
               >
                 Marketplace
@@ -189,21 +189,21 @@ const Header = ({
                   onDashboardClick?.();
                   setIsMenuOpen(false);
                 }}
-                className={`text-left transition-colors ${
+                className={`text-left transition-colors font-medium ${
                   currentView === 'exporter' || currentView === 'buyer' || currentView === 'admin' || currentView === 'trader' || currentView === 'agent'
-                    ? 'text-emerald-600 font-medium' 
-                    : 'text-stone-600 hover:text-emerald-600'
+                    ? 'text-emerald-600 font-semibold' 
+                    : 'text-stone-700 hover:text-emerald-600'
                 }`}
               >
                 Dashboard
               </button>
-              <a href="#features" className="text-stone-600 hover:text-emerald-600 transition-colors">
+              <a href="#features" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
                 Features
               </a>
-              <a href="#about" className="text-stone-600 hover:text-emerald-600 transition-colors">
+              <a href="#about" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
                 About
               </a>
-              <a href="#contact" className="text-stone-600 hover:text-emerald-600 transition-colors">
+              <a href="#contact" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
                 Contact
               </a>
               <div className="flex flex-col space-y-2 pt-4 border-t border-stone-200">
@@ -219,16 +219,16 @@ const Header = ({
                     <Button onClick={() => {
                       onDashboardClick?.();
                       setIsMenuOpen(false);
-                    }} variant="ghost" className="justify-start text-stone-600">
+                    }} variant="ghost" className="justify-start text-stone-700">
                       Dashboard
                     </Button>
-                    <Button variant="ghost" onClick={handleLogout} className="justify-start text-stone-600">
+                    <Button variant="ghost" onClick={handleLogout} className="justify-start text-stone-700">
                       Logout
                     </Button>
                   </>
                 ) : (
                   <>
-                    <Button variant="ghost" onClick={onLoginClick} className="justify-start text-stone-600">
+                    <Button variant="ghost" onClick={onLoginClick} className="justify-start text-stone-700">
                       <User className="w-4 h-4 mr-2" />
                       Login
                     </Button>
