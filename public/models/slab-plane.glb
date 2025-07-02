@@ -1,0 +1,4 @@
+
+# This would be a 3D model file (.glb format) containing a simple plane geometry
+# that can display the slab image as a texture. For now, the model-viewer will
+# use the poster image as fallback when the 3D model loads.

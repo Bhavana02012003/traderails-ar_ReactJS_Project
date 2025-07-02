@@ -1,11 +1,12 @@
 
 /// <reference path="../../types/model-viewer.d.ts" />
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
 import { 
   X, 
   RotateCcw, 
@@ -22,7 +23,10 @@ import {
   Share2,
   ZoomIn,
   ZoomOut,
-  RotateCw
+  RotateCw,
+  Settings,
+  Sun,
+  Lightbulb
 } from 'lucide-react';
 import { Slab } from '@/types/marketplace';
 
@@ -36,40 +40,42 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showTraceability, setShowTraceability] = useState(false);
   const [showInfo, setShowInfo] = useState(true);
+  const [showLightingControls, setShowLightingControls] = useState(false);
   const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const imageRef = useRef<HTMLDivElement>(null);
+  const [rotation, setRotation] = useState({ x: 0, y: 0, z: 0 });
+  const [autoRotate, setAutoRotate] = useState(true);
+  const [lighting, setLighting] = useState({
+    ambient: 0.4,
+    directional: 0.8,
+    exposure: 1.0,
+    shadowIntensity: 0.3
+  });
+  const modelViewerRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (modelViewerRef.current && autoRotate) {
+      const interval = setInterval(() => {
+        setRotation(prev => ({
+          ...prev,
+          y: (prev.y + 1) % 360
+        }));
+      }, 50);
+      return () => clearInterval(interval);
+    }
+  }, [autoRotate]);
 
   if (!slab) return null;
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev * 1.2, 4));
   const handleZoomOut = () => setZoom(prev => Math.max(prev / 1.2, 0.5));
-  const handleRotate = () => setRotation(prev => (prev + 90) % 360);
+  const handleRotateX = () => setRotation(prev => ({ ...prev, x: (prev.x + 90) % 360 }));
+  const handleRotateY = () => setRotation(prev => ({ ...prev, y: (prev.y + 90) % 360 }));
+  const handleRotateZ = () => setRotation(prev => ({ ...prev, z: (prev.z + 90) % 360 }));
+  
   const handleReset = () => {
     setZoom(1);
-    setRotation(0);
-    setPosition({ x: 0, y: 0 });
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isDragging) {
-      setPosition({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
-      });
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
+    setRotation({ x: 0, y: 0, z: 0 });
+    setAutoRotate(true);
   };
 
   const getSlabImage = () => {
@@ -92,6 +98,15 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
             </div>
             
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowLightingControls(!showLightingControls)}
+                className="bg-black/20 border-white/20 text-white hover:bg-black/40 backdrop-blur-sm"
+              >
+                <Settings className="w-4 h-4" />
+              </Button>
+              
               <Button
                 variant="outline"
                 size="sm"
@@ -121,52 +136,176 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
             </div>
           </div>
 
-          {/* Main Image Viewer */}
-          <div 
-            className="h-full relative overflow-hidden cursor-grab active:cursor-grabbing"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-          >
-            <div
-              ref={imageRef}
-              className="absolute inset-0 flex items-center justify-center"
+          {/* Main 3D Viewer */}
+          <div className="h-full relative overflow-hidden flex items-center justify-center">
+            <model-viewer
+              ref={modelViewerRef}
+              src="/models/slab-plane.glb"
+              poster={getSlabImage()}
+              alt={`3D view of ${slab.name}`}
+              camera-controls
+              auto-rotate={autoRotate}
+              rotation-per-second="30deg"
+              environment-image="neutral"
+              exposure={lighting.exposure}
+              shadow-intensity={lighting.shadowIntensity}
               style={{
-                transform: `translate(${position.x}px, ${position.y}px) scale(${zoom}) rotate(${rotation}deg)`,
-                transition: isDragging ? 'none' : 'transform 0.3s ease'
+                width: '100%',
+                height: '100%',
+                background: 'transparent'
+              }}
+              onLoad={() => {
+                // Apply custom texture with the slab image
+                if (modelViewerRef.current) {
+                  const modelViewer = modelViewerRef.current;
+                  modelViewer.addEventListener('load', () => {
+                    // Custom lighting setup
+                    const scene = modelViewer.model;
+                    if (scene) {
+                      // Apply the slab image as texture to the plane
+                      const material = scene.materials?.[0];
+                      if (material) {
+                        const texture = new Image();
+                        texture.crossOrigin = 'anonymous';
+                        texture.src = getSlabImage();
+                        texture.onload = () => {
+                          if (material.pbrMetallicRoughness) {
+                            material.pbrMetallicRoughness.baseColorTexture = {
+                              texture: { source: { uri: getSlabImage() } }
+                            };
+                          }
+                        };
+                      }
+                    }
+                  });
+                }
               }}
             >
-              <img
-                src={getSlabImage()}
-                alt={slab.name}
-                className="max-w-none max-h-none object-contain rounded-lg shadow-2xl"
-                style={{
-                  width: 'auto',
-                  height: '70vh',
-                  maxWidth: '90vw'
-                }}
-                draggable={false}
-              />
-              
-              {/* Traceability Annotations */}
+              {/* Traceability Hotspots */}
               {showTraceability && (
                 <>
-                  <div className="absolute top-1/4 left-1/4 bg-emerald-600 text-white px-3 py-2 rounded-full text-sm font-semibold font-[Inter] shadow-lg">
+                  <button
+                    className="bg-emerald-600 text-white px-3 py-2 rounded-full text-sm font-semibold font-[Inter] shadow-lg border-2 border-white"
+                    slot="hotspot-1"
+                    data-position="0.2 0.3 0.1"
+                    data-normal="0 0 1"
+                  >
                     {slab.blockId}
-                  </div>
-                  <div className="absolute bottom-1/4 right-1/4 bg-blue-600 text-white px-3 py-2 rounded-full text-xs font-[Inter] shadow-lg">
+                  </button>
+                  <button
+                    className="bg-blue-600 text-white px-3 py-2 rounded-full text-xs font-[Inter] shadow-lg border-2 border-white"
+                    slot="hotspot-2"
+                    data-position="-0.2 -0.3 0.1"
+                    data-normal="0 0 1"
+                  >
                     {slab.quarry.location}
-                  </div>
+                  </button>
                 </>
               )}
-            </div>
 
-            {/* Surface texture overlay for realism */}
-            <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-white/5 via-transparent to-black/10 mix-blend-overlay" />
+              {/* AR Button */}
+              <div slot="ar-button" className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
+                <Button className="bg-emerald-600 text-white hover:bg-emerald-700">
+                  <Smartphone className="w-4 h-4 mr-2" />
+                  View in AR
+                </Button>
+              </div>
+            </model-viewer>
           </div>
 
-          {/* Zoom and Rotation Controls */}
+          {/* Lighting Controls Panel */}
+          {showLightingControls && (
+            <div className="absolute left-6 top-24 z-20 w-72">
+              <Card className="bg-black/80 backdrop-blur-md border-white/20">
+                <CardContent className="p-4 space-y-4">
+                  <h3 className="font-semibold text-white font-[Inter] flex items-center gap-2">
+                    <Sun className="w-4 h-4" />
+                    Lighting Controls
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm text-white/80 font-[Inter] flex items-center gap-2 mb-2">
+                        <Lightbulb className="w-3 h-3" />
+                        Ambient Light: {lighting.ambient.toFixed(1)}
+                      </label>
+                      <Slider
+                        value={[lighting.ambient]}
+                        onValueChange={(value) => setLighting(prev => ({ ...prev, ambient: value[0] }))}
+                        max={1}
+                        min={0}
+                        step={0.1}
+                        className="w-full"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm text-white/80 font-[Inter] mb-2 block">
+                        Directional Light: {lighting.directional.toFixed(1)}
+                      </label>
+                      <Slider
+                        value={[lighting.directional]}
+                        onValueChange={(value) => setLighting(prev => ({ ...prev, directional: value[0] }))}
+                        max={2}
+                        min={0}
+                        step={0.1}
+                        className="w-full"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm text-white/80 font-[Inter] mb-2 block">
+                        Exposure: {lighting.exposure.toFixed(1)}
+                      </label>
+                      <Slider
+                        value={[lighting.exposure]}
+                        onValueChange={(value) => setLighting(prev => ({ ...prev, exposure: value[0] }))}
+                        max={2}
+                        min={0.1}
+                        step={0.1}
+                        className="w-full"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm text-white/80 font-[Inter] mb-2 block">
+                        Shadow Intensity: {lighting.shadowIntensity.toFixed(1)}
+                      </label>
+                      <Slider
+                        value={[lighting.shadowIntensity]}
+                        onValueChange={(value) => setLighting(prev => ({ ...prev, shadowIntensity: value[0] }))}
+                        max={1}
+                        min={0}
+                        step={0.1}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setAutoRotate(!autoRotate)}
+                      className="bg-white/10 border-white/20 text-white hover:bg-white/20 text-xs"
+                    >
+                      {autoRotate ? 'Stop' : 'Start'} Rotation
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleReset}
+                      className="bg-white/10 border-white/20 text-white hover:bg-white/20 text-xs"
+                    >
+                      Reset
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Rotation Controls */}
           <div className="absolute left-6 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-2">
             <Button
               variant="outline"
@@ -187,7 +326,7 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={handleRotate}
+              onClick={handleRotateY}
               className="bg-black/20 border-white/20 text-white hover:bg-black/40 backdrop-blur-sm w-10 h-10 p-0"
             >
               <RotateCw className="w-4 h-4" />
@@ -206,15 +345,6 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
                 Reset View
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                className="bg-black/20 border-white/20 text-white hover:bg-black/40 backdrop-blur-sm"
-              >
-                <Smartphone className="w-4 h-4 mr-2" />
-                View in AR
               </Button>
               
               <Button
@@ -294,17 +424,10 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
             <Card className="bg-black/40 backdrop-blur-sm border-white/20">
               <CardContent className="p-3 text-xs text-white">
                 <p className="font-[Inter]">• Pinch to zoom</p>
-                <p className="font-[Inter]">• Drag to move</p>
-                <p className="font-[Inter]">• Use controls to rotate</p>
+                <p className="font-[Inter]">• Drag to rotate</p>
+                <p className="font-[Inter]">• Tap hotspots for info</p>
               </CardContent>
             </Card>
-          </div>
-
-          {/* Zoom Level Indicator */}
-          <div className="absolute bottom-6 right-6 z-10">
-            <Badge className="bg-black/40 text-white border-white/20 backdrop-blur-sm font-[Inter]">
-              {Math.round(zoom * 100)}%
-            </Badge>
           </div>
         </div>
       </DialogContent>
