@@ -11,6 +11,23 @@ interface SlabCardProps {
 }
 
 const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
+  const handleViewDetails = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onClick();
+  };
+
+  const handleRequestQuote = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Handle quote request
+    console.log('Request quote for:', slab.id);
+  };
+
+  const handleARView = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Handle AR view
+    console.log('AR view for:', slab.id);
+  };
+
   if (viewMode === 'list') {
     return (
       <div className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group cursor-pointer">
@@ -74,11 +91,11 @@ const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
               </div>
               
               <div className="flex gap-2">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={handleARView}>
                   <Eye className="w-4 h-4 mr-1" />
                   AR View
                 </Button>
-                <Button className="emerald-gradient text-white">
+                <Button className="emerald-gradient text-white" onClick={handleRequestQuote}>
                   Request Quote
                 </Button>
               </div>
@@ -168,10 +185,10 @@ const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
         </div>
 
         <div className="flex gap-2">
-          <Button variant="outline" className="flex-1 text-sm">
+          <Button variant="outline" className="flex-1 text-sm" onClick={handleViewDetails}>
             View Details
           </Button>
-          <Button className="flex-1 emerald-gradient text-white text-sm">
+          <Button className="flex-1 emerald-gradient text-white text-sm" onClick={handleRequestQuote}>
             Request Quote
           </Button>
         </div>
