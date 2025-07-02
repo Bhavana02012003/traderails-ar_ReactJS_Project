@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { 
   CheckCircle, 
@@ -12,7 +11,8 @@ import {
   Lock,
   Eye,
   Zap,
-  Info
+  Info,
+  ArrowLeft
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,13 +28,15 @@ interface FinancialWorkflowTriggerProps {
   };
   buyer: string;
   status: 'approved' | 'pending' | 'rejected';
+  onBack: () => void;
 }
 
 const FinancialWorkflowTrigger = ({ 
   invoiceId, 
   amount, 
   buyer, 
-  status 
+  status,
+  onBack
 }: FinancialWorkflowTriggerProps) => {
   const [creditStatus, setCreditStatus] = useState<'idle' | 'triggered' | 'approved' | 'processing'>('idle');
   const [fxStatus, setFxStatus] = useState<'idle' | 'locked' | 'simulating'>('idle');
@@ -86,6 +88,14 @@ const FinancialWorkflowTrigger = ({
   return (
     <TooltipProvider>
       <div className="w-full p-6 space-y-6 font-inter">
+        {/* Back Button */}
+        <div className="flex items-center gap-4 mb-6">
+          <Button variant="ghost" onClick={onBack} className="flex items-center gap-2">
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </Button>
+        </div>
+
         {/* Invoice Overview */}
         <Card className="bg-white border-0 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-stone-50 to-stone-100 border-b">
