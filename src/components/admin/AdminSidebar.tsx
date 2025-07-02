@@ -1,4 +1,3 @@
-
 import { BarChart3, Users, Shield, AlertTriangle, CreditCard, FileCheck, Settings, Menu, LogOut, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect } from 'react';
@@ -10,6 +9,7 @@ interface AdminSidebarProps {
   activeSection: string;
   onSectionChange: (section: string) => void;
   onLogout: () => void;
+  userType?: 'buyer' | 'exporter' | 'agent' | 'trader' | 'admin';
 }
 
 // Mock organizations for demonstration
@@ -34,7 +34,7 @@ const mockOrganizations = [
   },
 ];
 
-const AdminSidebar = ({ collapsed, onToggle, activeSection, onSectionChange, onLogout }: AdminSidebarProps) => {
+const AdminSidebar = ({ collapsed, onToggle, activeSection, onSectionChange, onLogout, userType = 'admin' }: AdminSidebarProps) => {
   const menuItems = [
     { id: 'overview', icon: BarChart3, label: 'Overview' },
     { id: 'users', icon: Users, label: 'User Management' },
@@ -51,6 +51,9 @@ const AdminSidebar = ({ collapsed, onToggle, activeSection, onSectionChange, onL
     console.log('Switching to organization:', orgId);
     // In a real app, this would trigger a context switch
   };
+
+  // Only show organization switcher for traders and agents
+  const canSwitchOrganizations = userType === 'trader' || userType === 'agent';
 
   // Close sidebar on mobile when section changes
   useEffect(() => {
@@ -99,8 +102,8 @@ const AdminSidebar = ({ collapsed, onToggle, activeSection, onSectionChange, onL
             </Button>
           </div>
 
-          {/* Organization Switcher */}
-          {!collapsed && (
+          {/* Organization Switcher - Only for traders and agents */}
+          {!collapsed && canSwitchOrganizations && (
             <div className="mb-6">
               <OrganizationSwitcher
                 currentOrg={currentOrg}

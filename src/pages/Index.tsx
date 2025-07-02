@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import Header from '@/components/Header';
@@ -16,7 +17,7 @@ import InviteUserFlow from '@/components/invite/InviteUserFlow';
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin' | 'onboarding' | 'invite'>('home');
-  const [userType, setUserType] = useState<'exporter' | 'buyer' | 'admin' | null>(null);
+  const [userType, setUserType] = useState<'exporter' | 'buyer' | 'admin' | 'agent' | 'trader' | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLoginClick = () => {
@@ -24,12 +25,7 @@ const Index = () => {
   };
 
   const handleLoginSuccess = (type: 'buyer' | 'exporter' | 'agent' | 'trader') => {
-    // Map agent and trader to buyer for dashboard purposes
-    if (type === 'agent' || type === 'trader') {
-      setUserType('buyer');
-    } else {
-      setUserType(type);
-    }
+    setUserType(type);
     setIsLoggedIn(true);
     setIsLoginModalOpen(false);
     // Redirect to appropriate dashboard after login
@@ -166,9 +162,15 @@ const Index = () => {
       ) : currentView === 'marketplace' ? (
         <MarketplaceContent />
       ) : currentView === 'exporter' ? (
-        <ExporterDashboard onShowInviteFlow={handleShowInviteFlow} />
+        <ExporterDashboard 
+          onShowInviteFlow={handleShowInviteFlow} 
+          userType={userType === 'trader' ? 'trader' : 'exporter'}
+        />
       ) : currentView === 'buyer' ? (
-        <BuyerDashboard onShowInviteFlow={handleShowInviteFlow} />
+        <BuyerDashboard 
+          onShowInviteFlow={handleShowInviteFlow}
+          userType={userType === 'agent' ? 'agent' : userType === 'trader' ? 'trader' : 'buyer'}
+        />
       ) : currentView === 'admin' ? (
         <AdminDashboard onLogout={handleLogout} onShowInviteFlow={handleShowInviteFlow} />
       ) : currentView === 'invite' ? (

@@ -12,13 +12,47 @@ import ShipmentTracker from './ShipmentTracker';
 import PayoutSummary from './PayoutSummary';
 import BuyerInquiries from './BuyerInquiries';
 import CompliancePanel from './CompliancePanel';
+import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
 
 interface ExporterDashboardProps {
   onShowInviteFlow?: () => void;
+  userType?: 'exporter' | 'trader';
 }
 
-const ExporterDashboard = ({ onShowInviteFlow }: ExporterDashboardProps) => {
+// Mock organizations for demonstration
+const mockOrganizations = [
+  {
+    id: '1',
+    name: 'Shivani Granites Ltd.',
+    type: 'Factory' as const,
+    location: 'Jaipur, India',
+  },
+  {
+    id: '2',
+    name: 'Global Stone Exports',
+    type: 'Exporter' as const,
+    location: 'Mumbai, India',
+  },
+  {
+    id: '3',
+    name: 'Premium Marble Trading Co.',
+    type: 'Trader' as const,
+    location: 'Dubai, UAE',
+  },
+];
+
+const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: ExporterDashboardProps) => {
   const [activeTab, setActiveTab] = useState('overview');
+
+  const currentOrg = mockOrganizations[0]; // Default to first org
+
+  const handleOrganizationChange = (orgId: string) => {
+    console.log('Switching to organization:', orgId);
+    // In a real app, this would trigger a context switch
+  };
+
+  // Only show organization switcher for traders
+  const canSwitchOrganizations = userType === 'trader';
 
   const summaryMetrics = [
     {
@@ -54,7 +88,20 @@ const ExporterDashboard = ({ onShowInviteFlow }: ExporterDashboardProps) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 to-sage-50 font-sora">
       <div className="container mx-auto px-4 py-6 space-y-6">
-        <DashboardHeader />
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <DashboardHeader />
+          
+          {/* Organization Switcher - Only for traders */}
+          {canSwitchOrganizations && (
+            <div className="w-full lg:w-80">
+              <OrganizationSwitcher
+                currentOrg={currentOrg}
+                organizations={mockOrganizations}
+                onOrganizationChange={handleOrganizationChange}
+              />
+            </div>
+          )}
+        </div>
         
         {/* Summary Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

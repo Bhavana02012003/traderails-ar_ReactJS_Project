@@ -33,6 +33,15 @@ const ChooseOrganizationModal = ({
   const [selectedOrg, setSelectedOrg] = useState<string>('');
   const [rememberChoice, setRememberChoice] = useState(false);
 
+  // Only show modal for traders and agents
+  const shouldShowModal = userType === 'trader' || userType === 'agent';
+
+  // If user type doesn't support org switching, auto-select first org
+  if (!shouldShowModal && organizations.length > 0) {
+    onOrganizationSelect(organizations[0].id);
+    return null;
+  }
+
   const getOrgTypeColor = (type: string) => {
     switch (type) {
       case 'Factory':

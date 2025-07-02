@@ -8,21 +8,70 @@ import SlabBookmarks from './SlabBookmarks';
 import AssignedAgents from './AssignedAgents';
 import LocationMap from './LocationMap';
 import TrustBadges from './TrustBadges';
+import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
 
 interface BuyerDashboardProps {
   onShowInviteFlow?: () => void;
+  userType?: 'buyer' | 'agent' | 'trader';
 }
 
-const BuyerDashboard = ({ onShowInviteFlow }: BuyerDashboardProps) => {
+// Mock organizations for demonstration
+const mockOrganizations = [
+  {
+    id: '1',
+    name: 'Shivani Granites Ltd.',
+    type: 'Factory' as const,
+    location: 'Jaipur, India',
+  },
+  {
+    id: '2',
+    name: 'Global Stone Exports',
+    type: 'Exporter' as const,
+    location: 'Mumbai, India',
+  },
+  {
+    id: '3',
+    name: 'Premium Marble Trading Co.',
+    type: 'Trader' as const,
+    location: 'Dubai, UAE',
+  },
+];
+
+const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboardProps) => {
   const [activeTab, setActiveTab] = useState('overview');
+
+  const currentOrg = mockOrganizations[0]; // Default to first org
+
+  const handleOrganizationChange = (orgId: string) => {
+    console.log('Switching to organization:', orgId);
+    // In a real app, this would trigger a context switch
+  };
+
+  // Only show organization switcher for traders and agents
+  const canSwitchOrganizations = userType === 'trader' || userType === 'agent';
 
   return (
     <div className="min-h-screen bg-stone-50">
       <div className="container mx-auto px-4 lg:px-8 py-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-stone-900 mb-2">Buyer Dashboard</h1>
-          <p className="text-stone-600">Manage your orders, track shipments, and discover premium stone materials</p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-stone-900 mb-2">Buyer Dashboard</h1>
+              <p className="text-stone-600">Manage your orders, track shipments, and discover premium stone materials</p>
+            </div>
+            
+            {/* Organization Switcher - Only for traders and agents */}
+            {canSwitchOrganizations && (
+              <div className="w-full sm:w-80">
+                <OrganizationSwitcher
+                  currentOrg={currentOrg}
+                  organizations={mockOrganizations}
+                  onOrganizationChange={handleOrganizationChange}
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
