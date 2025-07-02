@@ -17,7 +17,7 @@ import {
   Verified, 
   Share2, 
   MessageCircle,
-  Cube,
+  Box,
   Shield,
   ChevronLeft,
   ChevronRight,
@@ -101,7 +101,7 @@ const SlabModal = ({ slab, open, onOpenChange }: SlabModalProps) => {
                     variant="outline"
                     onClick={() => setView3D(!view3D)}
                   >
-                    <Cube className="w-4 h-4 mr-2" />
+                    <Box className="w-4 h-4 mr-2" />
                     {view3D ? 'Photo View' : '3D View'}
                   </Button>
                   <Button className="glass-panel text-white border-white/20 hover:bg-white/20" variant="outline">
