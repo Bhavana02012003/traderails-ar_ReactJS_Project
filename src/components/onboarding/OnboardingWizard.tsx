@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,6 +12,8 @@ import FinalizeStep from './steps/FinalizeStep';
 export interface OnboardingData {
   role: string;
   email: string;
+  password: string;
+  mfaOtp: string;
   phone: string;
   otp: string;
   inviteCode: string;
@@ -39,6 +40,8 @@ const OnboardingWizard = () => {
   const [data, setData] = useState<OnboardingData>({
     role: '',
     email: '',
+    password: '',
+    mfaOtp: '',
     phone: '',
     otp: '',
     inviteCode: '',

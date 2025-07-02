@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Building2, ShoppingCart, Users, ArrowRight } from 'lucide-react';
+import { Building2, ShoppingCart, Users, UserCheck, ArrowRight } from 'lucide-react';
 import { OnboardingData } from '../OnboardingWizard';
 
 interface WelcomeStepProps {
@@ -22,6 +22,7 @@ const WelcomeStep = ({ data, updateData, onNext }: WelcomeStepProps) => {
       description: 'I manufacture or export granite, quartz, and natural stone products',
       icon: Building2,
       color: 'emerald',
+      authMethod: 'email',
     },
     {
       id: 'buyer',
@@ -29,13 +30,23 @@ const WelcomeStep = ({ data, updateData, onNext }: WelcomeStepProps) => {
       description: 'I purchase stone products for distribution or projects',
       icon: ShoppingCart,
       color: 'sage',
+      authMethod: 'email',
+    },
+    {
+      id: 'agent',
+      title: "Buyer's Agent",
+      description: 'I represent buyers and help them find the right suppliers',
+      icon: UserCheck,
+      color: 'stone',
+      authMethod: 'mobile',
     },
     {
       id: 'trader',
-      title: 'Independent Trader / Agent',
-      description: 'I facilitate trades between buyers and suppliers',
+      title: 'Independent Trader',
+      description: 'I facilitate trades between buyers and suppliers independently',
       icon: Users,
       color: 'stone',
+      authMethod: 'mobile',
     },
   ];
 
@@ -57,7 +68,7 @@ const WelcomeStep = ({ data, updateData, onNext }: WelcomeStepProps) => {
       <div className="space-y-6">
         <h2 className="text-xl font-semibold text-stone-800">What best describes you?</h2>
         
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {roles.map((role) => (
             <Card
               key={role.id}
@@ -78,7 +89,10 @@ const WelcomeStep = ({ data, updateData, onNext }: WelcomeStepProps) => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-stone-900 mb-2">{role.title}</h3>
-                  <p className="text-sm text-stone-600">{role.description}</p>
+                  <p className="text-sm text-stone-600 mb-2">{role.description}</p>
+                  <p className="text-xs text-stone-500">
+                    Auth: {role.authMethod === 'email' ? 'Email + MFA' : 'Mobile OTP'}
+                  </p>
                 </div>
                 {data.role === role.id && (
                   <div className="text-emerald-600">

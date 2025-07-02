@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, ArrowRight, Mail, Phone, Key } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Mail, Phone, Key, Shield } from 'lucide-react';
 import { OnboardingData } from '../OnboardingWizard';
 
 interface ContactInfoStepProps {
@@ -17,20 +17,41 @@ interface ContactInfoStepProps {
 }
 
 const ContactInfoStep = ({ data, updateData, onNext, onPrev }: ContactInfoStepProps) => {
-  const [contactMethod, setContactMethod] = useState<'email' | 'phone'>('email');
   const [otpSent, setOtpSent] = useState(false);
+  const [mfaOtpSent, setMfaOtpSent] = useState(false);
+
+  // Determine auth method based on role
+  const getAuthMethod = () => {
+    if (data.role === 'buyer' || data.role === 'exporter') {
+      return 'email';
+    }
+    return 'mobile';
+  };
+
+  const authMethod = getAuthMethod();
+  const requiresMfa = data.role === 'buyer' || data.role === 'exporter';
 
   const handleSendOTP = () => {
-    if (contactMethod === 'phone' && data.phone) {
+    if (authMethod === 'mobile' && data.phone) {
       setOtpSent(true);
-      // In a real app, this would send the OTP
       console.log('Sending OTP to:', data.phone);
     }
   };
 
+  const handleSendMfaOTP = () => {
+    if (requiresMfa) {
+      setMfaOtpSent(true);
+      console.log('Sending MFA OTP');
+    }
+  };
+
   const canProceed = () => {
-    if (contactMethod === 'email') {
-      return data.email && data.email.includes('@');
+    if (authMethod === 'email') {
+      const hasCredentials = data.email && data.email.includes('@') && data.password;
+      if (requiresMfa) {
+        return hasCredentials && (!mfaOtpSent || data.mfaOtp);
+      }
+      return hasCredentials;
     } else {
       return data.phone && data.otp && data.otp.length === 6;
     }
@@ -41,55 +62,88 @@ const ContactInfoStep = ({ data, updateData, onNext, onPrev }: ContactInfoStepPr
       <div className="text-center space-y-4">
         <h2 className="text-2xl md:text-3xl font-bold text-stone-900">Contact Information</h2>
         <p className="text-stone-600">
-          We'll use this to verify your account and send important updates about your trades.
+          {authMethod === 'email' 
+            ? "We'll use email authentication with additional security for your account."
+            : "We'll verify your account using your mobile number."
+          }
         </p>
       </div>
 
       <Card className="border-stone-200/50">
         <CardContent className="p-6 space-y-6">
-          {/* Contact Method Selection */}
-          <div className="space-y-4">
-            <Label className="text-base font-medium text-stone-800">How would you like to verify your account?</Label>
-            <div className="grid grid-cols-2 gap-4">
-              <Button
-                variant={contactMethod === 'email' ? 'default' : 'outline'}
-                onClick={() => setContactMethod('email')}
-                className="h-12 justify-start"
-              >
-                <Mail className="w-4 h-4 mr-2" />
-                Email
-              </Button>
-              <Button
-                variant={contactMethod === 'phone' ? 'default' : 'outline'}
-                onClick={() => setContactMethod('phone')}
-                className="h-12 justify-start"
-              >
-                <Phone className="w-4 h-4 mr-2" />
-                Phone
-              </Button>
-            </div>
-          </div>
+          {authMethod === 'email' ? (
+            // Email-based authentication for buyers and exporters
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="email" className="flex items-center">
+                  <Mail className="w-4 h-4 mr-2" />
+                  Email Address
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your business email"
+                  value={data.email}
+                  onChange={(e) => updateData({ email: e.target.value })}
+                  className="h-12"
+                />
+              </div>
 
-          {/* Email Input */}
-          {contactMethod === 'email' && (
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your business email"
-                value={data.email}
-                onChange={(e) => updateData({ email: e.target.value })}
-                className="h-12"
-              />
-            </div>
-          )}
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Create a secure password"
+                  value={data.password}
+                  onChange={(e) => updateData({ password: e.target.value })}
+                  className="h-12"
+                />
+              </div>
 
-          {/* Phone Input */}
-          {contactMethod === 'phone' && (
+              {requiresMfa && (
+                <div className="space-y-4 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                  <div className="flex items-center text-emerald-700">
+                    <Shield className="w-4 h-4 mr-2" />
+                    <span className="font-medium">Multi-Factor Authentication</span>
+                  </div>
+                  
+                  {!mfaOtpSent ? (
+                    <Button
+                      onClick={handleSendMfaOTP}
+                      variant="outline"
+                      className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-100"
+                    >
+                      Enable MFA (Recommended)
+                    </Button>
+                  ) : (
+                    <div className="space-y-2">
+                      <Label htmlFor="mfaOtp">Enter MFA Code</Label>
+                      <Input
+                        id="mfaOtp"
+                        type="text"
+                        placeholder="Enter 6-digit code"
+                        value={data.mfaOtp}
+                        onChange={(e) => updateData({ mfaOtp: e.target.value })}
+                        maxLength={6}
+                        className="h-12"
+                      />
+                      <p className="text-sm text-emerald-600">
+                        MFA code sent to your email for additional security
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
+          ) : (
+            // Mobile-based authentication for agents and traders
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone" className="flex items-center">
+                  <Phone className="w-4 h-4 mr-2" />
+                  Phone Number
+                </Label>
                 <div className="flex gap-2">
                   <Input
                     id="phone"

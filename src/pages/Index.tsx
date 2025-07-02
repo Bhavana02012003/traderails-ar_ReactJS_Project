@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import Header from '@/components/Header';
@@ -14,14 +15,14 @@ import LoginModal from '@/components/LoginModal';
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin'>('home');
-  const [userType, setUserType] = useState<'exporter' | 'buyer' | 'admin' | null>(null);
+  const [userType, setUserType] = useState<'exporter' | 'buyer' | 'admin' | 'agent' | 'trader' | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLoginClick = () => {
     setIsLoginModalOpen(true);
   };
 
-  const handleLoginSuccess = (type: 'buyer' | 'exporter' | 'admin') => {
+  const handleLoginSuccess = (type: 'buyer' | 'exporter' | 'agent' | 'trader') => {
     setUserType(type);
     setIsLoggedIn(true);
     setIsLoginModalOpen(false);
@@ -30,8 +31,9 @@ const Index = () => {
       setCurrentView('buyer');
     } else if (type === 'exporter') {
       setCurrentView('exporter');
-    } else if (type === 'admin') {
-      setCurrentView('admin');
+    } else if (type === 'agent' || type === 'trader') {
+      // For now, redirect agents and traders to marketplace
+      setCurrentView('marketplace');
     }
   };
 
@@ -66,6 +68,8 @@ const Index = () => {
       setCurrentView('exporter');
     } else if (userType === 'admin') {
       setCurrentView('admin');
+    } else if (userType === 'agent' || userType === 'trader') {
+      setCurrentView('marketplace');
     }
   };
 
