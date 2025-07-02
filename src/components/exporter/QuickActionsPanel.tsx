@@ -1,9 +1,13 @@
 
-import { Plus, Upload, Download } from 'lucide-react';
+import { Plus, Upload, Download, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
-const QuickActionsPanel = () => {
+interface QuickActionsPanelProps {
+  onShowInviteFlow?: () => void;
+}
+
+const QuickActionsPanel = ({ onShowInviteFlow }: QuickActionsPanelProps) => {
   return (
     <Card className="glass-panel border-0">
       <CardContent className="p-6">
@@ -21,6 +25,16 @@ const QuickActionsPanel = () => {
             <Download className="w-4 h-4 mr-2" />
             Download KYC Report
           </Button>
+          {onShowInviteFlow && (
+            <Button 
+              variant="outline" 
+              onClick={onShowInviteFlow}
+              className="hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700 transition-all duration-300"
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              Invite Team Member
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

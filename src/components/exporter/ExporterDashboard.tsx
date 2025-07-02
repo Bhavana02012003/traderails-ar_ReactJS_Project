@@ -13,7 +13,11 @@ import PayoutSummary from './PayoutSummary';
 import BuyerInquiries from './BuyerInquiries';
 import CompliancePanel from './CompliancePanel';
 
-const ExporterDashboard = () => {
+interface ExporterDashboardProps {
+  onShowInviteFlow?: () => void;
+}
+
+const ExporterDashboard = ({ onShowInviteFlow }: ExporterDashboardProps) => {
   const [activeTab, setActiveTab] = useState('overview');
 
   const summaryMetrics = [
@@ -75,7 +79,7 @@ const ExporterDashboard = () => {
           })}
         </div>
 
-        <QuickActionsPanel />
+        <QuickActionsPanel onShowInviteFlow={onShowInviteFlow} />
 
         {/* Main Dashboard Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">

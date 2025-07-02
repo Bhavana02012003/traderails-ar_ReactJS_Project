@@ -1,5 +1,6 @@
-
 import { useState } from 'react';
+import { UserPlus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import AdminSidebar from './AdminSidebar';
 import AdminMetrics from './AdminMetrics';
 import TransactionMonitor from './TransactionMonitor';
@@ -12,9 +13,10 @@ import DisputeResolution from './DisputeResolution';
 
 interface AdminDashboardProps {
   onLogout: () => void;
+  onShowInviteFlow?: () => void;
 }
 
-const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
+const AdminDashboard = ({ onLogout, onShowInviteFlow }: AdminDashboardProps) => {
   const [activeSection, setActiveSection] = useState('overview');
   const [selectedDisputeId, setSelectedDisputeId] = useState<string | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -62,9 +64,20 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
         }`}>
           {activeSection === 'overview' && (
             <div className="space-y-4 sm:space-y-6">
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Platform Overview</h1>
-                <p className="text-slate-600 text-sm sm:text-base">Monitor key metrics and platform health</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Platform Overview</h1>
+                  <p className="text-slate-600 text-sm sm:text-base">Monitor key metrics and platform health</p>
+                </div>
+                {onShowInviteFlow && (
+                  <Button 
+                    onClick={onShowInviteFlow}
+                    className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                  >
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Invite User
+                  </Button>
+                )}
               </div>
               
               <AdminMetrics />
@@ -87,9 +100,20 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
 
           {activeSection === 'users' && (
             <div className="space-y-4 sm:space-y-6">
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">User Management</h1>
-                <p className="text-slate-600 text-sm sm:text-base">Manage user accounts and verification</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">User Management</h1>
+                  <p className="text-slate-600 text-sm sm:text-base">Manage user accounts and verification</p>
+                </div>
+                {onShowInviteFlow && (
+                  <Button 
+                    onClick={onShowInviteFlow}
+                    className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                  >
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Invite User
+                  </Button>
+                )}
               </div>
               <KYCReviewQueue />
             </div>

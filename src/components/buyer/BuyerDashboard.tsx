@@ -9,7 +9,11 @@ import AssignedAgents from './AssignedAgents';
 import LocationMap from './LocationMap';
 import TrustBadges from './TrustBadges';
 
-const BuyerDashboard = () => {
+interface BuyerDashboardProps {
+  onShowInviteFlow?: () => void;
+}
+
+const BuyerDashboard = ({ onShowInviteFlow }: BuyerDashboardProps) => {
   const [activeTab, setActiveTab] = useState('overview');
 
   return (
@@ -42,7 +46,7 @@ const BuyerDashboard = () => {
             <BuyerSummaryCards />
             
             {/* Quick Actions */}
-            <BuyerQuickActions />
+            <BuyerQuickActions onShowInviteFlow={onShowInviteFlow} />
             
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               {/* Recent Orders */}

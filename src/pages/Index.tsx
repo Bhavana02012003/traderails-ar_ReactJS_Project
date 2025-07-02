@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import Header from '@/components/Header';
@@ -109,16 +110,6 @@ const Index = () => {
             <TrustSection />
             <FeaturesSection />
             <MarketplacePreview />
-            
-            {/* Demo button to show invite flow */}
-            <div className="py-12 text-center">
-              <button
-                onClick={handleShowInviteFlow}
-                className="px-6 py-3 emerald-gradient text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
-              >
-                Demo: Invite User Flow
-              </button>
-            </div>
           </main>
 
           <footer className="bg-stone-900 text-white py-12">
@@ -176,11 +167,11 @@ const Index = () => {
       ) : currentView === 'marketplace' ? (
         <MarketplaceContent />
       ) : currentView === 'exporter' ? (
-        <ExporterDashboard />
+        <ExporterDashboard onShowInviteFlow={handleShowInviteFlow} />
       ) : currentView === 'buyer' ? (
-        <BuyerDashboard />
+        <BuyerDashboard onShowInviteFlow={handleShowInviteFlow} />
       ) : currentView === 'admin' ? (
-        <AdminDashboard onLogout={handleLogout} />
+        <AdminDashboard onLogout={handleLogout} onShowInviteFlow={handleShowInviteFlow} />
       ) : currentView === 'invite' ? (
         <InviteUserFlow onBack={handleHomeClick} />
       ) : (
