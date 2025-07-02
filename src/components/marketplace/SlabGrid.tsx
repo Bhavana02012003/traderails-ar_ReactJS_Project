@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { Slab } from '@/types/marketplace';
 import SlabCard from './SlabCard';

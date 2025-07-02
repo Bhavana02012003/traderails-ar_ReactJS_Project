@@ -13,6 +13,7 @@ import MarketplaceFilters from "@/components/marketplace/MarketplaceFilters";
 import SlabModal from "@/components/marketplace/SlabModal";
 import SlabViewer3D from "@/components/slab-viewer/SlabViewer3D";
 import TraderDashboard from "@/components/trader/TraderDashboard";
+import ExporterDashboard from "@/components/exporter/ExporterDashboard";
 import LoginModal from "@/components/LoginModal";
 import { Slab } from "@/types/marketplace";
 import { Search, SlidersHorizontal, Grid3X3, List } from "lucide-react";
@@ -24,6 +25,8 @@ const Index = () => {
   const [selectedSlab, setSelectedSlab] = useState<Slab | null>(null);
   const [show3DViewer, setShow3DViewer] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userType, setUserType] = useState<'buyer' | 'exporter' | 'agent' | 'trader' | null>(null);
   
   // Marketplace state
   const [searchQuery, setSearchQuery] = useState('');
@@ -40,7 +43,24 @@ const Index = () => {
   });
 
   const handleLoginClick = () => {
-    setShowLoginModal(true);
+    if (isLoggedIn) {
+      handleLogout();
+    } else {
+      setShowLoginModal(true);
+    }
+  };
+
+  const handleLoginSuccess = (selectedUserType: 'buyer' | 'exporter' | 'agent' | 'trader') => {
+    setIsLoggedIn(true);
+    setUserType(selectedUserType);
+    setShowLoginModal(false);
+    setCurrentView('dashboard');
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserType(null);
+    setCurrentView('home');
   };
 
   const handleBrowseClick = () => {
@@ -61,7 +81,11 @@ const Index = () => {
   };
 
   const handleDashboardClick = () => {
-    setCurrentView('dashboard');
+    if (isLoggedIn) {
+      setCurrentView('dashboard');
+    } else {
+      setShowLoginModal(true);
+    }
   };
 
   const handleSlabClick = (slab: Slab) => {
@@ -121,20 +145,103 @@ const Index = () => {
     );
   }
 
-  // Show dashboard view
-  if (currentView === 'dashboard') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-slate-50 to-emerald-50">
-        <Header 
-          onLoginClick={handleLoginClick}
-          onMarketplaceClick={handleMarketplaceClick}
-          onHomeClick={handleHomeClick}
-          onDashboardClick={handleDashboardClick}
-          currentView="trader"
-        />
-        <TraderDashboard />
-      </div>
-    );
+  // Show dashboard view based on user type
+  if (currentView === 'dashboard' && isLoggedIn) {
+    const getDashboardView = () => {
+      switch (userType) {
+        case 'trader':
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-stone-50 via-slate-50 to-emerald-50">
+              <Header 
+                onLoginClick={handleLoginClick}
+                onMarketplaceClick={handleMarketplaceClick}
+                onHomeClick={handleHomeClick}
+                onDashboardClick={handleDashboardClick}
+                currentView="trader"
+                isLoggedIn={isLoggedIn}
+                userType={userType}
+                onLogout={handleLogout}
+              />
+              <TraderDashboard />
+            </div>
+          );
+        case 'exporter':
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-stone-50 via-slate-50 to-emerald-50">
+              <Header 
+                onLoginClick={handleLoginClick}
+                onMarketplaceClick={handleMarketplaceClick}
+                onHomeClick={handleHomeClick}
+                onDashboardClick={handleDashboardClick}
+                currentView="exporter"
+                isLoggedIn={isLoggedIn}
+                userType={userType}
+                onLogout={handleLogout}
+              />
+              <ExporterDashboard userType="exporter" />
+            </div>
+          );
+        case 'buyer':
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-stone-50 via-slate-50 to-emerald-50">
+              <Header 
+                onLoginClick={handleLoginClick}
+                onMarketplaceClick={handleMarketplaceClick}
+                onHomeClick={handleHomeClick}
+                onDashboardClick={handleDashboardClick}
+                currentView="buyer"
+                isLoggedIn={isLoggedIn}
+                userType={userType}
+                onLogout={handleLogout}
+              />
+              <div className="container mx-auto px-4 py-8">
+                <h1 className="text-3xl font-bold text-stone-900 mb-4">Buyer Dashboard</h1>
+                <p className="text-stone-600">Buyer dashboard functionality coming soon...</p>
+              </div>
+            </div>
+          );
+        case 'agent':
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-stone-50 via-slate-50 to-emerald-50">
+              <Header 
+                onLoginClick={handleLoginClick}
+                onMarketplaceClick={handleMarketplaceClick}
+                onHomeClick={handleHomeClick}
+                onDashboardClick={handleDashboardClick}
+                currentView="agent"
+                isLoggedIn={isLoggedIn}
+                userType={userType}
+                onLogout={handleLogout}
+              />
+              <div className="container mx-auto px-4 py-8">
+                <h1 className="text-3xl font-bold text-stone-900 mb-4">Agent Dashboard</h1>
+                <p className="text-stone-600">Agent dashboard functionality coming soon...</p>
+              </div>
+            </div>
+          );
+        default:
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-stone-50 via-slate-50 to-emerald-50">
+              <Header 
+                onLoginClick={handleLoginClick}
+                onMarketplaceClick={handleMarketplaceClick}
+                onHomeClick={handleHomeClick}
+                onDashboardClick={handleDashboardClick}
+                currentView="home"
+                isLoggedIn={isLoggedIn}
+                userType={userType}
+                onLogout={handleLogout}
+              />
+              <div className="container mx-auto px-4 py-8">
+                <h1 className="text-3xl font-bold text-stone-900 mb-4">Dashboard</h1>
+                <p className="text-stone-600">Please select a user type to access your dashboard.</p>
+              </div>
+            </div>
+          );
+      }
+    };
+
+    return getDashboardView();
   }
 
   // Show marketplace view
@@ -147,6 +254,9 @@ const Index = () => {
           onHomeClick={handleHomeClick}
           onDashboardClick={handleDashboardClick}
           currentView="marketplace"
+          isLoggedIn={isLoggedIn}
+          userType={userType}
+          onLogout={handleLogout}
         />
         
         {/* Marketplace Header */}
@@ -159,7 +269,6 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Search and Controls */}
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400 w-5 h-5" />
@@ -240,7 +349,6 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Trust Footer */}
         <div className="bg-stone-100 border-t border-stone-200 py-6 mt-12">
           <div className="container mx-auto px-4 lg:px-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -259,7 +367,6 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Slab Detail Modal */}
         {selectedSlab && !show3DViewer && (
           <SlabModal
             slab={selectedSlab}
@@ -281,6 +388,9 @@ const Index = () => {
         onHomeClick={handleHomeClick}
         onDashboardClick={handleDashboardClick}
         currentView="home"
+        isLoggedIn={isLoggedIn}
+        userType={userType}
+        onLogout={handleLogout}
       />
       <HeroSection onBrowseClick={handleBrowseClick} onListClick={handleListClick} />
       
@@ -340,10 +450,10 @@ const Index = () => {
       <MarketplacePreview />
       <TrustSection />
 
-      {/* Login Modal */}
       <LoginModal
         open={showLoginModal}
         onOpenChange={setShowLoginModal}
+        onLoginSuccess={handleLoginSuccess}
       />
     </div>
   );
