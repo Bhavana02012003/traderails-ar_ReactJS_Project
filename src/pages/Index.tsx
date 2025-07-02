@@ -11,10 +11,11 @@ import ExporterDashboard from '@/components/exporter/ExporterDashboard';
 import BuyerDashboard from '@/components/buyer/BuyerDashboard';
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import LoginModal from '@/components/LoginModal';
+import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
 
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin' | 'onboarding'>('home');
   const [userType, setUserType] = useState<'exporter' | 'buyer' | 'admin' | 'agent' | 'trader' | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -73,10 +74,15 @@ const Index = () => {
     }
   };
 
+  const handleCreateAccount = () => {
+    setCurrentView('onboarding');
+    setIsLoginModalOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Only show header if not in admin view */}
-      {currentView !== 'admin' && (
+      {/* Only show header if not in admin view or onboarding */}
+      {currentView !== 'admin' && currentView !== 'onboarding' && (
         <Header 
           onLoginClick={handleLoginClick} 
           onMarketplaceClick={handleBrowseClick}
@@ -159,14 +165,17 @@ const Index = () => {
         <ExporterDashboard />
       ) : currentView === 'buyer' ? (
         <BuyerDashboard />
-      ) : (
+      ) : currentView === 'admin' ? (
         <AdminDashboard onLogout={handleLogout} />
+      ) : (
+        <OnboardingWizard />
       )}
 
       <LoginModal 
         open={isLoginModalOpen} 
         onOpenChange={setIsLoginModalOpen}
         onLoginSuccess={handleLoginSuccess}
+        onCreateAccount={handleCreateAccount}
       />
     </div>
   );

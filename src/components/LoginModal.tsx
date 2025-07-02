@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -6,16 +5,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Globe, Mail, Phone, Eye, EyeOff, User } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 interface LoginModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onLoginSuccess?: (userType: 'buyer' | 'exporter' | 'agent' | 'trader') => void;
+  onCreateAccount?: () => void;
 }
 
-const LoginModal = ({ open, onOpenChange, onLoginSuccess }: LoginModalProps) => {
-  const navigate = useNavigate();
+const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: LoginModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
@@ -84,8 +82,7 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess }: LoginModalProps) => 
   };
 
   const handleCreateAccount = () => {
-    onOpenChange(false);
-    navigate('/onboarding');
+    onCreateAccount?.();
   };
 
   const canProceed = () => {
