@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { ArrowLeft, MessageSquare, Phone, Eye, Cube, Clock, MapPin, DollarSign, FileText, CheckCircle, XCircle, Edit3 } from 'lucide-react';
+import { ArrowLeft, MessageSquare, Phone, Eye, Box, Clock, MapPin, DollarSign, FileText, CheckCircle, XCircle, Edit3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -161,7 +160,7 @@ const QuoteReviewPage = ({ onBack }: QuoteReviewPageProps) => {
             <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-stone-900">
-                  <Cube className="w-5 h-5" />
+                  <Box className="w-5 h-5" />
                   Quoted Slabs ({quote.slabs.length} items)
                 </CardTitle>
               </CardHeader>

@@ -25,8 +25,13 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
   const [currentView, setCurrentView] = useState<'dashboard' | 'quote-review'>('dashboard');
   const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(null);
 
-  const handleInvoiceSelect = (invoice: any) => {
-    setSelectedInvoice(invoice);
+  const handleFinancialWorkflow = (orderData: {
+    invoiceId: string;
+    amount: { inr: string; usd: string };
+    buyer: string;
+    status: 'approved' | 'pending' | 'rejected';
+  }) => {
+    setSelectedInvoice(orderData);
   };
 
   const handleViewQuote = (quoteId: string) => {
@@ -56,7 +61,10 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
   if (selectedInvoice) {
     return (
       <FinancialWorkflowTrigger 
-        invoice={selectedInvoice}
+        invoiceId={selectedInvoice.invoiceId}
+        amount={selectedInvoice.amount}
+        buyer={selectedInvoice.buyer}
+        status={selectedInvoice.status}
         onBack={() => setSelectedInvoice(null)}
       />
     );
@@ -64,20 +72,26 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 to-stone-100 font-['Inter']">
-      <DashboardHeader 
-        title={`${userType === 'agent' ? 'Agent' : userType === 'trader' ? 'Trader' : 'Buyer'} Dashboard`}
-        subtitle={userType === 'agent' ? 'Managing buyer relationships' : userType === 'trader' ? 'Trading opportunities' : 'Premium stone sourcing platform'}
-      />
+      <DashboardHeader />
       
       <div className="container mx-auto px-4 lg:px-8 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-stone-900 mb-2">
+            {userType === 'agent' ? 'Agent' : userType === 'trader' ? 'Trader' : 'Buyer'} Dashboard
+          </h1>
+          <p className="text-stone-600">
+            {userType === 'agent' ? 'Managing buyer relationships' : userType === 'trader' ? 'Trading opportunities' : 'Premium stone sourcing platform'}
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            <BuyerSummaryCards userType={userType} />
+            <BuyerSummaryCards />
             
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
               <QuotesList onViewQuote={handleViewQuote} />
-              <RecentOrders onInvoiceSelect={handleInvoiceSelect} />
+              <RecentOrders onFinancialWorkflow={handleFinancialWorkflow} />
             </div>
             
             <TrustBadges />
