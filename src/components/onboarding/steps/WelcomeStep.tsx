@@ -43,7 +43,7 @@ const WelcomeStep = ({ data, updateData, onNext }: WelcomeStepProps) => {
     {
       id: 'trader',
       title: 'Independent Trader',
-      description: 'I facilitate trades between buyers and suppliers independently',
+      description: 'I work individually or with small operations, partnering with exporters for international trade',
       icon: Users,
       color: 'stone',
       authMethod: 'mobile',
