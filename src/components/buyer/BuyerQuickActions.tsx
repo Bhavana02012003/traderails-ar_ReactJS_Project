@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Search, UserPlus, Eye, MapPin, Heart, Quote, ClipboardList, Users, Building2, Shield, ChevronDown, ChevronRight } from 'lucide-react';
+import { UserPlus, Eye, MapPin, Quote, ClipboardList, Users, Building2, Shield, ChevronDown, ChevronRight, Heart } from 'lucide-react';
 
 interface BuyerQuickActionsProps {
   onShowInviteFlow?: () => void;
@@ -15,12 +15,12 @@ const BuyerQuickActions = ({ onShowInviteFlow, onViewQuote, onFinancialWorkflow 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
 
-  const allActions = [
+  const mainActions = [
     {
-      id: 'browse',
-      title: 'Browse Marketplace',
-      description: 'Discover premium slabs',
-      icon: Search,
+      id: 'quotes',
+      title: 'Review Quotes',
+      description: 'Check new pricing proposals',
+      icon: Quote,
       category: 'main'
     },
     {
@@ -44,14 +44,10 @@ const BuyerQuickActions = ({ onShowInviteFlow, onViewQuote, onFinancialWorkflow 
       description: 'Update delivery ports',
       icon: MapPin,
       category: 'main'
-    },
-    {
-      id: 'quotes',
-      title: 'Review Quotes',
-      description: 'Check new pricing proposals',
-      icon: Quote,
-      category: 'access'
-    },
+    }
+  ];
+
+  const accessActions = [
     {
       id: 'orders',
       title: 'Track Orders',
@@ -165,31 +161,52 @@ const BuyerQuickActions = ({ onShowInviteFlow, onViewQuote, onFinancialWorkflow 
         
         <CollapsibleContent>
           <CardContent className="space-y-6">
-            {/* Action Buttons Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-              {allActions.map((action) => (
-                <Button
-                  key={action.id}
-                  variant={selectedAction === action.id ? "default" : "outline"}
-                  className={`h-auto p-3 flex flex-col items-center space-y-2 min-h-[80px] text-center transition-all hover:scale-105 ${
-                    action.id === 'browse' ? 'emerald-gradient text-white' : ''
-                  }`}
-                  onClick={() => handleActionClick(action)}
-                >
-                  <action.icon className="w-4 h-4 flex-shrink-0" />
-                  <div className="space-y-1">
+            {/* Main Action Buttons - Just 4 tiles */}
+            <div>
+              <h3 className="text-sm font-medium text-stone-700 mb-3">Quick Actions</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {mainActions.map((action) => (
+                  <Button
+                    key={action.id}
+                    variant={selectedAction === action.id ? "default" : "outline"}
+                    className={`h-auto p-3 flex flex-col items-center space-y-2 min-h-[80px] text-center transition-all hover:scale-105 ${
+                      action.id === 'quotes' ? 'emerald-gradient text-white' : ''
+                    }`}
+                    onClick={() => handleActionClick(action)}
+                  >
+                    <action.icon className="w-4 h-4 flex-shrink-0" />
+                    <div className="space-y-1">
+                      <div className="font-medium text-xs leading-tight">{action.title}</div>
+                      <div className="text-xs opacity-80 leading-tight">{action.description}</div>
+                    </div>
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Access Buttons */}
+            <div>
+              <h3 className="text-sm font-medium text-stone-700 mb-3">Quick Access</h3>
+              <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
+                {accessActions.map((action) => (
+                  <Button
+                    key={action.id}
+                    variant={selectedAction === action.id ? "default" : "outline"}
+                    className="h-auto p-2 flex flex-col items-center space-y-1 min-h-[60px] text-center transition-all hover:scale-105"
+                    onClick={() => handleActionClick(action)}
+                  >
+                    <action.icon className="w-3 h-3 flex-shrink-0" />
                     <div className="font-medium text-xs leading-tight">{action.title}</div>
-                    <div className="text-xs opacity-80 leading-tight">{action.description}</div>
-                  </div>
-                </Button>
-              ))}
+                  </Button>
+                ))}
+              </div>
             </div>
 
             {/* Records Display */}
             {selectedAction && (
               <div className="border-t border-stone-200 pt-6">
                 <h3 className="text-sm font-medium text-stone-800 mb-4">
-                  {allActions.find(a => a.id === selectedAction)?.title} Records
+                  {[...mainActions, ...accessActions].find(a => a.id === selectedAction)?.title} Records
                 </h3>
                 <div className="space-y-3">
                   {getRecordsForAction(selectedAction).map((record: any) => (
