@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -343,7 +342,7 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
           {/* Sidebar - Slab Info & Actions */}
           <div className="space-y-6">
             {/* Slab Metadata Panel */}
-            <Card className="bg-white/80 backdrop-blur-sm shadow-xl sticky top-28">
+            <Card className="bg-white/80 backdrop-blur-sm shadow-xl">
               <CardContent className="p-6">
                 <div className="space-y-6">
                   {/* Price and Grade */}
