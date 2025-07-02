@@ -15,9 +15,9 @@ interface HeaderProps {
   onMarketplaceClick?: () => void;
   onHomeClick?: () => void;
   onDashboardClick?: () => void;
-  currentView?: 'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin';
+  currentView?: 'home' | 'marketplace' | 'exporter' | 'buyer' | 'admin' | 'trader' | 'agent';
   isLoggedIn?: boolean;
-  userType?: 'buyer' | 'exporter' | 'admin' | null;
+  userType?: 'buyer' | 'exporter' | 'admin' | 'agent' | 'trader' | null;
   onLogout?: () => void;
 }
 
@@ -75,7 +75,7 @@ const Header = ({
             <button 
               onClick={onDashboardClick}
               className={`transition-colors ${
-                currentView === 'exporter' || currentView === 'buyer' || currentView === 'admin'
+                currentView === 'exporter' || currentView === 'buyer' || currentView === 'admin' || currentView === 'trader' || currentView === 'agent'
                   ? 'text-emerald-600 font-medium' 
                   : 'text-stone-600 hover:text-emerald-600'
               }`}
@@ -95,7 +95,7 @@ const Header = ({
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
-            {isLoggedIn && (userType === 'buyer' || userType === 'exporter') ? (
+            {isLoggedIn && (userType === 'buyer' || userType === 'exporter' || userType === 'agent' || userType === 'trader') ? (
               <>
                 {/* Notifications */}
                 <Button variant="ghost" className="relative">
@@ -187,7 +187,7 @@ const Header = ({
                   setIsMenuOpen(false);
                 }}
                 className={`text-left transition-colors ${
-                  currentView === 'exporter' || currentView === 'buyer' || currentView === 'admin'
+                  currentView === 'exporter' || currentView === 'buyer' || currentView === 'admin' || currentView === 'trader' || currentView === 'agent'
                     ? 'text-emerald-600 font-medium' 
                     : 'text-stone-600 hover:text-emerald-600'
                 }`}
@@ -204,7 +204,7 @@ const Header = ({
                 Contact
               </a>
               <div className="flex flex-col space-y-2 pt-4 border-t border-stone-200">
-                {isLoggedIn && (userType === 'buyer' || userType === 'exporter') ? (
+                {isLoggedIn && (userType === 'buyer' || userType === 'exporter' || userType === 'agent' || userType === 'trader') ? (
                   <>
                     <Button variant="ghost" className="justify-start relative">
                       <Bell className="w-4 h-4 mr-2" />
