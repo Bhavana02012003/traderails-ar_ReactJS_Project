@@ -1,12 +1,20 @@
-import { useState } from 'react';
-import { Eye, Clock, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Eye, Clock, CheckCircle, XCircle, AlertTriangle, Search, Filter, ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { 
   Pagination, 
   PaginationContent, 
-  PaginationEllipsis, 
   PaginationItem, 
   PaginationLink, 
   PaginationNext, 
@@ -19,6 +27,10 @@ interface QuotesListProps {
 
 const QuotesList = ({ onViewQuote }: QuotesListProps) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'date' | 'value' | 'seller'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const itemsPerPage = 5;
 
   // Mock quotes data - expanded for pagination demo
@@ -102,10 +114,50 @@ const QuotesList = ({ onViewQuote }: QuotesListProps) => {
     }
   ];
 
-  const totalPages = Math.ceil(allQuotes.length / itemsPerPage);
+  // Filter and sort quotes
+  const filteredAndSortedQuotes = useMemo(() => {
+    let filtered = allQuotes.filter(quote => {
+      const matchesSearch = 
+        quote.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        quote.seller.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        quote.location.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesStatus = statusFilter === 'all' || quote.status === statusFilter;
+      
+      return matchesSearch && matchesStatus;
+    });
+
+    // Sort quotes
+    filtered.sort((a, b) => {
+      let comparison = 0;
+      
+      switch (sortBy) {
+        case 'date':
+          comparison = new Date(a.sentDate).getTime() - new Date(b.sentDate).getTime();
+          break;
+        case 'value':
+          comparison = a.totalValue - b.totalValue;
+          break;
+        case 'seller':
+          comparison = a.seller.localeCompare(b.seller);
+          break;
+      }
+      
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+
+    return filtered;
+  }, [allQuotes, searchTerm, statusFilter, sortBy, sortOrder]);
+
+  const totalPages = Math.ceil(filteredAndSortedQuotes.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentQuotes = allQuotes.slice(startIndex, endIndex);
+  const currentQuotes = filteredAndSortedQuotes.slice(startIndex, endIndex);
+
+  // Reset to first page when filters change
+  useState(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, sortBy, sortOrder]);
 
   const getStatusBadge = (status: string, urgent: boolean) => {
     const baseClasses = "text-xs font-medium";
@@ -171,57 +223,133 @@ const QuotesList = ({ onViewQuote }: QuotesListProps) => {
   return (
     <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
       <CardHeader>
-        <CardTitle className="text-stone-900">Quotes ({allQuotes.length})</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-stone-900">Quotes ({filteredAndSortedQuotes.length})</CardTitle>
+          <div className="flex items-center gap-2">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
+              <Input
+                placeholder="Search quotes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 w-64"
+              />
+            </div>
+
+            {/* Status Filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Filter className="w-4 h-4 mr-2" />
+                  Status
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setStatusFilter('all')}>
+                  All Statuses
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStatusFilter('pending')}>
+                  Pending
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStatusFilter('accepted')}>
+                  Accepted
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStatusFilter('negotiating')}>
+                  Negotiating
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStatusFilter('expired')}>
+                  Expired
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Sort */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <ArrowUpDown className="w-4 h-4 mr-2" />
+                  Sort
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setSortBy('date')}>
+                  Date {sortBy === 'date' && (sortOrder === 'desc' ? '↓' : '↑')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortBy('value')}>
+                  Value {sortBy === 'value' && (sortOrder === 'desc' ? '↓' : '↑')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortBy('seller')}>
+                  Seller {sortBy === 'seller' && (sortOrder === 'desc' ? '↓' : '↑')}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}>
+                  {sortOrder === 'asc' ? 'Descending' : 'Ascending'}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {currentQuotes.map((quote) => (
-            <div 
-              key={quote.id}
-              className={`p-4 rounded-lg border transition-all hover:shadow-md ${
-                quote.status === 'pending' ? 'bg-amber-50/50 border-amber-200' :
-                quote.status === 'accepted' ? 'bg-emerald-50/50 border-emerald-200' :
-                quote.status === 'expired' ? 'bg-stone-50 border-stone-200' :
-                'bg-blue-50/50 border-blue-200'
-              }`}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-stone-900">#{quote.id}</h3>
-                    {getStatusBadge(quote.status, quote.urgent)}
-                    {isExpiringSoon(quote.validTill) && quote.status === 'pending' && (
-                      <Badge variant="outline" className="text-xs text-orange-700 border-orange-200 bg-orange-50">
-                        Expires Soon
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-sm font-medium text-stone-900">{quote.seller}</p>
-                  <p className="text-xs text-stone-600">{quote.location}</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold text-stone-900">${quote.totalValue.toLocaleString()}</p>
-                  <p className="text-xs text-stone-600">{quote.slabCount} slabs</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4 text-xs text-stone-600">
-                  <span>Sent: {formatDate(quote.sentDate)}</span>
-                  <span>Valid till: {formatDate(quote.validTill)}</span>
-                </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => onViewQuote(quote.id)}
-                  className="text-stone-700 hover:text-stone-900"
-                >
-                  <Eye className="w-4 h-4 mr-1" />
-                  Review
-                </Button>
-              </div>
+          {currentQuotes.length === 0 ? (
+            <div className="text-center py-8 text-stone-500">
+              No quotes found matching your criteria.
             </div>
-          ))}
+          ) : (
+            currentQuotes.map((quote) => (
+              <div 
+                key={quote.id}
+                className={`p-4 rounded-lg border transition-all hover:shadow-md ${
+                  quote.status === 'pending' ? 'bg-amber-50/50 border-amber-200' :
+                  quote.status === 'accepted' ? 'bg-emerald-50/50 border-emerald-200' :
+                  quote.status === 'expired' ? 'bg-stone-50 border-stone-200' :
+                  'bg-blue-50/50 border-blue-200'
+                }`}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-stone-900">#{quote.id}</h3>
+                      {getStatusBadge(quote.status, quote.urgent)}
+                      {isExpiringSoon(quote.validTill) && quote.status === 'pending' && (
+                        <Badge variant="outline" className="text-xs text-orange-700 border-orange-200 bg-orange-50">
+                          Expires Soon
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-sm font-medium text-stone-900">{quote.seller}</p>
+                    <p className="text-xs text-stone-600">{quote.location}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-stone-900">${quote.totalValue.toLocaleString()}</p>
+                    <p className="text-xs text-stone-600">{quote.slabCount} slabs</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4 text-xs text-stone-600">
+                    <span>Sent: {formatDate(quote.sentDate)}</span>
+                    <span>Valid till: {formatDate(quote.validTill)}</span>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => onViewQuote(quote.id)}
+                    className="text-stone-700 hover:text-stone-900"
+                  >
+                    <Eye className="w-4 h-4 mr-1" />
+                    Review
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {totalPages > 1 && (
