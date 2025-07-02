@@ -72,9 +72,12 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
                 <DisputePanel onViewDispute={handleViewDispute} />
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <UserOnboardingFeed />
                 <ComplianceAlerts />
+              </div>
+              
+              <div className="grid grid-cols-1 gap-6">
                 <PartnerHealthStatus />
               </div>
             </div>
