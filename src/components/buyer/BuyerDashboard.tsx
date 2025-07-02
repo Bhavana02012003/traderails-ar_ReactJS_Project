@@ -8,6 +8,10 @@ import FinancialWorkflowTrigger from '@/components/finance/FinancialWorkflowTrig
 import InviteUserFlow from '@/components/invite/InviteUserFlow';
 import ShipmentTrackingView from '@/components/shipment/ShipmentTrackingView';
 import TrustBadges from './TrustBadges';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { FileText } from 'lucide-react';
 
 interface BuyerDashboardProps {
   onShowInviteFlow?: () => void;
@@ -100,6 +104,43 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
             onFinancialWorkflow={handleFinancialWorkflow}
             onTrackShipment={handleTrackShipment}
           />
+        </div>
+
+        {/* Invoices Section */}
+        <div className="mb-8">
+          <Card className="glass-panel border-0">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <FileText className="w-5 h-5 mr-2" />
+                Recent Invoices
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="bg-white/60 backdrop-blur-lg rounded-xl p-4 border border-white/30">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-stone-900">INV-2024-00108</h3>
+                      <p className="text-sm text-stone-600">From: Shivani Granites Ltd - ₹2,85,574</p>
+                      <p className="text-xs text-stone-500">Received: June 28, 2025</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-amber-100 text-amber-800 border-amber-200">
+                        Pending Payment
+                      </Badge>
+                      <Button 
+                        size="sm" 
+                        onClick={() => window.open('/invoice/preview', '_blank')}
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        View Invoice
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Trust Badges */}

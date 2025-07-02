@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Upload, Download, Bell, TrendingUp, Package, Truck, DollarSign } from 'lucide-react';
+import { Plus, Upload, Download, Bell, TrendingUp, Package, Truck, DollarSign, FileText } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -162,6 +162,7 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
           <TabsList className="glass-panel border-0 p-1 h-auto">
             <TabsTrigger value="overview" className="px-6 py-3">Overview</TabsTrigger>
             <TabsTrigger value="quotes" className="px-6 py-3">My Quotes</TabsTrigger>
+            <TabsTrigger value="invoices" className="px-6 py-3">Invoices</TabsTrigger>
             <TabsTrigger value="inventory" className="px-6 py-3">Inventory</TabsTrigger>
             <TabsTrigger value="shipments" className="px-6 py-3">Shipments</TabsTrigger>
             <TabsTrigger value="payouts" className="px-6 py-3">Payouts</TabsTrigger>
@@ -190,6 +191,42 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
               onViewQuote={handleViewQuote}
               onEditQuote={handleEditQuote}
             />
+          </TabsContent>
+
+          <TabsContent value="invoices">
+            <Card className="glass-panel border-0">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <FileText className="w-5 h-5 mr-2" />
+                  My Invoices
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="bg-white/60 backdrop-blur-lg rounded-xl p-4 border border-white/30">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold text-stone-900">INV-2024-00108</h3>
+                        <p className="text-sm text-stone-600">Rohan Imports Ltd - ₹2,85,574</p>
+                        <p className="text-xs text-stone-500">Created: June 28, 2025</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge className="bg-amber-100 text-amber-800 border-amber-200">
+                          Pending Payment
+                        </Badge>
+                        <Button 
+                          size="sm" 
+                          onClick={() => window.open('/invoice/preview', '_blank')}
+                          className="bg-emerald-600 hover:bg-emerald-700"
+                        >
+                          View Invoice
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="inventory">
