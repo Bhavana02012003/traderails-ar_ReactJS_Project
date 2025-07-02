@@ -1,5 +1,5 @@
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Eye, Box } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
@@ -9,6 +9,8 @@ import MarketplacePreview from "@/components/MarketplacePreview";
 import TrustSection from "@/components/TrustSection";
 
 const Index = () => {
+  const navigate = useNavigate();
+
   const handleLoginClick = () => {
     // Handle login click
     console.log("Login clicked");
@@ -25,8 +27,9 @@ const Index = () => {
   };
 
   const handleMarketplaceClick = () => {
-    // Handle marketplace navigation
+    // Navigate to marketplace page when it exists
     console.log("Marketplace clicked");
+    // TODO: Navigate to marketplace when route is created
   };
 
   const handleHomeClick = () => {
@@ -37,6 +40,7 @@ const Index = () => {
   const handleDashboardClick = () => {
     // Handle dashboard navigation
     console.log("Dashboard clicked");
+    // TODO: Navigate to dashboard when route is created
   };
 
   return (
