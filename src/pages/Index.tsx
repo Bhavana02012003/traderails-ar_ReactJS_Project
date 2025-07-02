@@ -21,13 +21,12 @@ import { Globe, MapPin, Phone, Mail, Shield, Users, TrendingUp } from 'lucide-re
 // Component imports for different sections and views
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
-import NavigationSection from '@/components/NavigationSection';
 import TrustSection from '@/components/TrustSection';
 import FeaturesSection from '@/components/FeaturesSection';
 import MarketplacePreview from '@/components/MarketplacePreview';
 import MarketplaceContent from '@/components/MarketplaceContent';
 import AboutContent from '@/components/AboutContent';
-import ContactContent from '@/components/ContactContent';
+import ContactContent from '@/components/ContactOverlay';
 import AboutOverlay from '@/components/AboutOverlay';
 import ContactOverlay from '@/components/ContactOverlay';
 
@@ -239,15 +238,6 @@ const Index = () => {
             <HeroSection 
               onBrowseClick={handleBrowseClick}
               onListClick={handleListClick}
-            />
-            
-            {/* Professional Navigation Section */}
-            <NavigationSection
-              onHomeClick={handleHomeClick}
-              onMarketplaceClick={handleBrowseClick}
-              onAboutClick={handleAboutClick}
-              onContactClick={handleContactClick}
-              currentView={currentView}
             />
             
             {/* Trust indicators and social proof */}
