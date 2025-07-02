@@ -5,17 +5,19 @@ import { Button } from '@/components/ui/button';
 interface AdminSidebarProps {
   collapsed: boolean;
   onToggle: () => void;
+  activeSection: string;
+  onSectionChange: (section: string) => void;
 }
 
-const AdminSidebar = ({ collapsed, onToggle }: AdminSidebarProps) => {
+const AdminSidebar = ({ collapsed, onToggle, activeSection, onSectionChange }: AdminSidebarProps) => {
   const menuItems = [
-    { icon: BarChart3, label: 'Overview', active: true },
-    { icon: Users, label: 'User Management' },
-    { icon: Shield, label: 'KYC & Compliance' },
-    { icon: CreditCard, label: 'Transactions' },
-    { icon: AlertTriangle, label: 'Disputes' },
-    { icon: FileCheck, label: 'Partner Health' },
-    { icon: Settings, label: 'Platform Settings' },
+    { id: 'overview', icon: BarChart3, label: 'Overview' },
+    { id: 'users', icon: Users, label: 'User Management' },
+    { id: 'kyc', icon: Shield, label: 'KYC & Compliance' },
+    { id: 'transactions', icon: CreditCard, label: 'Transactions' },
+    { id: 'disputes', icon: AlertTriangle, label: 'Disputes' },
+    { id: 'partners', icon: FileCheck, label: 'Partner Health' },
+    { id: 'settings', icon: Settings, label: 'Platform Settings' },
   ];
 
   return (
@@ -43,19 +45,19 @@ const AdminSidebar = ({ collapsed, onToggle }: AdminSidebarProps) => {
         </div>
 
         <nav className="space-y-2">
-          {menuItems.map((item, index) => (
-            <a
-              key={index}
-              href="#"
-              className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 ${
-                item.active 
+          {menuItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => onSectionChange(item.id)}
+              className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 text-left ${
+                activeSection === item.id
                   ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg' 
                   : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
               }`}
             >
               <item.icon className="w-5 h-5 flex-shrink-0" />
               {!collapsed && <span className="text-sm font-medium">{item.label}</span>}
-            </a>
+            </button>
           ))}
         </nav>
       </div>
