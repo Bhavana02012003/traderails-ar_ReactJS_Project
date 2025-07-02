@@ -1,6 +1,5 @@
 
 import { useState } from 'react';
-import { BarChart3, Package, MessageSquare, MapPin, TrendingUp, Users, FileText, DollarSign } from 'lucide-react';
 import DashboardHeader from '@/components/exporter/DashboardHeader';
 import BuyerSummaryCards from './BuyerSummaryCards';
 import RecentOrders from './RecentOrders';
@@ -75,6 +74,7 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
       <DashboardHeader />
       
       <div className="container mx-auto px-4 lg:px-8 py-8 max-w-7xl">
+        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-stone-900 mb-2">
             {userType === 'agent' ? 'Agent' : userType === 'trader' ? 'Trader' : 'Buyer'} Dashboard
@@ -84,33 +84,33 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
           </p>
         </div>
 
-        {/* Summary Cards - Always Visible */}
+        {/* Summary Cards */}
         <div className="mb-8">
           <BuyerSummaryCards />
         </div>
 
-        {/* Quick Actions with Collapsible Sections */}
+        {/* Quick Actions */}
         <div className="mb-8">
-          <BuyerQuickActions onShowInviteFlow={handleShowInviteFlow}>
-            {/* Collapsible Content */}
-            <div className="space-y-6">
-              {/* Essential Sections */}
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <QuotesList onViewQuote={handleViewQuote} />
-                <RecentOrders onFinancialWorkflow={handleFinancialWorkflow} />
-              </div>
+          <BuyerQuickActions onShowInviteFlow={handleShowInviteFlow} />
+        </div>
 
-              {/* Secondary Sections */}
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                {userType === 'buyer' && <AssignedAgents />}
-                <LocationMap />
-              </div>
+        {/* Main Dashboard Sections */}
+        <div className="space-y-8">
+          {/* Primary Sections */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <QuotesList onViewQuote={handleViewQuote} />
+            <RecentOrders onFinancialWorkflow={handleFinancialWorkflow} />
+          </div>
 
-              {/* Additional Sections */}
-              <SlabBookmarks />
-              <TrustBadges />
-            </div>
-          </BuyerQuickActions>
+          {/* Secondary Sections */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            {userType === 'buyer' && <AssignedAgents />}
+            <LocationMap />
+          </div>
+
+          {/* Additional Sections */}
+          <SlabBookmarks />
+          <TrustBadges />
         </div>
       </div>
     </div>

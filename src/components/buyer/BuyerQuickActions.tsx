@@ -2,18 +2,17 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Search, UserPlus, Eye, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Search, UserPlus, Eye, MapPin, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface BuyerQuickActionsProps {
   onShowInviteFlow?: () => void;
-  children?: React.ReactNode;
 }
 
-const BuyerQuickActions = ({ onShowInviteFlow, children }: BuyerQuickActionsProps) => {
+const BuyerQuickActions = ({ onShowInviteFlow }: BuyerQuickActionsProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const actions = [
+  const mainActions = [
     {
       title: 'Browse Marketplace',
       description: 'Discover premium slabs',
@@ -43,52 +42,51 @@ const BuyerQuickActions = ({ onShowInviteFlow, children }: BuyerQuickActionsProp
   ];
 
   return (
-    <Card className="bg-white/70 backdrop-blur-sm border border-stone-200">
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold text-stone-900">Quick Actions</CardTitle>
+    <Card className="bg-white/80 backdrop-blur-sm border border-stone-200 shadow-sm">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg font-semibold text-stone-800">Quick Actions</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         {/* Main Quick Actions */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {actions.map((action, index) => (
+          {mainActions.map((action, index) => (
             <Button
               key={index}
               variant={action.variant}
-              className={`h-auto p-3 flex flex-col items-center space-y-2 min-h-[80px] text-center ${action.className || ''}`}
+              className={`h-auto p-4 flex flex-col items-center space-y-2 min-h-[90px] text-center transition-all hover:scale-105 ${action.className || ''}`}
               onClick={action.onClick}
             >
               <action.icon className="w-5 h-5 flex-shrink-0" />
               <div className="space-y-1">
-                <div className="font-medium text-xs leading-tight">{action.title}</div>
-                <div className="text-xs opacity-75 leading-tight">{action.description}</div>
+                <div className="font-medium text-sm leading-tight">{action.title}</div>
+                <div className="text-xs opacity-80 leading-tight">{action.description}</div>
               </div>
             </Button>
           ))}
         </div>
 
-        {/* Collapsible Menu for Other Sections */}
-        {children && (
-          <div className="border-t border-stone-200 pt-4">
+        {/* Collapsible More Actions */}
+        <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+          <CollapsibleTrigger asChild>
             <Button
               variant="ghost"
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="w-full justify-between p-2 h-auto"
+              className="w-full justify-between p-3 h-auto border border-stone-200 hover:bg-stone-50 transition-colors"
             >
-              <span className="text-sm font-medium text-stone-700">View More Sections</span>
+              <span className="text-sm font-medium text-stone-700">More Dashboard Sections</span>
               {isExpanded ? (
-                <ChevronUp className="w-4 h-4 text-stone-500" />
-              ) : (
                 <ChevronDown className="w-4 h-4 text-stone-500" />
+              ) : (
+                <ChevronRight className="w-4 h-4 text-stone-500" />
               )}
             </Button>
-            
-            {isExpanded && (
-              <div className="mt-4 space-y-4">
-                {children}
-              </div>
-            )}
-          </div>
-        )}
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-0">
+            <div className="pt-4 text-center">
+              <p className="text-sm text-stone-600 mb-2">Additional sections will appear below</p>
+              <div className="w-12 h-px bg-stone-300 mx-auto"></div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </CardContent>
     </Card>
   );
