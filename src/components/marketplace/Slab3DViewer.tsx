@@ -48,14 +48,6 @@ const SlabMesh = ({ slab, showTraceability }: { slab: Slab; showTraceability: bo
     }
   }, [texture]);
 
-  // Subtle floating animation
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += 0.005;
-      meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
-    }
-  });
-
   // Create material based on finish type
   const getMaterial = () => {
     const baseProps = {
@@ -69,7 +61,6 @@ const SlabMesh = ({ slab, showTraceability }: { slab: Slab; showTraceability: bo
           ...baseProps,
           metalness: 0.1,
           roughness: 0.1,
-          reflectivity: 0.9,
           clearcoat: 1.0,
           clearcoatRoughness: 0.1,
         });
@@ -156,8 +147,8 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
   };
 
   const defectMarkers = [
-    { position: [1.5, 0.11, 2], type: 'Natural Vein', description: 'Beautiful natural marble veining' },
-    { position: [-1, 0.11, -1.5], type: 'Minor Edge Chip', description: 'Small chip that can be polished' },
+    { position: [1.5, 0.11, 2] as [number, number, number], type: 'Natural Vein', description: 'Beautiful natural marble veining' },
+    { position: [-1, 0.11, -1.5] as [number, number, number], type: 'Minor Edge Chip', description: 'Small chip that can be polished' },
   ];
 
   return (
@@ -262,6 +253,7 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
                   minDistance={3}
                   maxDistance={15}
                   maxPolarAngle={Math.PI / 2}
+                  autoRotate={false}
                 />
               </Suspense>
             </Canvas>
