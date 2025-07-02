@@ -13,7 +13,6 @@ import {
   Edit,
   Send,
   FileText,
-  Lock,
   Building,
   Calendar,
   Clock
@@ -30,10 +29,10 @@ interface TraderDashboardProps {
 
 // Mock data
 const tradeStatuses = [
-  { status: 'Quoted', count: 12, color: 'bg-amber-500' },
-  { status: 'Approved', count: 8, color: 'bg-blue-500' },
-  { status: 'In Escrow', count: 5, color: 'bg-purple-500' },
-  { status: 'Dispatched', count: 3, color: 'bg-emerald-500' }
+  { status: 'Quoted', count: 12, color: 'bg-gradient-to-br from-amber-400 to-amber-600', textColor: 'text-amber-900', bgAccent: 'bg-amber-50' },
+  { status: 'Approved', count: 8, color: 'bg-gradient-to-br from-blue-400 to-blue-600', textColor: 'text-blue-900', bgAccent: 'bg-blue-50' },
+  { status: 'In Production', count: 5, color: 'bg-gradient-to-br from-purple-400 to-purple-600', textColor: 'text-purple-900', bgAccent: 'bg-purple-50' },
+  { status: 'Dispatched', count: 3, color: 'bg-gradient-to-br from-emerald-400 to-emerald-600', textColor: 'text-emerald-900', bgAccent: 'bg-emerald-50' }
 ];
 
 const slabData = [
@@ -68,22 +67,19 @@ const activeBuyers = [
     name: 'Stone Craft LLC',
     location: 'Dubai, UAE',
     quoteValue: '₹2,45,000',
-    creditRequested: '₹1,50,000',
     status: 'pending'
   },
   {
     name: 'Marble Masters Inc',
     location: 'New York, USA',
     quoteValue: '₹5,80,000',
-    creditRequested: '₹3,00,000',
     status: 'approved'
   },
   {
     name: 'Premium Stones Ltd',
     location: 'London, UK',
     quoteValue: '₹1,95,000',
-    creditRequested: '₹1,00,000',
-    status: 'escrow'
+    status: 'production'
   }
 ];
 
@@ -134,7 +130,7 @@ const TraderDashboard = ({ onShowInviteFlow }: TraderDashboardProps) => {
     switch (status) {
       case 'pending': return 'bg-amber-100 text-amber-800';
       case 'approved': return 'bg-emerald-100 text-emerald-800';
-      case 'escrow': return 'bg-purple-100 text-purple-800';
+      case 'production': return 'bg-purple-100 text-purple-800';
       case 'confirmed': return 'bg-emerald-100 text-emerald-800';
       default: return 'bg-stone-100 text-stone-800';
     }
@@ -169,31 +165,64 @@ const TraderDashboard = ({ onShowInviteFlow }: TraderDashboardProps) => {
           </div>
         </div>
 
-        {/* Trade Pipeline Overview */}
-        <Card className="glass-panel border-0 shadow-lg">
-          <CardHeader>
+        {/* Enhanced Trade Pipeline Overview */}
+        <Card className="glass-panel border-0 shadow-lg overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-stone-100 to-emerald-50 border-b">
             <CardTitle className="flex items-center space-x-2">
               <TrendingUp className="w-5 h-5 text-emerald-600" />
               <span>Trade Pipeline Overview</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {tradeStatuses.map((item, index) => (
-                <div key={index} className="text-center">
-                  <div className={`w-16 h-16 ${item.color} rounded-full flex items-center justify-center mx-auto mb-2`}>
-                    <span className="text-white font-bold text-lg">{item.count}</span>
+                <div key={index} className="relative group">
+                  <div className={`p-6 rounded-xl ${item.bgAccent} border-2 border-transparent hover:border-stone-200 transition-all duration-300 hover:shadow-md`}>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className={`w-12 h-12 ${item.color} rounded-lg flex items-center justify-center shadow-md`}>
+                        <span className="text-white font-bold text-lg">{item.count}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className={`text-2xl font-bold ${item.textColor}`}>{item.count}</span>
+                        <p className="text-xs text-stone-500 uppercase tracking-wide">DEALS</p>
+                      </div>
+                    </div>
+                    <h3 className={`font-semibold ${item.textColor} text-center`}>{item.status}</h3>
+                    <div className="mt-3 bg-white bg-opacity-50 rounded-lg p-2">
+                      <div className={`h-2 ${item.color} rounded-full opacity-60`}></div>
+                    </div>
                   </div>
-                  <p className="text-sm font-medium text-stone-700">{item.status}</p>
                 </div>
               ))}
             </div>
+            
+            {/* Pipeline Flow Visualization */}
+            <div className="relative mb-8">
+              <div className="flex items-center justify-between">
+                {tradeStatuses.map((item, index) => (
+                  <div key={index} className="flex flex-col items-center">
+                    <div className={`w-8 h-8 ${item.color} rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg`}>
+                      {item.count}
+                    </div>
+                    <span className="text-xs font-medium text-stone-600 mt-2">{item.status}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="absolute top-4 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-400 via-blue-400 via-purple-400 to-emerald-400 -z-10"></div>
+            </div>
+            
             <div className="flex flex-wrap gap-3">
-              <Button className="emerald-gradient text-white">
+              <Button className="emerald-gradient text-white shadow-lg hover:shadow-xl transition-all duration-300">
+                <Send className="w-4 h-4 mr-2" />
                 Create Quote
               </Button>
-              <Button variant="outline">
-                Check Escrow Status
+              <Button variant="outline" className="hover:bg-stone-50">
+                <Package className="w-4 h-4 mr-2" />
+                Check Production Status
+              </Button>
+              <Button variant="outline" className="hover:bg-stone-50">
+                <FileText className="w-4 h-4 mr-2" />
+                Track Shipments
               </Button>
             </div>
           </CardContent>
@@ -376,7 +405,7 @@ const TraderDashboard = ({ onShowInviteFlow }: TraderDashboardProps) => {
                             Contact
                           </Button>
                           <Button size="sm" className="emerald-gradient text-white">
-                            <Lock className="w-4 h-4 mr-1" />
+                            <Send className="w-4 h-4 mr-1" />
                             Finalize
                           </Button>
                         </div>
@@ -428,7 +457,7 @@ const TraderDashboard = ({ onShowInviteFlow }: TraderDashboardProps) => {
                         </div>
                         <div className="text-right">
                           <span className="text-lg font-bold text-blue-700">{payment.amount}</span>
-                          <Badge className={getStatusColor(payment.status)} size="sm">
+                          <Badge className={getStatusColor(payment.status)}>
                             {payment.status}
                           </Badge>
                         </div>
