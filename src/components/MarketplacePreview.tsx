@@ -1,47 +1,112 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Eye, Heart, Star, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Eye, Heart, Star, ArrowRight, ArrowLeft, Box } from 'lucide-react';
+import Slab3DViewer from './marketplace/Slab3DViewer';
 
 const MarketplacePreview = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [selectedSlab, setSelectedSlab] = useState(null);
+  const [show3DViewer, setShow3DViewer] = useState(false);
 
   const slabs = [
     {
-      id: 1,
+      id: '1',
       name: "Carrara White Marble",
-      supplier: "Marble Masters Italy",
-      price: "$145/sqft",
+      supplier: {
+        name: "Marble Masters Italy",
+        location: "Carrara, Italy",
+        country: "Italy",
+        rating: 4.9,
+        verified: true
+      },
+      price: 145,
+      priceUnit: 'sqft',
       location: "Carrara, Italy",
       rating: 4.9,
       image: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=500&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400&h=300&fit=crop",
+      images: ["https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&h=600&fit=crop"],
       featured: true,
       thickness: "2cm",
-      finish: "Polished"
+      finish: "polished",
+      material: "marble",
+      color: "white",
+      dimensions: { length: 320, width: 160, thickness: 2 },
+      quarry: { name: 'Carrara Quarry', location: 'Tuscany, Italy' },
+      blockId: 'CAR-2024-001',
+      grade: 4.8,
+      aiQualityScore: 95,
+      certifications: ['CE', 'ISO 9001'],
+      availability: 'in-stock',
+      shippingTime: '14-21 days',
+      createdAt: '2024-01-15',
+      updatedAt: '2024-01-15'
     },
     {
-      id: 2,
+      id: '2',
       name: "Absolute Black Granite",
-      supplier: "Granite World India",
-      price: "$89/sqft",
+      supplier: {
+        name: "Granite World India",
+        location: "Karnataka, India",
+        country: "India",
+        rating: 4.8,
+        verified: true
+      },
+      price: 89,
+      priceUnit: 'sqft',
       location: "Karnataka, India",
       rating: 4.8,
       image: "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?w=500&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?w=400&h=300&fit=crop",
+      images: ["https://images.unsplash.com/photo-1493397212122-2b85dda8106b?w=800&h=600&fit=crop"],
       featured: false,
       thickness: "3cm",
-      finish: "Honed"
+      finish: "honed",
+      material: "granite",
+      color: "black",
+      dimensions: { length: 300, width: 150, thickness: 3 },
+      quarry: { name: 'Karnataka Quarry', location: 'Bangalore, India' },
+      blockId: 'ABS-2024-002',
+      grade: 4.6,
+      aiQualityScore: 88,
+      certifications: ['ASTM', 'BIS'],
+      availability: 'in-stock',
+      shippingTime: '21-28 days',
+      createdAt: '2024-01-14',
+      updatedAt: '2024-01-14'
     },
     {
-      id: 3,
+      id: '3',
       name: "Calacatta Gold Marble",
-      supplier: "Premium Stone Co.",
-      price: "$289/sqft",
+      supplier: {
+        name: "Premium Stone Co.",
+        location: "Tuscany, Italy",
+        country: "Italy",
+        rating: 5.0,
+        verified: true
+      },
+      price: 289,
+      priceUnit: 'sqft',
       location: "Tuscany, Italy",
       rating: 5.0,
       image: "https://images.unsplash.com/photo-1524230572899-a752b3835840?w=500&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1524230572899-a752b3835840?w=400&h=300&fit=crop",
+      images: ["https://images.unsplash.com/photo-1524230572899-a752b3835840?w=800&h=600&fit=crop"],
       featured: true,
       thickness: "2cm",
-      finish: "Polished"
+      finish: "polished",
+      material: "marble",
+      color: "white",
+      dimensions: { length: 310, width: 155, thickness: 2 },
+      quarry: { name: 'Calacatta Quarry', location: 'Tuscany, Italy' },
+      blockId: 'CAL-2024-003',
+      grade: 5.0,
+      aiQualityScore: 97,
+      certifications: ['CE', 'ISO 9001', 'GREENGUARD'],
+      availability: 'in-stock',
+      shippingTime: '10-14 days',
+      createdAt: '2024-01-13',
+      updatedAt: '2024-01-13'
     }
   ];
 
@@ -51,6 +116,11 @@ const MarketplacePreview = () => {
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + slabs.length) % slabs.length);
+  };
+
+  const handle3DView = (slab) => {
+    setSelectedSlab(slab);
+    setShow3DViewer(true);
   };
 
   return (
@@ -91,9 +161,12 @@ const MarketplacePreview = () => {
                         <button className="absolute top-4 right-4 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors">
                           <Heart className="w-5 h-5 text-stone-600" />
                         </button>
-                        <button className="absolute bottom-4 right-4 glass-panel px-4 py-2 rounded-lg text-white hover:scale-105 transition-transform">
-                          <Eye className="w-4 h-4 mr-2 inline" />
-                          AR View
+                        <button 
+                          onClick={() => handle3DView(slab)}
+                          className="absolute bottom-4 right-4 glass-panel px-4 py-2 rounded-lg text-white hover:scale-105 transition-transform flex items-center gap-2"
+                        >
+                          <Box className="w-4 h-4" />
+                          3D View
                         </button>
                       </div>
 
@@ -112,11 +185,11 @@ const MarketplacePreview = () => {
                         </div>
 
                         <h3 className="text-2xl font-bold text-stone-900 mb-2">{slab.name}</h3>
-                        <p className="text-stone-600 mb-4">{slab.supplier}</p>
+                        <p className="text-stone-600 mb-4">{slab.supplier.name}</p>
                         <p className="text-sm text-stone-500 mb-4">{slab.location}</p>
 
                         <div className="flex items-center justify-between mb-6">
-                          <div className="text-3xl font-bold text-emerald-600">{slab.price}</div>
+                          <div className="text-3xl font-bold text-emerald-600">${slab.price}/{slab.priceUnit}</div>
                           <div className="text-right">
                             <div className="text-sm text-stone-500">Thickness: {slab.thickness}</div>
                             <div className="text-sm text-stone-500">Finish: {slab.finish}</div>
@@ -175,6 +248,16 @@ const MarketplacePreview = () => {
           </Button>
         </div>
       </div>
+
+      {/* 3D Viewer */}
+      <Slab3DViewer 
+        slab={selectedSlab}
+        isOpen={show3DViewer}
+        onClose={() => {
+          setShow3DViewer(false);
+          setSelectedSlab(null);
+        }}
+      />
     </section>
   );
 };

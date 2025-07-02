@@ -1,10 +1,10 @@
-
 import { useState } from 'react';
-import { Heart, Eye, Star, MapPin, Clock, Verified } from 'lucide-react';
+import { Heart, Eye, Star, MapPin, Clock, Verified, Box } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Slab } from '@/types/marketplace';
 import PayoutModal from './PayoutModal';
+import Slab3DViewer from './Slab3DViewer';
 
 interface SlabCardProps {
   slab: Slab;
@@ -14,6 +14,7 @@ interface SlabCardProps {
 
 const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
   const [showPayoutModal, setShowPayoutModal] = useState(false);
+  const [show3DViewer, setShow3DViewer] = useState(false);
 
   const handleViewDetails = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -22,7 +23,6 @@ const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
 
   const handleRequestQuote = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Handle quote request
     console.log('Request quote for:', slab.id);
   };
 
@@ -31,10 +31,9 @@ const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
     setShowPayoutModal(true);
   };
 
-  const handleARView = (e: React.MouseEvent) => {
+  const handle3DView = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Handle AR view
-    console.log('AR view for:', slab.id);
+    setShow3DViewer(true);
   };
 
   if (viewMode === 'list') {
@@ -101,6 +100,10 @@ const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
                 </div>
                 
                 <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={handle3DView}>
+                    <Box className="w-4 h-4 mr-1" />
+                    3D View
+                  </Button>
                   <Button variant="outline" size="sm" onClick={handleRequestQuote}>
                     Request Quote
                   </Button>
@@ -116,6 +119,11 @@ const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
           isOpen={showPayoutModal} 
           onClose={() => setShowPayoutModal(false)} 
           slab={slab}
+        />
+        <Slab3DViewer 
+          slab={slab}
+          isOpen={show3DViewer}
+          onClose={() => setShow3DViewer(false)}
         />
       </>
     );
@@ -155,9 +163,13 @@ const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
 
           {/* Bottom overlay */}
           <div className="absolute bottom-4 right-4">
-            <Badge className="glass-panel text-white text-xs">
+            <button 
+              onClick={handle3DView}
+              className="glass-panel text-white text-xs px-3 py-2 rounded-lg hover:scale-105 transition-transform flex items-center gap-2"
+            >
+              <Box className="w-4 h-4" />
               3D | AR
-            </Badge>
+            </button>
           </div>
 
           {/* Grade indicator */}
@@ -214,6 +226,11 @@ const SlabCard = ({ slab, viewMode, onClick }: SlabCardProps) => {
         isOpen={showPayoutModal} 
         onClose={() => setShowPayoutModal(false)} 
         slab={slab}
+      />
+      <Slab3DViewer 
+        slab={slab}
+        isOpen={show3DViewer}
+        onClose={() => setShow3DViewer(false)}
       />
     </>
   );
