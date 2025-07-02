@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import MarketplaceFilters from '@/components/marketplace/MarketplaceFilters';
 import SlabGrid from '@/components/marketplace/SlabGrid';
-import SlabModal from '@/components/marketplace/SlabModal';
+import SlabDetailPage from '@/components/marketplace/SlabDetailPage';
 import { Slab } from '@/types/marketplace';
 
 const MarketplaceContent = () => {
@@ -14,6 +14,7 @@ const MarketplaceContent = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedSlab, setSelectedSlab] = useState<Slab | null>(null);
+  const [showDetailPage, setShowDetailPage] = useState(false);
   const [filters, setFilters] = useState({
     material: [] as string[],
     finish: [] as string[],
@@ -30,6 +31,26 @@ const MarketplaceContent = () => {
     { value: 'grade', label: 'AI Quality Score' },
     { value: 'popularity', label: 'Most Popular' }
   ];
+
+  const handleSlabClick = (slab: Slab) => {
+    setSelectedSlab(slab);
+    setShowDetailPage(true);
+  };
+
+  const handleBackToMarketplace = () => {
+    setShowDetailPage(false);
+    setSelectedSlab(null);
+  };
+
+  // Show detail page if a slab is selected
+  if (showDetailPage && selectedSlab) {
+    return (
+      <SlabDetailPage 
+        slab={selectedSlab} 
+        onBack={handleBackToMarketplace}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -121,7 +142,7 @@ const MarketplaceContent = () => {
               searchQuery={searchQuery}
               sortBy={sortBy}
               filters={filters}
-              onSlabClick={setSelectedSlab}
+              onSlabClick={handleSlabClick}
             />
           </div>
         </div>
@@ -145,15 +166,6 @@ const MarketplaceContent = () => {
           </div>
         </div>
       </div>
-
-      {/* Slab Detail Modal */}
-      {selectedSlab && (
-        <SlabModal
-          slab={selectedSlab}
-          open={!!selectedSlab}
-          onOpenChange={() => setSelectedSlab(null)}
-        />
-      )}
     </div>
   );
 };
