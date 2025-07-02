@@ -7,10 +7,11 @@ interface HeaderProps {
   onLoginClick: () => void;
   onMarketplaceClick?: () => void;
   onHomeClick?: () => void;
-  currentView?: 'home' | 'marketplace';
+  onExporterClick?: () => void;
+  currentView?: 'home' | 'marketplace' | 'exporter';
 }
 
-const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, currentView = 'home' }: HeaderProps) => {
+const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, onExporterClick, currentView = 'home' }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -46,6 +47,16 @@ const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, currentView = '
               }`}
             >
               Marketplace
+            </button>
+            <button 
+              onClick={onExporterClick}
+              className={`transition-colors ${
+                currentView === 'exporter' 
+                  ? 'text-emerald-600 font-medium' 
+                  : 'text-stone-600 hover:text-emerald-600'
+              }`}
+            >
+              Exporter
             </button>
             <a href="#features" className="text-stone-600 hover:text-emerald-600 transition-colors">
               Features
@@ -111,6 +122,19 @@ const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, currentView = '
                 }`}
               >
                 Marketplace
+              </button>
+              <button 
+                onClick={() => {
+                  onExporterClick?.();
+                  setIsMenuOpen(false);
+                }}
+                className={`text-left transition-colors ${
+                  currentView === 'exporter' 
+                    ? 'text-emerald-600 font-medium' 
+                    : 'text-stone-600 hover:text-emerald-600'
+                }`}
+              >
+                Exporter
               </button>
               <a href="#features" className="text-stone-600 hover:text-emerald-600 transition-colors">
                 Features
