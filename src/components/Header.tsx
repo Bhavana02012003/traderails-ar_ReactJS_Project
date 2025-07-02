@@ -139,25 +139,26 @@ const Header = ({
               Marketplace
             </button>
             
-            {/* Dashboard Navigation Link - Highlights for all dashboard views */}
-            <button 
-              onClick={onDashboardClick}
-              className={`transition-colors font-medium ${
-                currentView === 'exporter' || currentView === 'buyer' || currentView === 'admin' || currentView === 'trader' || currentView === 'agent'
-                  ? 'text-emerald-600 font-semibold' 
-                  : 'text-stone-700 hover:text-emerald-600'
-              }`}
-            >
-              Dashboard
-            </button>
+            {/* Dashboard Navigation Link - Only visible when user is logged in */}
+            {isLoggedIn && (
+              <button 
+                onClick={onDashboardClick}
+                className={`transition-colors font-medium ${
+                  currentView === 'exporter' || currentView === 'buyer' || currentView === 'admin' || currentView === 'trader' || currentView === 'agent'
+                    ? 'text-emerald-600 font-semibold' 
+                    : 'text-stone-700 hover:text-emerald-600'
+                }`}
+              >
+                Dashboard
+              </button>
+            )}
             
-            {/* Static Navigation Links - Using hash links for anchor navigation */}
-            <a href="#features" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
-              Features
-            </a>
+            {/* About Navigation Link - Using hash link for anchor navigation */}
             <a href="#about" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
               About
             </a>
+            
+            {/* Contact Navigation Link - Using hash link for anchor navigation */}
             <a href="#contact" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
               Contact
             </a>
@@ -274,28 +275,38 @@ const Header = ({
                 Marketplace
               </button>
               
-              <button 
-                onClick={() => {
-                  onDashboardClick?.();
-                  setIsMenuOpen(false);
-                }}
-                className={`text-left transition-colors font-medium ${
-                  currentView === 'exporter' || currentView === 'buyer' || currentView === 'admin' || currentView === 'trader' || currentView === 'agent'
-                    ? 'text-emerald-600 font-semibold' 
-                    : 'text-stone-700 hover:text-emerald-600'
-                }`}
-              >
-                Dashboard
-              </button>
+              {/* Dashboard Navigation Link - Only visible when user is logged in */}
+              {isLoggedIn && (
+                <button 
+                  onClick={() => {
+                    onDashboardClick?.();
+                    setIsMenuOpen(false);
+                  }}
+                  className={`text-left transition-colors font-medium ${
+                    currentView === 'exporter' || currentView === 'buyer' || currentView === 'admin' || currentView === 'trader' || currentView === 'agent'
+                      ? 'text-emerald-600 font-semibold' 
+                      : 'text-stone-700 hover:text-emerald-600'
+                  }`}
+                >
+                  Dashboard
+                </button>
+              )}
               
-              {/* Static Links */}
-              <a href="#features" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
-                Features
-              </a>
-              <a href="#about" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
+              {/* About Link - Closes mobile menu on click */}
+              <a 
+                href="#about" 
+                className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 About
               </a>
-              <a href="#contact" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
+              
+              {/* Contact Link - Closes mobile menu on click */}
+              <a 
+                href="#contact" 
+                className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Contact
               </a>
               
