@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Download, Send, Share2, FileText, Shield, Package, CheckCircle, Eye, Printer } from 'lucide-react';
+import { Download, Send, Share2, FileText, Shield, CheckCircle, Eye, Printer } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,14 +8,14 @@ import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const InvoicePreviewPage = () => {
-  const [viewMode, setViewMode] = useState<'preview' | 'print'>('preview');
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   // Mock invoice data
   const invoiceData = {
-    invoiceNumber: 'INV-2024-00108',
-    dateIssued: '2025-06-28',
+    invoiceNumber: 'TR-2025-0081',
+    dateIssued: '2025-06-30',
     linkedQuote: 'Q-02837',
-    status: 'pending_payment' as const,
+    status: 'pending' as const,
     
     exporter: {
       name: 'Shivani Granites Pvt Ltd',
@@ -28,10 +28,9 @@ const InvoicePreviewPage = () => {
     },
     
     buyer: {
-      name: 'Rohan Imports Ltd',
+      name: 'Rohan Imports LLC',
       address: '1247 Broadway, New York, NY 10001, USA',
       country: 'United States',
-      orgId: 'ORG-US-4521',
       phone: '+1 (555) 123-4567',
       email: 'purchasing@rohanimports.com'
     },
@@ -44,75 +43,68 @@ const InvoicePreviewPage = () => {
     
     items: [
       {
-        blockId: 'BLK-8723',
+        blockId: 'BL-8203',
         stoneType: 'Black Galaxy',
         finish: 'Polished',
-        quantity: 12,
+        quantity: 14,
         unit: 'Slabs',
-        rateInr: 7200,
-        totalInr: 86400
+        rateInr: 6800,
+        totalInr: 95200
       },
       {
-        blockId: 'BLK-8724',
+        blockId: 'BL-8204',
         stoneType: 'Absolute Black',
         finish: 'Honed',
         quantity: 8,
         unit: 'Slabs',
-        rateInr: 6800,
-        totalInr: 54400
+        rateInr: 6500,
+        totalInr: 52000
       },
       {
-        blockId: 'BLK-8725',
+        blockId: 'BL-8205',
         stoneType: 'Steel Grey',
         finish: 'Polished',
-        quantity: 15,
+        quantity: 12,
         unit: 'Slabs',
         rateInr: 5900,
-        totalInr: 88500
+        totalInr: 70800
       }
     ],
     
     totals: {
-      subtotal: 229300,
-      gst: 41274, // 18% GST
+      subtotal: 218000,
+      gst: 39240, // 18% GST
       freight: 15000,
-      total: 285574
+      total: 272240
     },
     
     payment: {
       terms: '60 days',
       method: 'Escrow',
-      fxRate: 83.40,
-      fxAmount: 3425, // USD equivalent
-      creditProvider: 'LendSure India'
-    },
-    
-    attachments: [
-      { name: 'Accepted Quote PDF', type: 'quote', verified: true },
-      { name: 'KYC Verification', type: 'kyc', verified: true },
-      { name: 'Packing List & Slab Manifest', type: 'packing', verified: false },
-      { name: 'Buyer Acceptance Screenshot', type: 'acceptance', verified: true }
-    ]
+      fxRate: 83.20,
+      fxAmount: 3274, // USD equivalent
+      creditProvider: 'LendSure Capital'
+    }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'pending_payment':
+      case 'pending':
         return (
-          <Badge variant="outline" className="text-amber-700 border-amber-200 bg-amber-50">
-            Pending Payment
+          <Badge className="bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100">
+            Pending
+          </Badge>
+        );
+      case 'approved':
+        return (
+          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100">
+            Approved
           </Badge>
         );
       case 'financed':
         return (
-          <Badge variant="outline" className="text-blue-700 border-blue-200 bg-blue-50">
+          <Badge className="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100">
             Financed
-          </Badge>
-        );
-      case 'cancelled':
-        return (
-          <Badge variant="outline" className="text-red-700 border-red-200 bg-red-50">
-            Cancelled
           </Badge>
         );
       default:
@@ -135,61 +127,94 @@ const InvoicePreviewPage = () => {
     });
   };
 
+  const handleDownloadPDF = async () => {
+    setIsGeneratingPDF(true);
+    try {
+      // Dynamic import to avoid bundle size issues
+      const html2pdf = (await import('html2pdf.js')).default;
+      
+      const element = document.getElementById('invoice-content');
+      const opt = {
+        margin: [10, 15, 10, 15],
+        filename: `invoice-${invoiceData.invoiceNumber}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      
+      await html2pdf().set(opt).from(element).save();
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 to-slate-50 font-sora">
-      <div className="container mx-auto px-4 py-6 max-w-5xl">
-        {/* Action Bar */}
-        <div className="flex items-center justify-between mb-6 bg-white/70 backdrop-blur-sm rounded-lg p-4 shadow-sm">
-          <div className="flex items-center gap-4">
-            <Button
-              variant={viewMode === 'preview' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setViewMode('preview')}
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              Preview
-            </Button>
-            <Button
-              variant={viewMode === 'print' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setViewMode('print')}
-            >
-              <Printer className="w-4 h-4 mr-2" />
-              Print View
-            </Button>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              <Download className="w-4 h-4 mr-2" />
-              Download PDF
-            </Button>
-            <Button variant="outline" size="sm">
-              <Send className="w-4 h-4 mr-2" />
-              Send to Buyer
-            </Button>
-            <Button variant="outline" size="sm">
-              <Share2 className="w-4 h-4 mr-2" />
-              Share with Lender
-            </Button>
+      {/* Sticky Action Bar */}
+      <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b border-stone-200 shadow-sm">
+        <div className="container mx-auto px-4 py-3 max-w-5xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="text-lg font-semibold text-stone-900">
+                Invoice Preview
+              </div>
+              {getStatusBadge(invoiceData.status)}
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleDownloadPDF}
+                disabled={isGeneratingPDF}
+                className="bg-white hover:bg-stone-50"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
+              </Button>
+              <Button variant="outline" size="sm" className="bg-white hover:bg-stone-50">
+                <Send className="w-4 h-4 mr-2" />
+                Send to Buyer
+              </Button>
+              <Button variant="outline" size="sm" className="bg-white hover:bg-stone-50">
+                <Share2 className="w-4 h-4 mr-2" />
+                Share
+              </Button>
+            </div>
           </div>
         </div>
+      </div>
 
+      <div className="container mx-auto px-4 py-8 max-w-5xl">
         {/* Invoice Document */}
-        <Card className={`bg-white shadow-lg ${viewMode === 'print' ? 'print:shadow-none' : ''}`}>
-          <CardContent className="p-8">
-            {/* Watermark Background */}
-            <div className="absolute inset-0 opacity-5 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0ic3RvbmUtdGV4dHVyZSIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIzIiBmaWxsPSIjMDAwIiBvcGFjaXR5PSIwLjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjc3RvbmUtdGV4dHVyZSkiLz48L3N2Zz4=')] pointer-events-none"></div>
-            
+        <div 
+          id="invoice-content"
+          className="bg-white shadow-xl rounded-lg overflow-hidden print:shadow-none print:rounded-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f3f4f6' fill-opacity='0.3'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundSize: '30px 30px'
+          }}
+        >
+          <div className="relative p-8 print:p-6">
             {/* Header Section */}
-            <div className="relative mb-8">
+            <div className="mb-8">
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <h1 className="text-3xl font-bold text-stone-900 mb-2">INVOICE</h1>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center">
+                      <FileText className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h1 className="text-2xl font-bold text-stone-900">COMMERCIAL INVOICE</h1>
+                      <p className="text-stone-600">TradeRails.ai Platform</p>
+                    </div>
+                  </div>
                   <div className="space-y-1 text-stone-700">
-                    <p className="text-lg font-semibold">#{invoiceData.invoiceNumber}</p>
-                    <p>Date Issued: {formatDate(invoiceData.dateIssued)}</p>
-                    <p>Linked Quote: #{invoiceData.linkedQuote}</p>
+                    <p className="text-xl font-bold">#{invoiceData.invoiceNumber}</p>
+                    <p>Date: {formatDate(invoiceData.dateIssued)}</p>
+                    <p className="text-sm">Linked Quote: #{invoiceData.linkedQuote}</p>
                   </div>
                 </div>
                 
@@ -197,9 +222,9 @@ const InvoicePreviewPage = () => {
                   <div className="mb-4">
                     {getStatusBadge(invoiceData.status)}
                   </div>
-                  <div className="text-sm text-stone-600">
-                    <p>Generated via</p>
-                    <p className="font-semibold text-stone-900">TradeRails.ai</p>
+                  <div className="text-sm text-stone-600 space-y-1">
+                    <p className="font-medium">Export Document</p>
+                    <p>Digitally Generated</p>
                   </div>
                 </div>
               </div>
@@ -207,85 +232,96 @@ const InvoicePreviewPage = () => {
               <Separator className="my-6" />
             </div>
 
-            {/* Exporter & Buyer Details */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Seller & Buyer Details Card */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               {/* Exporter Details */}
-              <div>
-                <h3 className="text-lg font-semibold text-stone-900 mb-3">From (Exporter)</h3>
-                <div className="bg-stone-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-stone-900 mb-2">{invoiceData.exporter.name}</h4>
-                  <div className="space-y-1 text-sm text-stone-700">
+              <Card className="border-2 border-emerald-100 bg-emerald-50/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg text-emerald-800">Exporter Details</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <h4 className="font-bold text-stone-900 text-lg">{invoiceData.exporter.name}</h4>
+                  <div className="text-sm text-stone-700 space-y-1">
                     <p>{invoiceData.exporter.address}</p>
-                    <p>GSTIN: {invoiceData.exporter.gstin}</p>
-                    <p>IEC: {invoiceData.exporter.iec}</p>
-                    <p>PAN: {invoiceData.exporter.pan}</p>
-                    <p>Phone: {invoiceData.exporter.phone}</p>
-                    <p>Email: {invoiceData.exporter.email}</p>
+                    <div className="grid grid-cols-2 gap-2 pt-2">
+                      <p><span className="font-medium">GSTIN:</span> {invoiceData.exporter.gstin}</p>
+                      <p><span className="font-medium">IEC:</span> {invoiceData.exporter.iec}</p>
+                      <p><span className="font-medium">PAN:</span> {invoiceData.exporter.pan}</p>
+                    </div>
+                    <div className="pt-2 border-t border-emerald-200">
+                      <p>{invoiceData.exporter.phone}</p>
+                      <p>{invoiceData.exporter.email}</p>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
 
               {/* Buyer Details */}
-              <div>
-                <h3 className="text-lg font-semibold text-stone-900 mb-3">To (Buyer)</h3>
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-stone-900 mb-2">{invoiceData.buyer.name}</h4>
-                  <div className="space-y-1 text-sm text-stone-700">
+              <Card className="border-2 border-blue-100 bg-blue-50/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg text-blue-800">Buyer Details</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <h4 className="font-bold text-stone-900 text-lg">{invoiceData.buyer.name}</h4>
+                  <div className="text-sm text-stone-700 space-y-1">
                     <p>{invoiceData.buyer.address}</p>
-                    <p>Country: {invoiceData.buyer.country}</p>
-                    <p>Org ID: {invoiceData.buyer.orgId}</p>
-                    <p>Phone: {invoiceData.buyer.phone}</p>
-                    <p>Email: {invoiceData.buyer.email}</p>
+                    <p><span className="font-medium">Country:</span> {invoiceData.buyer.country}</p>
+                    <div className="pt-2 border-t border-blue-200">
+                      <p>{invoiceData.buyer.phone}</p>
+                      <p>{invoiceData.buyer.email}</p>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Shipping Details */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-stone-900 mb-3">Shipping Details</h3>
-              <div className="bg-emerald-50 p-4 rounded-lg">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="mb-8 border-stone-200 bg-stone-50/50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Shipping Details</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                   <div>
-                    <p className="font-medium text-stone-700">Port of Loading</p>
+                    <p className="font-semibold text-stone-700 mb-1">Port of Loading</p>
                     <p className="text-stone-900">{invoiceData.shipping.portOfLoading}</p>
                   </div>
                   <div>
-                    <p className="font-medium text-stone-700">Port of Discharge</p>
+                    <p className="font-semibold text-stone-700 mb-1">Port of Discharge</p>
                     <p className="text-stone-900">{invoiceData.shipping.portOfDischarge}</p>
                   </div>
                   <div>
-                    <p className="font-medium text-stone-700">Terms</p>
-                    <p className="text-stone-900">{invoiceData.shipping.shippingTerms}</p>
+                    <p className="font-semibold text-stone-700 mb-1">Terms</p>
+                    <p className="text-stone-900 font-medium">{invoiceData.shipping.shippingTerms}</p>
                   </div>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
             {/* Itemized Table */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-stone-900 mb-4">Items</h3>
-              <div className="overflow-x-auto">
+              <h3 className="text-xl font-bold text-stone-900 mb-4">Stone Items</h3>
+              <div className="border border-stone-200 rounded-lg overflow-hidden">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-stone-100">
-                      <TableHead className="font-semibold">Block ID</TableHead>
-                      <TableHead className="font-semibold">Stone Type</TableHead>
-                      <TableHead className="font-semibold">Finish</TableHead>
-                      <TableHead className="font-semibold text-center">Quantity</TableHead>
-                      <TableHead className="font-semibold text-right">Rate (INR)</TableHead>
-                      <TableHead className="font-semibold text-right">Total (INR)</TableHead>
+                    <TableRow className="bg-stone-100 hover:bg-stone-100">
+                      <TableHead className="font-bold text-stone-900">Block ID</TableHead>
+                      <TableHead className="font-bold text-stone-900">Stone Type</TableHead>
+                      <TableHead className="font-bold text-stone-900">Finish</TableHead>
+                      <TableHead className="font-bold text-stone-900 text-center">Qty</TableHead>
+                      <TableHead className="font-bold text-stone-900 text-right">Rate (INR)</TableHead>
+                      <TableHead className="font-bold text-stone-900 text-right">Total (INR)</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {invoiceData.items.map((item, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="font-medium">{item.blockId}</TableCell>
-                        <TableCell>{item.stoneType}</TableCell>
+                      <TableRow key={index} className="hover:bg-stone-50">
+                        <TableCell className="font-semibold text-emerald-700">{item.blockId}</TableCell>
+                        <TableCell className="font-medium">{item.stoneType}</TableCell>
                         <TableCell>{item.finish}</TableCell>
                         <TableCell className="text-center">{item.quantity} {item.unit}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(item.rateInr)}</TableCell>
-                        <TableCell className="text-right font-medium">{formatCurrency(item.totalInr)}</TableCell>
+                        <TableCell className="text-right font-medium">{formatCurrency(item.rateInr)}</TableCell>
+                        <TableCell className="text-right font-bold">{formatCurrency(item.totalInr)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -295,121 +331,114 @@ const InvoicePreviewPage = () => {
 
             {/* Totals */}
             <div className="flex justify-end mb-8">
-              <div className="w-full max-w-md">
-                <div className="bg-stone-50 p-6 rounded-lg">
+              <Card className="w-full max-w-md border-2 border-stone-200">
+                <CardContent className="p-6">
                   <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-stone-700">Subtotal:</span>
-                      <span className="font-medium">{formatCurrency(invoiceData.totals.subtotal)}</span>
+                    <div className="flex justify-between text-stone-700">
+                      <span>Subtotal:</span>
+                      <span className="font-semibold">{formatCurrency(invoiceData.totals.subtotal)}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-stone-700">GST (18%):</span>
-                      <span className="font-medium">{formatCurrency(invoiceData.totals.gst)}</span>
+                    <div className="flex justify-between text-stone-700">
+                      <span>GST (18%):</span>
+                      <span className="font-semibold">{formatCurrency(invoiceData.totals.gst)}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-stone-700">Freight:</span>
-                      <span className="font-medium">{formatCurrency(invoiceData.totals.freight)}</span>
+                    <div className="flex justify-between text-stone-700">
+                      <span>Freight:</span>
+                      <span className="font-semibold">{formatCurrency(invoiceData.totals.freight)}</span>
                     </div>
                     <Separator />
-                    <div className="flex justify-between text-lg font-bold">
-                      <span>Total Amount Payable:</span>
+                    <div className="flex justify-between text-xl font-bold text-stone-900">
+                      <span>Total Payable:</span>
                       <span>{formatCurrency(invoiceData.totals.total)}</span>
                     </div>
-                    <div className="text-sm text-stone-600 text-right">
+                    <div className="text-sm text-stone-600 text-right pt-2 border-t border-stone-200">
                       USD Equivalent: {formatCurrency(invoiceData.payment.fxAmount, 'USD')} @ ₹{invoiceData.payment.fxRate}
                     </div>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </div>
 
-            {/* Payment & Credit Section */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-stone-900 mb-4">Payment & Credit Terms</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-amber-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-stone-900 mb-2">Payment Terms</h4>
-                  <div className="space-y-1 text-sm text-stone-700">
-                    <p>Payment Due: {invoiceData.payment.terms}</p>
-                    <p>Method: Via {invoiceData.payment.method}</p>
-                    <p>FX Rate Locked: USD @ ₹{invoiceData.payment.fxRate}</p>
+            {/* FX / Credit Summary Box */}
+            <Card className="mb-8 border-2 border-amber-200 bg-amber-50/30">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg text-amber-800">Payment & Credit Terms</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                  <div className="space-y-2">
+                    <p><span className="font-semibold">Payment Terms:</span> {invoiceData.payment.terms}</p>
+                    <p><span className="font-semibold">Method:</span> Via {invoiceData.payment.method}</p>
+                    <p><span className="font-semibold">FX Booked:</span> USD @ ₹{invoiceData.payment.fxRate}</p>
                   </div>
-                </div>
-                
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-stone-900 mb-2">Credit Information</h4>
-                  <div className="space-y-1 text-sm text-stone-700">
-                    <p>Credit Provider: {invoiceData.payment.creditProvider}</p>
-                    <p>Financing Available: Yes</p>
-                    <Button variant="link" className="p-0 h-auto text-sm text-blue-600">
-                      View Credit Summary →
+                  <div className="space-y-2">
+                    <p><span className="font-semibold">Credit Provider:</span> {invoiceData.payment.creditProvider}</p>
+                    <p><span className="font-semibold">Escrow Enabled:</span> Yes</p>
+                    <Button variant="link" className="p-0 h-auto text-sm text-amber-700 hover:text-amber-800">
+                      View Full Credit Summary →
                     </Button>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Attachments Section */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-stone-900 mb-4">Attachments</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {invoiceData.attachments.map((attachment, index) => (
-                  <div key={index} className="flex items-center gap-3 p-3 bg-white border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors">
-                    <div className="flex-shrink-0">
-                      <FileText className="w-5 h-5 text-stone-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-stone-900 truncate">{attachment.name}</p>
-                      <p className="text-xs text-stone-500 capitalize">{attachment.type}</p>
-                    </div>
-                    {attachment.verified && (
-                      <div className="flex-shrink-0">
-                        <CheckCircle className="w-4 h-4 text-emerald-600" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
             {/* Footer */}
-            <div className="border-t border-stone-200 pt-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="border-t-2 border-stone-200 pt-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                 <div>
-                  <h4 className="font-medium text-stone-900 mb-2">Bank Details for Remittance</h4>
+                  <h4 className="font-bold text-stone-900 mb-2">Bank Account Details</h4>
                   <div className="text-sm text-stone-700 space-y-1">
                     <p>Bank: State Bank of India</p>
-                    <p>Account Name: Shivani Granites Pvt Ltd</p>
-                    <p>Account No: 1234567890123</p>
-                    <p>SWIFT Code: SBININBB104</p>
+                    <p>Account: Shivani Granites Pvt Ltd</p>
+                    <p>A/C No: 1234567890123</p>
+                    <p>SWIFT: SBININBB104</p>
                     <p>IFSC: SBIN0001234</p>
                   </div>
                 </div>
                 
                 <div>
-                  <h4 className="font-medium text-stone-900 mb-2">Legal Disclaimers</h4>
+                  <h4 className="font-bold text-stone-900 mb-2">Legal Disclaimers</h4>
                   <div className="text-xs text-stone-600 space-y-1">
-                    <p>• This invoice is auto-generated and digitally verified</p>
-                    <p>• All stone quality as per agreed specifications</p>
-                    <p>• Disputes subject to Indian Arbitration laws</p>
-                    <p>• Platform fees and charges apply as per T&C</p>
+                    <p>• Auto-generated and digitally verified</p>
+                    <p>• Stone quality as per agreed specifications</p>
+                    <p>• Subject to Indian Arbitration laws</p>
+                    <p>• Platform T&C apply</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-end">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-emerald-600 rounded-full flex items-center justify-center mb-2">
+                      <Shield className="w-8 h-8 text-white" />
+                    </div>
+                    <p className="text-xs text-stone-600">Digitally Signed</p>
+                    <p className="text-xs text-stone-600">Platform Verified</p>
                   </div>
                 </div>
               </div>
               
-              <div className="flex items-center justify-between mt-6 pt-4 border-t border-stone-100">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-emerald-600" />
-                  <span className="text-sm text-stone-600">Digitally Signed & Platform Verified</span>
-                </div>
-                <div className="text-sm text-stone-500">
-                  Auto-generated via TradeRails.ai on {formatDate(invoiceData.dateIssued)}
+              <div className="flex items-center justify-center pt-4 border-t border-stone-100">
+                <div className="text-center text-sm text-stone-500">
+                  <p className="font-medium">Auto-generated via TradeRails.ai</p>
+                  <p>Generated on {formatDate(invoiceData.dateIssued)}</p>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
+
+      {/* Print Styles */}
+      <style jsx>{`
+        @media print {
+          body { background: white !important; }
+          .container { max-width: none !important; padding: 0 !important; }
+          .sticky { position: static !important; }
+          .shadow-xl { box-shadow: none !important; }
+          .rounded-lg { border-radius: 0 !important; }
+          .bg-gradient-to-br { background: white !important; }
+        }
+      `}</style>
     </div>
   );
 };
