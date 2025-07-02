@@ -25,9 +25,9 @@ const HeroSection = ({ onBrowseClick, onListClick }: HeroSectionProps) => {
 
           {/* Main Headline */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-stone-900 mb-6 leading-tight">
-            Trade Granite
+            Trade Stone on
             <br />
-            <span className="text-gradient">Globally with Trust</span>
+            <span className="text-gradient">TradeRails</span>
           </h1>
 
           {/* Subtitle */}

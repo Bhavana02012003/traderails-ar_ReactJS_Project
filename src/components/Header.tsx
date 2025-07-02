@@ -5,9 +5,12 @@ import { Globe, User, Menu, X } from 'lucide-react';
 
 interface HeaderProps {
   onLoginClick: () => void;
+  onMarketplaceClick?: () => void;
+  onHomeClick?: () => void;
+  currentView?: 'home' | 'marketplace';
 }
 
-const Header = ({ onLoginClick }: HeaderProps) => {
+const Header = ({ onLoginClick, onMarketplaceClick, onHomeClick, currentView = 'home' }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -15,18 +18,35 @@ const Header = ({ onLoginClick }: HeaderProps) => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 cursor-pointer" onClick={onHomeClick}>
             <div className="w-8 h-8 emerald-gradient rounded-lg flex items-center justify-center">
               <Globe className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-stone-900">StoneFlow</span>
+            <span className="text-xl font-bold text-stone-900">TradeRails</span>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#marketplace" className="text-stone-600 hover:text-emerald-600 transition-colors">
+            <button 
+              onClick={onHomeClick}
+              className={`transition-colors ${
+                currentView === 'home' 
+                  ? 'text-emerald-600 font-medium' 
+                  : 'text-stone-600 hover:text-emerald-600'
+              }`}
+            >
+              Home
+            </button>
+            <button 
+              onClick={onMarketplaceClick}
+              className={`transition-colors ${
+                currentView === 'marketplace' 
+                  ? 'text-emerald-600 font-medium' 
+                  : 'text-stone-600 hover:text-emerald-600'
+              }`}
+            >
               Marketplace
-            </a>
+            </button>
             <a href="#features" className="text-stone-600 hover:text-emerald-600 transition-colors">
               Features
             </a>
@@ -66,9 +86,32 @@ const Header = ({ onLoginClick }: HeaderProps) => {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-stone-200 animate-fade-in">
             <nav className="flex flex-col space-y-4">
-              <a href="#marketplace" className="text-stone-600 hover:text-emerald-600 transition-colors">
+              <button 
+                onClick={() => {
+                  onHomeClick?.();
+                  setIsMenuOpen(false);
+                }}
+                className={`text-left transition-colors ${
+                  currentView === 'home' 
+                    ? 'text-emerald-600 font-medium' 
+                    : 'text-stone-600 hover:text-emerald-600'
+                }`}
+              >
+                Home
+              </button>
+              <button 
+                onClick={() => {
+                  onMarketplaceClick?.();
+                  setIsMenuOpen(false);
+                }}
+                className={`text-left transition-colors ${
+                  currentView === 'marketplace' 
+                    ? 'text-emerald-600 font-medium' 
+                    : 'text-stone-600 hover:text-emerald-600'
+                }`}
+              >
                 Marketplace
-              </a>
+              </button>
               <a href="#features" className="text-stone-600 hover:text-emerald-600 transition-colors">
                 Features
               </a>
