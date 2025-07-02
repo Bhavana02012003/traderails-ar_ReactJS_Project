@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Globe, Mail, Phone, Eye, EyeOff, User } from 'lucide-react';
+import OTPVerificationFlow, { ContactData } from './auth/OTPVerificationFlow';
 
 interface LoginModalProps {
   open: boolean;
@@ -18,10 +20,9 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [otp, setOtp] = useState('');
   const [mfaOtp, setMfaOtp] = useState('');
-  const [showOtpInput, setShowOtpInput] = useState(false);
   const [showMfaInput, setShowMfaInput] = useState(false);
+  const [showOtpFlow, setShowOtpFlow] = useState(false);
   const [selectedUserType, setSelectedUserType] = useState<'buyer' | 'exporter' | 'agent' | 'trader'>('buyer');
 
   const getUserTypeConfig = (userType: string) => {
@@ -56,11 +57,18 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
 
   const config = getUserTypeConfig(selectedUserType);
 
-  const handleSendOtp = () => {
-    if (config.authMethod === 'mobile' && phoneNumber) {
-      setShowOtpInput(true);
-      console.log('Sending OTP to:', phoneNumber);
-    }
+  const handleOTPLogin = () => {
+    setShowOtpFlow(true);
+  };
+
+  const handleOTPVerificationSuccess = (contactData: ContactData) => {
+    onLoginSuccess?.(selectedUserType);
+    onOpenChange(false);
+    setShowOtpFlow(false);
+  };
+
+  const handleBackFromOTP = () => {
+    setShowOtpFlow(false);
   };
 
   const handleSendMfaOtp = () => {
@@ -93,9 +101,25 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
       }
       return hasCredentials;
     } else {
-      return phoneNumber && otp && otp.length === 6;
+      return phoneNumber;
     }
   };
+
+  if (showOtpFlow) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-md bg-transparent border-0 shadow-none p-0">
+          <DialogTitle className="sr-only">OTP Verification</DialogTitle>
+          <OTPVerificationFlow
+            onVerificationSuccess={handleOTPVerificationSuccess}
+            onBack={handleBackFromOTP}
+            purpose="login"
+            userRole={selectedUserType}
+          />
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -197,80 +221,32 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
                 </div>
               </>
             ) : (
-              // Mobile-based login for agents and traders
-              <>
-                {!showOtpInput ? (
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <div className="flex space-x-2">
-                      <Select defaultValue="+1">
-                        <SelectTrigger className="w-20 h-12 bg-stone-50 border-stone-200">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white border border-stone-200">
-                          <SelectItem value="+1">+1</SelectItem>
-                          <SelectItem value="+44">+44</SelectItem>
-                          <SelectItem value="+91">+91</SelectItem>
-                          <SelectItem value="+86">+86</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        placeholder="(555) 123-4567"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        className="flex-1 h-12 bg-stone-50 border-stone-200 focus:border-emerald-500 focus:ring-emerald-500"
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <Label htmlFor="otp">Enter OTP</Label>
-                    <Input
-                      id="otp"
-                      type="text"
-                      placeholder="123456"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                      className="h-12 bg-stone-50 border-stone-200 focus:border-emerald-500 focus:ring-emerald-500 text-center text-lg tracking-widest"
-                      maxLength={6}
-                    />
-                    <p className="text-sm text-stone-600 text-center">
-                      Code sent to {phoneNumber}
-                    </p>
-                  </div>
-                )}
-              </>
+              // Mobile-based login for agents and traders - Use OTP Flow
+              <div className="space-y-4 text-center">
+                <div className="p-6 bg-emerald-50 rounded-lg border border-emerald-200">
+                  <Phone className="w-12 h-12 text-emerald-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-emerald-900 mb-2">Mobile Verification</h3>
+                  <p className="text-emerald-700 text-sm mb-4">
+                    As a {config.label.toLowerCase()}, you'll sign in using mobile verification for quick and secure access.
+                  </p>
+                  <Button
+                    onClick={handleOTPLogin}
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                  >
+                    Continue with Mobile
+                  </Button>
+                </div>
+              </div>
             )}
 
-            {/* Login Button */}
-            {config.authMethod === 'mobile' && !showOtpInput ? (
-              <Button 
-                onClick={handleSendOtp}
-                className="w-full h-12 emerald-gradient text-white font-semibold"
-                disabled={!phoneNumber}
-              >
-                Send OTP
-              </Button>
-            ) : (
+            {/* Login Button for Email Users */}
+            {config.authMethod === 'email' && (
               <Button 
                 onClick={handleLogin}
                 className="w-full h-12 emerald-gradient text-white font-semibold"
                 disabled={!canProceed()}
               >
                 Sign In as {config.label}
-              </Button>
-            )}
-
-            {/* Back button for mobile OTP */}
-            {config.authMethod === 'mobile' && showOtpInput && (
-              <Button 
-                variant="ghost" 
-                onClick={() => setShowOtpInput(false)}
-                className="w-full text-stone-600"
-              >
-                Back to phone number
               </Button>
             )}
           </div>

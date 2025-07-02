@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, ArrowRight, Mail, Phone, Key, Shield } from 'lucide-react';
 import { OnboardingData } from '../OnboardingWizard';
+import OTPVerificationFlow, { ContactData } from '../../auth/OTPVerificationFlow';
 
 interface ContactInfoStepProps {
   data: OnboardingData;
@@ -17,8 +18,9 @@ interface ContactInfoStepProps {
 }
 
 const ContactInfoStep = ({ data, updateData, onNext, onPrev }: ContactInfoStepProps) => {
-  const [otpSent, setOtpSent] = useState(false);
   const [mfaOtpSent, setMfaOtpSent] = useState(false);
+  const [showOtpFlow, setShowOtpFlow] = useState(false);
+  const [contactVerified, setContactVerified] = useState(false);
 
   // Determine auth method based on role
   const getAuthMethod = () => {
@@ -31,11 +33,24 @@ const ContactInfoStep = ({ data, updateData, onNext, onPrev }: ContactInfoStepPr
   const authMethod = getAuthMethod();
   const requiresMfa = data.role === 'buyer' || data.role === 'exporter';
 
-  const handleSendOTP = () => {
-    if (authMethod === 'mobile' && data.phone) {
-      setOtpSent(true);
-      console.log('Sending OTP to:', data.phone);
+  const handleStartOTPVerification = () => {
+    setShowOtpFlow(true);
+  };
+
+  const handleOTPVerificationSuccess = (contactData: ContactData) => {
+    setContactVerified(true);
+    setShowOtpFlow(false);
+    
+    // Update data based on verification
+    if (contactData.type === 'phone') {
+      updateData({ phone: contactData.value });
+    } else {
+      updateData({ email: contactData.value });
     }
+  };
+
+  const handleBackFromOTP = () => {
+    setShowOtpFlow(false);
   };
 
   const handleSendMfaOTP = () => {
@@ -46,16 +61,31 @@ const ContactInfoStep = ({ data, updateData, onNext, onPrev }: ContactInfoStepPr
   };
 
   const canProceed = () => {
+    if (showOtpFlow) return false;
+    
     if (authMethod === 'email') {
       const hasCredentials = data.email && data.email.includes('@') && data.password;
       if (requiresMfa) {
-        return hasCredentials && (!mfaOtpSent || data.mfaOtp);
+        return hasCredentials && (!mfaOtpSent || data.mfaOtp) && contactVerified;
       }
-      return hasCredentials;
+      return hasCredentials && contactVerified;
     } else {
-      return data.phone && data.otp && data.otp.length === 6;
+      return contactVerified;
     }
   };
+
+  if (showOtpFlow) {
+    return (
+      <div className="fixed inset-0 z-50">
+        <OTPVerificationFlow
+          onVerificationSuccess={handleOTPVerificationSuccess}
+          onBack={handleBackFromOTP}
+          purpose="onboarding"
+          userRole={data.role}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
@@ -136,53 +166,34 @@ const ContactInfoStep = ({ data, updateData, onNext, onPrev }: ContactInfoStepPr
                 </div>
               )}
             </>
-          ) : (
-            // Mobile-based authentication for agents and traders
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="flex items-center">
-                  <Phone className="w-4 h-4 mr-2" />
-                  Phone Number
-                </Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="+1 (555) 123-4567"
-                    value={data.phone}
-                    onChange={(e) => updateData({ phone: e.target.value })}
-                    className="h-12"
-                  />
-                  <Button
-                    onClick={handleSendOTP}
-                    disabled={!data.phone || otpSent}
-                    variant="outline"
-                    className="h-12 px-6"
-                  >
-                    {otpSent ? 'Sent' : 'Send OTP'}
-                  </Button>
-                </div>
-              </div>
+          ) : null}
 
-              {otpSent && (
-                <div className="space-y-2">
-                  <Label htmlFor="otp">Enter OTP</Label>
-                  <Input
-                    id="otp"
-                    type="text"
-                    placeholder="Enter 6-digit code"
-                    value={data.otp}
-                    onChange={(e) => updateData({ otp: e.target.value })}
-                    maxLength={6}
-                    className="h-12"
-                  />
-                  <p className="text-sm text-stone-600">
-                    We've sent a verification code to {data.phone}
-                  </p>
-                </div>
-              )}
+          {/* Contact Verification Section */}
+          <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="flex items-center text-blue-700">
+              <Phone className="w-4 h-4 mr-2" />
+              <span className="font-medium">Contact Verification Required</span>
             </div>
-          )}
+            
+            {!contactVerified ? (
+              <div className="space-y-3">
+                <p className="text-blue-700 text-sm">
+                  Verify your {authMethod === 'email' ? 'email' : 'phone number'} to continue with account setup.
+                </p>
+                <Button
+                  onClick={handleStartOTPVerification}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Verify {authMethod === 'email' ? 'Email' : 'Phone Number'}
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center text-emerald-700">
+                <Shield className="w-4 h-4 mr-2" />
+                <span className="font-medium">Contact verified successfully!</span>
+              </div>
+            )}
+          </div>
 
           {/* Invite Code */}
           <div className="space-y-2">

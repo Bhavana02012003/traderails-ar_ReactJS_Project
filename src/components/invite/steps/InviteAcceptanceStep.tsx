@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Building, Shield, CheckCircle, ArrowLeft, Camera, User } from 'lucide-react';
 import { InviteData } from '../InviteUserFlow';
+import OTPVerificationFlow, { ContactData } from '../../auth/OTPVerificationFlow';
 
 interface InviteAcceptanceStepProps {
   data: InviteData;
@@ -17,20 +18,19 @@ interface InviteAcceptanceStepProps {
 const InviteAcceptanceStep = ({ data, updateData, onAccepted, onBack }: InviteAcceptanceStepProps) => {
   const [step, setStep] = useState<'welcome' | 'otp' | 'profile'>('welcome');
   const [isLoading, setIsLoading] = useState(false);
+  const [showOtpFlow, setShowOtpFlow] = useState(false);
 
   const handleContinue = () => {
-    setStep('otp');
+    setShowOtpFlow(true);
   };
 
-  const handleOtpSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    // Simulate OTP verification
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setIsLoading(false);
+  const handleOTPVerificationSuccess = (contactData: ContactData) => {
+    setShowOtpFlow(false);
     setStep('profile');
+  };
+
+  const handleBackFromOTP = () => {
+    setShowOtpFlow(false);
   };
 
   const handleProfileSubmit = async (e: React.FormEvent) => {
@@ -54,6 +54,18 @@ const InviteAcceptanceStep = ({ data, updateData, onAccepted, onBack }: InviteAc
     };
     return roleMap[role] || role;
   };
+
+  if (showOtpFlow) {
+    return (
+      <div className="fixed inset-0 z-50">
+        <OTPVerificationFlow
+          onVerificationSuccess={handleOTPVerificationSuccess}
+          onBack={handleBackFromOTP}
+          purpose="invite"
+        />
+      </div>
+    );
+  }
 
   if (step === 'welcome') {
     return (
@@ -115,55 +127,6 @@ const InviteAcceptanceStep = ({ data, updateData, onAccepted, onBack }: InviteAc
               Back to Invite Form
             </Button>
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (step === 'otp') {
-    return (
-      <div className="p-8 md:p-12">
-        <div className="max-w-md mx-auto text-center">
-          <div className="mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <Shield className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold text-stone-900 mb-2">Verify Your Identity</h2>
-            <p className="text-stone-600">Enter the OTP sent to {data.phoneNumber}</p>
-          </div>
-
-          <form onSubmit={handleOtpSubmit} className="space-y-6">
-            <div className="space-y-3">
-              <Label htmlFor="otp" className="text-base font-semibold text-stone-800">
-                Verification Code
-              </Label>
-              <Input
-                id="otp"
-                type="text"
-                placeholder="123456"
-                value={data.otp}
-                onChange={(e) => updateData({ otp: e.target.value })}
-                maxLength={6}
-                className="text-center text-xl tracking-widest h-14 bg-white/70 border-stone-200 focus:border-emerald-500"
-              />
-              <p className="text-sm text-stone-600">Didn't receive it? Check WhatsApp or SMS</p>
-            </div>
-
-            <Button
-              type="submit"
-              disabled={data.otp.length !== 6 || isLoading}
-              className="w-full h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
-            >
-              {isLoading ? (
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Verifying...</span>
-                </div>
-              ) : (
-                'Verify & Continue'
-              )}
-            </Button>
-          </form>
         </div>
       </div>
     );
