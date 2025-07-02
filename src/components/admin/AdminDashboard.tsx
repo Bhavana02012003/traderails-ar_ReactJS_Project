@@ -90,6 +90,19 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
             </div>
           )}
 
+          {activeSection === 'kyc' && (
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-2xl font-bold text-slate-900 mb-2">KYC & Compliance</h1>
+                <p className="text-slate-600">Review KYC applications and monitor compliance</p>
+              </div>
+              <div className="grid grid-cols-1 gap-6">
+                <KYCReviewQueue />
+                <ComplianceAlerts />
+              </div>
+            </div>
+          )}
+
           {activeSection === 'transactions' && (
             <div className="space-y-6">
               <div>
@@ -110,24 +123,26 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
             </div>
           )}
 
-          {activeSection === 'compliance' && (
+          {activeSection === 'partners' && (
             <div className="space-y-6">
               <div>
-                <h1 className="text-2xl font-bold text-slate-900 mb-2">Compliance Dashboard</h1>
-                <p className="text-slate-600">Monitor regulatory compliance and alerts</p>
+                <h1 className="text-2xl font-bold text-slate-900 mb-2">Partner Health Status</h1>
+                <p className="text-slate-600">Monitor partner API health and performance</p>
               </div>
-              <ComplianceAlerts />
               <PartnerHealthStatus />
             </div>
           )}
 
-          {activeSection === 'analytics' && (
+          {activeSection === 'settings' && (
             <div className="space-y-6">
               <div>
-                <h1 className="text-2xl font-bold text-slate-900 mb-2">Analytics & Reports</h1>
-                <p className="text-slate-600">Platform performance and business insights</p>
+                <h1 className="text-2xl font-bold text-slate-900 mb-2">Platform Settings</h1>
+                <p className="text-slate-600">Configure platform parameters and preferences</p>
               </div>
-              <AdminMetrics />
+              <div className="bg-white rounded-lg border border-slate-200 p-6">
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">System Configuration</h3>
+                <p className="text-slate-600">Platform settings panel coming soon...</p>
+              </div>
             </div>
           )}
         </main>
