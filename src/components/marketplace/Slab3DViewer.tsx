@@ -1,7 +1,7 @@
 
 /// <reference path="../../types/model-viewer.d.ts" />
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,10 +18,11 @@ import {
   MapPin,
   Ruler,
   Shield,
-  Lightbulb,
-  LightbulbOff,
   Download,
-  Share2
+  Share2,
+  ZoomIn,
+  ZoomOut,
+  RotateCw
 } from 'lucide-react';
 import { Slab } from '@/types/marketplace';
 
@@ -34,48 +35,44 @@ interface Slab3DViewerProps {
 const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showTraceability, setShowTraceability] = useState(false);
-  const [lighting, setLighting] = useState(true);
   const [showInfo, setShowInfo] = useState(true);
-  const modelViewerRef = useRef<any>(null);
-
-  useEffect(() => {
-    // Load model-viewer script if not already loaded
-    if (!window.customElements.get('model-viewer')) {
-      const script = document.createElement('script');
-      script.type = 'module';
-      script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
-      document.head.appendChild(script);
-    }
-  }, []);
+  const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const imageRef = useRef<HTMLDivElement>(null);
 
   if (!slab) return null;
 
+  const handleZoomIn = () => setZoom(prev => Math.min(prev * 1.2, 4));
+  const handleZoomOut = () => setZoom(prev => Math.max(prev / 1.2, 0.5));
+  const handleRotate = () => setRotation(prev => (prev + 90) % 360);
   const handleReset = () => {
-    if (modelViewerRef.current) {
-      modelViewerRef.current.resetTurntableRotation();
-      modelViewerRef.current.jumpCameraToGoal();
+    setZoom(1);
+    setRotation(0);
+    setPosition({ x: 0, y: 0 });
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging) {
+      setPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      });
     }
   };
 
-  const handleARMode = () => {
-    if (modelViewerRef.current) {
-      modelViewerRef.current.activateAR();
-    }
+  const handleMouseUp = () => {
+    setIsDragging(false);
   };
 
-  // Use the actual slab image as texture for the 3D model
-  const get3DModelUrl = () => {
-    // In a real implementation, this would generate a .glb file from the slab image
-    // For now, we'll use a generic stone slab model but with the actual texture
-    return `https://modelviewer.dev/shared-assets/models/RobotExpressive.glb`;
-  };
-
-  const getEnvironmentImage = () => {
-    return lighting ? 'https://modelviewer.dev/shared-assets/environments/spruit_sunrise_1k_HDR.hdr' : '';
-  };
-
-  const getSlabTexture = () => {
-    // Use the actual slab image as the primary texture reference
+  const getSlabImage = () => {
     return slab.images[0] || slab.thumbnail;
   };
 
@@ -86,24 +83,15 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
           {/* Top Controls */}
           <div className="absolute top-6 left-6 right-6 z-20 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Badge className="bg-emerald-600 text-white px-4 py-2 text-sm font-medium">
+              <Badge className="bg-emerald-600 text-white px-4 py-2 text-sm font-medium font-[Inter]">
                 3D Viewer
               </Badge>
-              <Badge variant="outline" className="bg-black/20 text-white border-white/20 backdrop-blur-sm">
+              <Badge variant="outline" className="bg-black/20 text-white border-white/20 backdrop-blur-sm font-[Inter]">
                 {slab.name}
               </Badge>
             </div>
             
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setLighting(!lighting)}
-                className="bg-black/20 border-white/20 text-white hover:bg-black/40 backdrop-blur-sm"
-              >
-                {lighting ? <Lightbulb className="w-4 h-4" /> : <LightbulbOff className="w-4 h-4" />}
-              </Button>
-              
               <Button
                 variant="outline"
                 size="sm"
@@ -133,87 +121,77 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
             </div>
           </div>
 
-          {/* 3D Model Viewer with actual slab texture reference */}
-          <div className="h-full relative">
-            {/* Display actual slab image as background reference */}
-            <div 
-              className="absolute inset-0 opacity-20 bg-cover bg-center"
-              style={{ backgroundImage: `url(${getSlabTexture()})` }}
-            />
-            
-            <model-viewer
-              ref={modelViewerRef}
-              src={get3DModelUrl()}
-              alt={slab.name}
-              camera-controls
-              auto-rotate={false}
-              environment-image={getEnvironmentImage()}
-              exposure="0.8"
-              shadow-intensity="1"
-              ar
-              ar-modes="webxr scene-viewer quick-look"
+          {/* Main Image Viewer */}
+          <div 
+            className="h-full relative overflow-hidden cursor-grab active:cursor-grabbing"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
+            <div
+              ref={imageRef}
+              className="absolute inset-0 flex items-center justify-center"
               style={{
-                width: '100%',
-                height: '100%',
-                background: 'transparent'
+                transform: `translate(${position.x}px, ${position.y}px) scale(${zoom}) rotate(${rotation}deg)`,
+                transition: isDragging ? 'none' : 'transform 0.3s ease'
               }}
             >
-              {/* Hotspots for annotations */}
+              <img
+                src={getSlabImage()}
+                alt={slab.name}
+                className="max-w-none max-h-none object-contain rounded-lg shadow-2xl"
+                style={{
+                  width: 'auto',
+                  height: '70vh',
+                  maxWidth: '90vw'
+                }}
+                draggable={false}
+              />
+              
+              {/* Traceability Annotations */}
               {showTraceability && (
                 <>
-                  <button
-                    className="hotspot"
-                    slot="hotspot-1"
-                    data-position="0 0.5 0"
-                    data-normal="0 1 0"
-                    style={{
-                      backgroundColor: '#10b981',
-                      color: 'white',
-                      padding: '8px 12px',
-                      borderRadius: '20px',
-                      border: 'none',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      fontFamily: 'Inter, sans-serif'
-                    }}
-                  >
+                  <div className="absolute top-1/4 left-1/4 bg-emerald-600 text-white px-3 py-2 rounded-full text-sm font-semibold font-[Inter] shadow-lg">
                     {slab.blockId}
-                  </button>
-                  
-                  <button
-                    className="hotspot"
-                    slot="hotspot-2"
-                    data-position="1 0.2 0"
-                    data-normal="1 0 0"
-                    style={{
-                      backgroundColor: '#3b82f6',
-                      color: 'white',
-                      padding: '6px 10px',
-                      borderRadius: '15px',
-                      border: 'none',
-                      fontSize: '11px',
-                      cursor: 'pointer',
-                      fontFamily: 'Inter, sans-serif'
-                    }}
-                  >
+                  </div>
+                  <div className="absolute bottom-1/4 right-1/4 bg-blue-600 text-white px-3 py-2 rounded-full text-xs font-[Inter] shadow-lg">
                     {slab.quarry.location}
-                  </button>
+                  </div>
                 </>
               )}
-            </model-viewer>
-
-            {/* Actual slab image overlay for texture reference */}
-            <div className="absolute bottom-20 left-6 w-32 h-24 rounded-lg overflow-hidden border-2 border-white/20 backdrop-blur-sm">
-              <img 
-                src={getSlabTexture()} 
-                alt="Actual slab texture"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 text-center">
-                Actual Texture
-              </div>
             </div>
+
+            {/* Surface texture overlay for realism */}
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-white/5 via-transparent to-black/10 mix-blend-overlay" />
+          </div>
+
+          {/* Zoom and Rotation Controls */}
+          <div className="absolute left-6 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleZoomIn}
+              className="bg-black/20 border-white/20 text-white hover:bg-black/40 backdrop-blur-sm w-10 h-10 p-0"
+            >
+              <ZoomIn className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleZoomOut}
+              className="bg-black/20 border-white/20 text-white hover:bg-black/40 backdrop-blur-sm w-10 h-10 p-0"
+            >
+              <ZoomOut className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRotate}
+              className="bg-black/20 border-white/20 text-white hover:bg-black/40 backdrop-blur-sm w-10 h-10 p-0"
+            >
+              <RotateCw className="w-4 h-4" />
+            </Button>
           </div>
 
           {/* Bottom Controls */}
@@ -233,7 +211,6 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={handleARMode}
                 className="bg-black/20 border-white/20 text-white hover:bg-black/40 backdrop-blur-sm"
               >
                 <Smartphone className="w-4 h-4 mr-2" />
@@ -258,9 +235,9 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="font-bold text-xl text-stone-900 font-[Inter]">{slab.name}</h3>
-                      <p className="text-stone-600 text-sm mt-1">{slab.supplier.name}</p>
+                      <p className="text-stone-600 text-sm mt-1 font-[Inter]">{slab.supplier.name}</p>
                     </div>
-                    <Badge className="bg-emerald-100 text-emerald-800 text-sm px-3 py-1">
+                    <Badge className="bg-emerald-100 text-emerald-800 text-sm px-3 py-1 font-[Inter]">
                       Grade {slab.grade.toFixed(1)}
                     </Badge>
                   </div>
@@ -268,24 +245,24 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
                   <div className="grid grid-cols-2 gap-4 text-sm mb-4">
                     <div className="flex items-center gap-2">
                       <Ruler className="w-4 h-4 text-stone-500" />
-                      <span className="text-stone-600">
+                      <span className="text-stone-600 font-[Inter]">
                         {slab.dimensions.length}×{slab.dimensions.width}×{slab.dimensions.thickness}cm
                       </span>
                     </div>
                     
                     <div className="flex items-center gap-2">
                       <FileText className="w-4 h-4 text-stone-500" />
-                      <span className="text-stone-600">{slab.blockId}</span>
+                      <span className="text-stone-600 font-[Inter]">{slab.blockId}</span>
                     </div>
                     
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-stone-500" />
-                      <span className="text-stone-600">{slab.quarry.location}</span>
+                      <span className="text-stone-600 font-[Inter]">{slab.quarry.location}</span>
                     </div>
                     
                     <div className="flex items-center gap-2">
                       <Shield className="w-4 h-4 text-stone-500" />
-                      <span className="text-stone-600 capitalize">{slab.finish}</span>
+                      <span className="text-stone-600 capitalize font-[Inter]">{slab.finish}</span>
                     </div>
                   </div>
                   
@@ -294,15 +271,15 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
                       ${slab.price}/{slab.priceUnit}
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="text-xs">
+                      <Button size="sm" variant="outline" className="text-xs font-[Inter]">
                         <Download className="w-3 h-3 mr-1" />
                         PDF
                       </Button>
-                      <Button size="sm" variant="outline" className="text-xs">
+                      <Button size="sm" variant="outline" className="text-xs font-[Inter]">
                         <Share2 className="w-3 h-3 mr-1" />
                         Share
                       </Button>
-                      <Button size="sm" className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs">
+                      <Button size="sm" className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-[Inter]">
                         Request Quote
                       </Button>
                     </div>
@@ -317,17 +294,17 @@ const Slab3DViewer = ({ slab, isOpen, onClose }: Slab3DViewerProps) => {
             <Card className="bg-black/40 backdrop-blur-sm border-white/20">
               <CardContent className="p-3 text-xs text-white">
                 <p className="font-[Inter]">• Pinch to zoom</p>
-                <p className="font-[Inter]">• Drag to rotate</p>
-                <p className="font-[Inter]">• Two fingers to pan</p>
+                <p className="font-[Inter]">• Drag to move</p>
+                <p className="font-[Inter]">• Use controls to rotate</p>
               </CardContent>
             </Card>
           </div>
 
-          {/* Loading Indicator */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="bg-black/20 backdrop-blur-sm rounded-lg p-4 text-white text-sm font-[Inter]">
-              Loading 3D model...
-            </div>
+          {/* Zoom Level Indicator */}
+          <div className="absolute bottom-6 right-6 z-10">
+            <Badge className="bg-black/40 text-white border-white/20 backdrop-blur-sm font-[Inter]">
+              {Math.round(zoom * 100)}%
+            </Badge>
           </div>
         </div>
       </DialogContent>

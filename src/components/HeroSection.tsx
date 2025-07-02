@@ -23,11 +23,9 @@ const HeroSection = ({ onBrowseClick, onListClick }: HeroSectionProps) => {
             <span className="text-sm font-medium text-stone-700">Trusted by 500+ stone traders globally</span>
           </div>
 
-          {/* Main Headline - Reduced size */}
+          {/* Main Headline - Single line */}
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-stone-900 mb-4 leading-tight">
-            Trade Stone on
-            <br />
-            <span className="text-gradient">TradeRails</span>
+            Trade Stone on <span className="text-gradient">TradeRails</span>
           </h1>
 
           {/* Company Tagline */}
