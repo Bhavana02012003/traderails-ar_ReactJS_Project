@@ -6,12 +6,13 @@ import QuoteReviewPage from './QuoteReviewPage';
 import FinancialWorkflowTrigger from '@/components/finance/FinancialWorkflowTrigger';
 import InviteUserFlow from '@/components/invite/InviteUserFlow';
 import ShipmentTrackingView from '@/components/shipment/ShipmentTrackingView';
-import ShipmentTrackerDemo from '@/components/shipment/ShipmentTrackerDemo';
+import RealTimeShipmentTracker from '@/components/shipment/RealTimeShipmentTracker';
 import TrustBadges from './TrustBadges';
+import RecentOrders from './RecentOrders';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Download, Send } from 'lucide-react';
+import { FileText, Download, Send, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface BuyerDashboardProps {
@@ -45,7 +46,7 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
 
   const handleTrackShipment = (shipmentId: string) => {
     setSelectedShipmentId(shipmentId);
-    setCurrentView('shipment-tracking');
+    setCurrentView('real-time-tracker');
   };
 
   const handleBackToDashboard = () => {
@@ -108,10 +109,6 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
     }
   };
 
-  const handleRealTimeTracker = () => {
-    setCurrentView('real-time-tracker');
-  };
-
   if (showInviteFlow) {
     return <InviteUserFlow onBack={() => setShowInviteFlow(false)} />;
   }
@@ -132,8 +129,29 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
 
   if (currentView === 'real-time-tracker') {
     return (
-      <div>
-        <ShipmentTrackerDemo onBack={handleBackToDashboard} />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-stone-50 font-['Inter']">
+        {/* Header */}
+        <div className="bg-white/90 backdrop-blur-xl border-b border-stone-200/50 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center space-x-4">
+                <Button variant="ghost" onClick={handleBackToDashboard} className="text-stone-600">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Dashboard
+                </Button>
+                <div>
+                  <h1 className="text-xl font-bold text-stone-900">Order Workflow Tracker</h1>
+                  <p className="text-sm text-stone-600">Shipment ID: {selectedShipmentId}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <RealTimeShipmentTracker shipmentId={selectedShipmentId || undefined} />
+        </div>
       </div>
     );
   }
@@ -160,31 +178,19 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
           <BuyerSummaryCards />
         </div>
 
-        {/* Real-Time Tracker Demo Button */}
-        <div className="mb-8">
-          <Card className="glass-panel border-0">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-stone-900">Real-Time Shipment Tracking</h3>
-                  <p className="text-stone-600">Monitor your trades from quote acceptance to payout release</p>
-                </div>
-                <Button 
-                  onClick={handleRealTimeTracker}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  View Live Tracker
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Main Content with Tabs */}
         <div className="mb-8">
           <BuyerQuickActions 
             onShowInviteFlow={handleShowInviteFlow}
             onViewQuote={handleViewQuote}
+            onFinancialWorkflow={handleFinancialWorkflow}
+            onTrackShipment={handleTrackShipment}
+          />
+        </div>
+
+        {/* Recent Orders Section */}
+        <div className="mb-8">
+          <RecentOrders 
             onFinancialWorkflow={handleFinancialWorkflow}
             onTrackShipment={handleTrackShipment}
           />

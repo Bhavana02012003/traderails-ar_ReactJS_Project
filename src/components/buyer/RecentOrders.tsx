@@ -227,7 +227,7 @@ const RecentOrders = ({ expanded = false, onFinancialWorkflow, onTrackShipment }
     }
   };
 
-  const handleTrackClick = (orderId: string) => {
+  const handleWorkflowClick = (orderId: string) => {
     if (onTrackShipment) {
       onTrackShipment(orderId);
     }
@@ -338,19 +338,20 @@ const RecentOrders = ({ expanded = false, onFinancialWorkflow, onTrackShipment }
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => handleTrackClick(order.id)}
+                    onClick={() => handleWorkflowClick(order.id)}
+                    className="text-blue-600 border-blue-200 hover:bg-blue-50"
                   >
-                    <Eye className="w-4 h-4 mr-1" />
-                    Track
+                    <Truck className="w-4 h-4 mr-1" />
+                    Workflow
                   </Button>
                   <Button 
                     variant="outline" 
                     size="sm"
                     onClick={() => handleFinancialWorkflowClick(order)}
-                    className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                    className="text-emerald-600 border-emerald-200 hover:bg-emerald-50"
                   >
                     <CreditCard className="w-4 h-4 mr-1" />
-                    Workflow
+                    Finance
                   </Button>
                   <Button
                     variant="ghost"
