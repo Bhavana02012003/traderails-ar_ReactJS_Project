@@ -20,6 +20,7 @@ import { Globe, MapPin, Phone, Mail, Shield, Users, TrendingUp } from 'lucide-re
 
 // Component imports for different sections and views
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import HeroSection from '@/components/HeroSection';
 import TrustSection from '@/components/TrustSection';
 import FeaturesSection from '@/components/FeaturesSection';
@@ -263,6 +264,7 @@ const Index = () => {
           <TrustSection />
           <FeaturesSection />
           <MarketplacePreview />
+          <Footer />
         </main>
       ) : currentView === 'marketplace' ? (
         /* Marketplace view for browsing stone inventory */
