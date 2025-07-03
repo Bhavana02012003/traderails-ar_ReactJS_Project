@@ -1,4 +1,3 @@
-
 /**
  * Main Index Page Component
  * 
@@ -260,7 +259,7 @@ const Index = () => {
       ) : currentView === 'home' ? (
         /* Home page layout with hero section, features, and marketplace preview */
         <main className="overflow-hidden">
-          <HeroSection />
+          <HeroSection onBrowseClick={handleBrowseClick} onListClick={handleListClick} />
           <TrustSection />
           <FeaturesSection />
           <MarketplacePreview />
