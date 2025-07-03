@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 
 interface MobileDashboardProps {
-  userType?: 'exporter' | 'factory';
+  userType?: 'exporter' | 'factory' | 'trader';
 }
 
 const MobileDashboard = ({ userType = 'exporter' }: MobileDashboardProps) => {
@@ -143,7 +143,7 @@ const MobileDashboard = ({ userType = 'exporter' }: MobileDashboardProps) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-stone-100 font-sora">
       {/* Mobile Header */}
-      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-stone-200 px-4 py-4">
+      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-stone-200 px-4 py-4 animate-slide-in-down">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-stone-900">Dashboard</h1>
@@ -152,9 +152,18 @@ const MobileDashboard = ({ userType = 'exporter' }: MobileDashboardProps) => {
           <div className="flex items-center gap-3">
             <Button size="sm" variant="ghost" className="relative p-2">
               <Bell className="w-5 h-5 text-stone-600" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full"></div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
             </Button>
-            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 px-4">
+            <Button 
+              size="sm" 
+              className="bg-emerald-600 hover:bg-emerald-700 px-4 transform hover:scale-105 transition-transform duration-200"
+              onClick={() => {
+                // Add bounce animation on click
+                const button = document.activeElement as HTMLElement;
+                button?.classList.add('animate-bounce');
+                setTimeout(() => button?.classList.remove('animate-bounce'), 600);
+              }}
+            >
               <Plus className="w-4 h-4 mr-1" />
               New
             </Button>
@@ -172,7 +181,8 @@ const MobileDashboard = ({ userType = 'exporter' }: MobileDashboardProps) => {
               return (
                 <Card 
                   key={card.id} 
-                  className="min-w-[280px] snap-start bg-gradient-to-br from-white to-slate-50 border-0 shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="min-w-[280px] snap-start bg-gradient-to-br from-white to-slate-50 border-0 shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in"
+                  style={{ animationDelay: `${index * 150}ms` }}
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
@@ -181,13 +191,13 @@ const MobileDashboard = ({ userType = 'exporter' }: MobileDashboardProps) => {
                         <p className="text-3xl font-bold text-stone-900">{card.value}</p>
                         <p className="text-xs text-stone-500 mt-1">{card.change}</p>
                       </div>
-                      <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${card.bgGradient} flex items-center justify-center shadow-lg`}>
+                      <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${card.bgGradient} flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300`}>
                         <Icon className="w-6 h-6 text-white" />
                       </div>
                     </div>
                     <div className="w-full bg-stone-200 rounded-full h-1">
                       <div 
-                        className={`h-1 rounded-full bg-gradient-to-r ${card.bgGradient}`}
+                        className={`h-1 rounded-full bg-gradient-to-r ${card.bgGradient} transition-all duration-1000 ease-out`}
                         style={{ width: `${65 + index * 10}%` }}
                       ></div>
                     </div>
@@ -204,7 +214,7 @@ const MobileDashboard = ({ userType = 'exporter' }: MobileDashboardProps) => {
             className="w-full"
             onClick={() => setActiveCard(activeCard === 'quotes' ? null : 'quotes')}
           >
-            <Card className="bg-white border-0 shadow-md hover:shadow-lg transition-all duration-300">
+            <Card className="bg-white border-0 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg font-semibold text-stone-900 flex items-center gap-2">
@@ -216,18 +226,18 @@ const MobileDashboard = ({ userType = 'exporter' }: MobileDashboardProps) => {
                       {recentQuotes.length} active
                     </Badge>
                     {activeCard === 'quotes' ? 
-                      <ChevronDown className="w-5 h-5 text-stone-500" /> : 
-                      <ChevronRight className="w-5 h-5 text-stone-500" />
+                      <ChevronDown className="w-5 h-5 text-stone-500 transition-transform duration-200" /> : 
+                      <ChevronRight className="w-5 h-5 text-stone-500 transition-transform duration-200" />
                     }
                   </div>
                 </div>
               </CardHeader>
             </Card>
           </CollapsibleTrigger>
-          <CollapsibleContent className="mt-2">
+          <CollapsibleContent className="mt-2 animate-slide-in-down">
             <div className="space-y-3">
-              {recentQuotes.map((quote) => (
-                <Card key={quote.id} className="bg-white border-0 shadow-sm">
+              {recentQuotes.map((quote, index) => (
+                <Card key={quote.id} className="bg-white border-0 shadow-sm animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
@@ -247,10 +257,10 @@ const MobileDashboard = ({ userType = 'exporter' }: MobileDashboardProps) => {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="flex-1 text-xs h-8">
+                      <Button size="sm" variant="outline" className="flex-1 text-xs h-8 transform hover:scale-105 transition-transform duration-200">
                         View
                       </Button>
-                      <Button size="sm" className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-xs h-8">
+                      <Button size="sm" className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-xs h-8 transform hover:scale-105 transition-transform duration-200">
                         Action
                       </Button>
                     </div>
@@ -267,7 +277,7 @@ const MobileDashboard = ({ userType = 'exporter' }: MobileDashboardProps) => {
             className="w-full"
             onClick={() => setActiveCard(activeCard === 'shipments' ? null : 'shipments')}
           >
-            <Card className="bg-white border-0 shadow-md hover:shadow-lg transition-all duration-300">
+            <Card className="bg-white border-0 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg font-semibold text-stone-900 flex items-center gap-2">
@@ -279,18 +289,18 @@ const MobileDashboard = ({ userType = 'exporter' }: MobileDashboardProps) => {
                       {shipmentData.length} in transit
                     </Badge>
                     {activeCard === 'shipments' ? 
-                      <ChevronDown className="w-5 h-5 text-stone-500" /> : 
-                      <ChevronRight className="w-5 h-5 text-stone-500" />
+                      <ChevronDown className="w-5 h-5 text-stone-500 transition-transform duration-200" /> : 
+                      <ChevronRight className="w-5 h-5 text-stone-500 transition-transform duration-200" />
                     }
                   </div>
                 </div>
               </CardHeader>
             </Card>
           </CollapsibleTrigger>
-          <CollapsibleContent className="mt-2">
+          <CollapsibleContent className="mt-2 animate-slide-in-down">
             <div className="space-y-3">
-              {shipmentData.map((shipment) => (
-                <Card key={shipment.id} className="bg-white border-0 shadow-sm">
+              {shipmentData.map((shipment, index) => (
+                <Card key={shipment.id} className="bg-white border-0 shadow-sm animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
@@ -309,7 +319,7 @@ const MobileDashboard = ({ userType = 'exporter' }: MobileDashboardProps) => {
                       </div>
                       <div className="w-full bg-stone-200 rounded-full h-2">
                         <div 
-                          className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500"
+                          className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-1000 ease-out"
                           style={{ width: `${shipment.progress}%` }}
                         ></div>
                       </div>
@@ -322,22 +332,22 @@ const MobileDashboard = ({ userType = 'exporter' }: MobileDashboardProps) => {
         </Collapsible>
 
         {/* Quick Actions */}
-        <Card className="bg-gradient-to-br from-emerald-50 to-green-50 border-0 shadow-md">
+        <Card className="bg-gradient-to-br from-emerald-50 to-green-50 border-0 shadow-md animate-fade-in">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg font-semibold text-stone-900">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              <Button className="h-12 bg-emerald-600 hover:bg-emerald-700 flex-col py-2 px-3">
+              <Button className="h-12 bg-emerald-600 hover:bg-emerald-700 flex-col py-2 px-3 transform hover:scale-105 transition-transform duration-200">
                 <Send className="w-4 h-4 mb-1" />
                 <span className="text-xs">New Quote</span>
               </Button>
-              <Button variant="outline" className="h-12 flex-col py-2 px-3 border-emerald-200 hover:bg-emerald-50">
+              <Button variant="outline" className="h-12 flex-col py-2 px-3 border-emerald-200 hover:bg-emerald-50 transform hover:scale-105 transition-transform duration-200">
                 <Package className="w-4 h-4 mb-1" />
                 <span className="text-xs">Add Inventory</span>
               </Button>
             </div>
-            <Button variant="outline" className="w-full h-10 text-sm border-stone-200 hover:bg-stone-50">
+            <Button variant="outline" className="w-full h-10 text-sm border-stone-200 hover:bg-stone-50 transform hover:scale-105 transition-transform duration-200">
               <Eye className="w-4 h-4 mr-2" />
               View All Activity
             </Button>

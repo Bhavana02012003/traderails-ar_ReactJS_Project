@@ -9,9 +9,10 @@ interface StatusBadgeProps {
   variant: 'credit' | 'escrow' | 'fx-lock';
   className?: string;
   size?: 'sm' | 'md';
+  isActive?: boolean;
 }
 
-const StatusBadge = ({ variant, className, size = 'md' }: StatusBadgeProps) => {
+const StatusBadge = ({ variant, className, size = 'md', isActive = false }: StatusBadgeProps) => {
   const configs = {
     credit: {
       icon: CreditCard,
@@ -36,6 +37,9 @@ const StatusBadge = ({ variant, className, size = 'md' }: StatusBadgeProps) => {
   const config = configs[variant];
   const Icon = config.icon;
 
+  // Add special glow effect for active escrow status
+  const glowEffect = variant === 'escrow' && isActive ? 'animate-pulse shadow-lg shadow-blue-400/50' : '';
+
   return (
     <TooltipProvider>
       <Tooltip>
@@ -43,25 +47,35 @@ const StatusBadge = ({ variant, className, size = 'md' }: StatusBadgeProps) => {
           <Badge
             variant="outline"
             className={cn(
-              'inline-flex items-center gap-1.5 transition-all duration-200 hover:scale-105 cursor-help border-2',
+              'inline-flex items-center gap-1.5 transition-all duration-300 hover:scale-105 cursor-help border-2 relative',
               config.colors,
               size === 'sm' ? 'text-xs px-2 py-0.5' : 'text-sm px-3 py-1',
+              glowEffect,
               className
             )}
           >
+            {/* Add special glow ring for active escrow */}
+            {variant === 'escrow' && isActive && (
+              <div className="absolute inset-0 rounded-full bg-blue-400/20 animate-ping"></div>
+            )}
             <Icon className={cn(
-              'flex-shrink-0',
+              'flex-shrink-0 relative z-10',
               size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'
             )} />
-            <span className="font-medium">{config.label}</span>
+            <span className="font-medium relative z-10">
+              {variant === 'escrow' && isActive ? 'Funds Locked' : config.label}
+            </span>
           </Badge>
         </TooltipTrigger>
         <TooltipContent 
           side="top" 
-          className="max-w-xs p-3 bg-white dark:bg-gray-900 border border-stone-200 dark:border-stone-700 shadow-lg"
+          className="max-w-xs p-3 bg-white dark:bg-gray-900 border border-stone-200 dark:border-stone-700 shadow-lg animate-fade-in"
         >
           <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
-            {config.description}
+            {variant === 'escrow' && isActive 
+              ? 'Funds are securely locked in escrow and will be released upon successful delivery confirmation.'
+              : config.description
+            }
           </p>
         </TooltipContent>
       </Tooltip>
@@ -73,13 +87,24 @@ interface StatusBadgeGroupProps {
   statuses: Array<'credit' | 'escrow' | 'fx-lock'>;
   className?: string;
   size?: 'sm' | 'md';
+  activeStatuses?: Array<'credit' | 'escrow' | 'fx-lock'>;
 }
 
-const StatusBadgeGroup = ({ statuses, className, size = 'md' }: StatusBadgeGroupProps) => {
+const StatusBadgeGroup = ({ statuses, className, size = 'md', activeStatuses = [] }: StatusBadgeGroupProps) => {
   return (
     <div className={cn('flex flex-wrap gap-2', className)}>
-      {statuses.map((status) => (
-        <StatusBadge key={status} variant={status} size={size} />
+      {statuses.map((status, index) => (
+        <div
+          key={status}
+          className="animate-fade-in"
+          style={{ animationDelay: `${index * 100}ms` }}
+        >
+          <StatusBadge 
+            variant={status} 
+            size={size} 
+            isActive={activeStatuses.includes(status)}
+          />
+        </div>
       ))}
     </div>
   );

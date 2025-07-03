@@ -22,7 +22,7 @@ const VerificationResultScreen = ({
       // Auto-continue after success animation
       const timer = setTimeout(() => {
         onContinue();
-      }, 2000);
+      }, 2500);
       return () => clearTimeout(timer);
     }
   }, [status, onContinue]);
@@ -31,14 +31,14 @@ const VerificationResultScreen = ({
     return (
       <div className="p-6 sm:p-8">
         <div className="text-center space-y-6">
-          <div className="animate-scale-in">
-            <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <div className="animate-bounce">
+            <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg animate-pulse">
               <CheckCircle className="w-10 h-10 text-white" />
             </div>
           </div>
           
           <div className="space-y-2 animate-fade-in">
-            <h2 className="text-2xl font-bold text-stone-900">
+            <h2 className="text-2xl font-bold text-stone-900 animate-scale-in">
               Verification Successful!
             </h2>
             <p className="text-stone-600">
@@ -47,10 +47,10 @@ const VerificationResultScreen = ({
           </div>
 
           <div className="animate-pulse">
-            <div className="w-8 h-1 bg-emerald-500 rounded-full mx-auto"></div>
+            <div className="w-8 h-1 bg-emerald-500 rounded-full mx-auto animate-bounce"></div>
           </div>
 
-          <p className="text-sm text-stone-500">
+          <p className="text-sm text-stone-500 animate-fade-in">
             Redirecting you to continue...
           </p>
         </div>
@@ -62,7 +62,7 @@ const VerificationResultScreen = ({
     return (
       <div className="p-6 sm:p-8">
         <div className="text-center space-y-6">
-          <div className="w-20 h-20 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto shadow-lg">
+          <div className="w-20 h-20 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto shadow-lg animate-bounce">
             <XCircle className="w-10 h-10 text-white" />
           </div>
           
@@ -87,7 +87,7 @@ const VerificationResultScreen = ({
           <div className="space-y-3">
             <Button
               onClick={onBackToContact}
-              className="w-full h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              className="w-full h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             >
               <RotateCcw className="w-4 h-4 mr-2" />
               Try Again
@@ -96,7 +96,7 @@ const VerificationResultScreen = ({
             <Button
               variant="ghost"
               onClick={onBackToContact}
-              className="w-full text-stone-600 hover:text-stone-900"
+              className="w-full text-stone-600 hover:text-stone-900 transform hover:scale-105 transition-transform duration-200"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Change {contactData.type === 'phone' ? 'Phone Number' : 'Email'}

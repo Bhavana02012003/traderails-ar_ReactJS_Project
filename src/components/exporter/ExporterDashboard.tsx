@@ -21,7 +21,7 @@ import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 interface ExporterDashboardProps {
   onShowInviteFlow?: () => void;
-  userType?: 'exporter' | 'factory';
+  userType?: 'exporter' | 'factory' | 'trader';
   onOrgDetailsClick?: () => void;
 }
 
@@ -86,7 +86,11 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
   // Mobile Layout
   if (isMobile) {
     if (showQuoteCreation) {
-      return <QuoteCreationFlow onClose={handleCloseQuoteCreation} />;
+      return (
+        <div className="animate-slide-in-right">
+          <QuoteCreationFlow onClose={handleCloseQuoteCreation} />
+        </div>
+      );
     }
 
     return (
@@ -102,7 +106,11 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
 
   // Desktop Layout
   if (showQuoteCreation) {
-    return <QuoteCreationFlow onClose={handleCloseQuoteCreation} />;
+    return (
+      <div className="animate-slide-in-right">
+        <QuoteCreationFlow onClose={handleCloseQuoteCreation} />
+      </div>
+    );
   }
 
   const summaryMetrics = [
@@ -159,7 +167,7 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
           {summaryMetrics.map((metric, index) => {
             const Icon = metric.icon;
             return (
-              <Card key={index} className="glass-panel border-0 hover:shadow-lg transition-all duration-300 group">
+              <Card key={index} className="glass-panel border-0 hover:shadow-lg transition-all duration-300 group animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>

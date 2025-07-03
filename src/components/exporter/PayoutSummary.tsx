@@ -17,7 +17,8 @@ const PayoutSummary = ({ detailed = false }: PayoutSummaryProps) => {
       releaseDate: '2024-01-15',
       status: 'Released',
       method: 'RTGS',
-      protections: ['credit', 'escrow'] as Array<'credit' | 'escrow' | 'fx-lock'>
+      protections: ['credit', 'escrow'] as Array<'credit' | 'escrow' | 'fx-lock'>,
+      activeProtections: [] as Array<'credit' | 'escrow' | 'fx-lock'>
     },
     {
       invoiceId: 'INV-2024-002',
@@ -25,7 +26,8 @@ const PayoutSummary = ({ detailed = false }: PayoutSummaryProps) => {
       releaseDate: '2024-01-20',
       status: 'In Escrow',
       method: 'Wire Transfer',
-      protections: ['escrow', 'fx-lock'] as Array<'credit' | 'escrow' | 'fx-lock'>
+      protections: ['escrow', 'fx-lock'] as Array<'credit' | 'escrow' | 'fx-lock'>,
+      activeProtections: ['escrow'] as Array<'credit' | 'escrow' | 'fx-lock'>
     },
     {
       invoiceId: 'INV-2024-003',
@@ -33,7 +35,8 @@ const PayoutSummary = ({ detailed = false }: PayoutSummaryProps) => {
       releaseDate: '2024-01-25',
       status: 'Pending',
       method: 'RTGS',
-      protections: ['credit', 'escrow', 'fx-lock'] as Array<'credit' | 'escrow' | 'fx-lock'>
+      protections: ['credit', 'escrow', 'fx-lock'] as Array<'credit' | 'escrow' | 'fx-lock'>,
+      activeProtections: ['escrow', 'fx-lock'] as Array<'credit' | 'escrow' | 'fx-lock'>
     }
   ];
 
@@ -43,7 +46,7 @@ const PayoutSummary = ({ detailed = false }: PayoutSummaryProps) => {
   }, 0);
 
   return (
-    <Card className="glass-panel border-0">
+    <Card className="glass-panel border-0 animate-fade-in">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <DollarSign className="w-5 h-5 text-emerald-600" />
@@ -51,7 +54,7 @@ const PayoutSummary = ({ detailed = false }: PayoutSummaryProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="text-center p-4 bg-emerald-50 rounded-xl">
+        <div className="text-center p-4 bg-emerald-50 rounded-xl animate-scale-in">
           <div className="text-3xl font-bold text-emerald-600">
             ₹{totalReceivable.toLocaleString()}
           </div>
@@ -69,8 +72,12 @@ const PayoutSummary = ({ detailed = false }: PayoutSummaryProps) => {
           <Separator />
 
           <div className="space-y-3">
-            {payouts.map((payout) => (
-              <div key={payout.invoiceId} className="space-y-3 p-3 bg-white/50 rounded-lg">
+            {payouts.map((payout, index) => (
+              <div 
+                key={payout.invoiceId} 
+                className="space-y-3 p-3 bg-white/50 rounded-lg animate-fade-in transform hover:scale-[1.02] transition-transform duration-200" 
+                style={{ animationDelay: `${index * 150}ms` }}
+              >
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="font-medium text-stone-900">{payout.invoiceId}</div>
@@ -91,9 +98,10 @@ const PayoutSummary = ({ detailed = false }: PayoutSummaryProps) => {
                   </div>
                 </div>
                 
-                {/* Status badges */}
+                {/* Enhanced status badges with glow effects */}
                 <StatusBadgeGroup 
                   statuses={payout.protections} 
+                  activeStatuses={payout.activeProtections}
                   size="sm"
                   className="justify-start"
                 />
