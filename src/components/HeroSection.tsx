@@ -1,4 +1,3 @@
-
 /**
  * Hero Section Component
  * 
@@ -79,13 +78,12 @@ const HeroSection = ({ onBrowseClick, onListClick }: HeroSectionProps) => {
         </div>
 
         {/* Main Headlines */}
-        <h1 className={`text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight transition-all duration-1000 delay-200 ${
+        <h1 className={`text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-6 leading-tight transition-all duration-1000 delay-200 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
           Connect Global
-          <br />
           <span className="bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent">
-            Stone Commerce
+            {" "}Stone Commerce
           </span>
         </h1>
 
