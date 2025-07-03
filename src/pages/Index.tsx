@@ -260,10 +260,10 @@ const Index = () => {
       ) : currentView === 'home' ? (
         /* Home page layout with hero section, features, and marketplace preview */
         <main className="overflow-hidden">
-          <HeroSection onGetStarted={handleLoginClick} onBrowse={handleBrowseClick} />
+          <HeroSection />
           <TrustSection />
           <FeaturesSection />
-          <MarketplacePreview onExplore={handleBrowseClick} onList={handleListClick} />
+          <MarketplacePreview />
         </main>
       ) : currentView === 'marketplace' ? (
         /* Marketplace view for browsing stone inventory */

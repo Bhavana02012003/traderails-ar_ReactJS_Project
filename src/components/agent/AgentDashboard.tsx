@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -165,14 +164,30 @@ const AgentDashboard = ({ onShowInviteFlow }: AgentDashboardProps) => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Organization Switcher */}
-        <div className="mb-8">
-          <OrganizationSwitcher
-            currentOrg={currentOrg}
-            organizations={organizations}
-            onOrganizationChange={handleOrganizationChange}
-            className="max-w-md"
-          />
+        {/* Header with Organization Switcher - Standardized Layout */}
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-8">
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">
+              Agent Dashboard
+            </h1>
+            <p className="text-slate-600 mb-4">
+              Field inspection and quality control for buyers
+            </p>
+            <div className="flex items-center space-x-2">
+              <Building className="w-4 h-4 text-slate-500" />
+              <span className="text-sm text-slate-600">
+                Currently inspecting for: <span className="font-medium">{currentOrg.name}</span>
+              </span>
+            </div>
+          </div>
+          
+          <div className="w-full lg:w-80 lg:flex-shrink-0">
+            <OrganizationSwitcher
+              currentOrg={currentOrg}
+              organizations={organizations}
+              onOrganizationChange={handleOrganizationChange}
+            />
+          </div>
         </div>
 
         {/* Main Dashboard Grid */}

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { 
   TrendingUp, 
@@ -139,16 +140,16 @@ const TraderDashboard = ({ onShowInviteFlow }: TraderDashboardProps) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-slate-50 to-emerald-50 font-sora">
       <div className="container mx-auto px-4 py-6 space-y-6">
-        {/* Header with Organization Switcher */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div>
+        {/* Header with Organization Switcher - Standardized Layout */}
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+          <div className="flex-1">
             <h1 className="text-3xl font-bold text-stone-900 mb-2">
               Independent Trader Dashboard
             </h1>
-            <p className="text-stone-600">
+            <p className="text-stone-600 mb-4">
               Manage your trade operations and buyer relationships
             </p>
-            <div className="flex items-center space-x-2 mt-2">
+            <div className="flex items-center space-x-2">
               <Building className="w-4 h-4 text-stone-500" />
               <span className="text-sm text-stone-600">
                 Operating under: <span className="font-medium">{currentOrg.name}</span>
@@ -156,7 +157,7 @@ const TraderDashboard = ({ onShowInviteFlow }: TraderDashboardProps) => {
             </div>
           </div>
           
-          <div className="w-full lg:w-80">
+          <div className="w-full lg:w-80 lg:flex-shrink-0">
             <OrganizationSwitcher
               currentOrg={currentOrg}
               organizations={mockOrganizations}
