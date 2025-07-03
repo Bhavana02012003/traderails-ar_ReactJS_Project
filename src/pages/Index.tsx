@@ -1,3 +1,4 @@
+
 /**
  * Main Index Page Component
  * 
@@ -246,7 +247,13 @@ const Index = () => {
         /* Session Management view for security and session control */
         <SessionManagement />
       ) : currentView === 'home' ? (
-        // ... keep existing code (home page layout)
+        /* Home page layout with hero section, features, and marketplace preview */
+        <main className="overflow-hidden">
+          <HeroSection onGetStarted={handleLoginClick} onBrowse={handleBrowseClick} />
+          <TrustSection />
+          <FeaturesSection />
+          <MarketplacePreview onExplore={handleBrowseClick} onList={handleListClick} />
+        </main>
       ) : currentView === 'marketplace' ? (
         /* Marketplace view for browsing stone inventory */
         <MarketplaceContent />
