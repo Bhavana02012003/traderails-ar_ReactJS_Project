@@ -41,11 +41,12 @@ import AgentDashboard from '@/components/agent/AgentDashboard';
 import LoginModal from '@/components/LoginModal';
 import InviteUserFlow from '@/components/invite/InviteUserFlow';
 import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
+import SessionManagement from '@/components/security/SessionManagement';
 
 /**
  * Type definitions for application state management
  */
-type ViewType = 'home' | 'marketplace' | 'about' | 'contact' | 'onboarding' | 'exporter' | 'buyer' | 'admin' | 'trader' | 'agent' | 'invite';
+type ViewType = 'home' | 'marketplace' | 'about' | 'contact' | 'onboarding' | 'exporter' | 'buyer' | 'admin' | 'trader' | 'agent' | 'invite' | 'session-management';
 type UserType = 'exporter' | 'buyer' | 'admin' | 'agent' | 'trader' | null;
 
 /**
@@ -197,6 +198,15 @@ const Index = () => {
   };
 
   /**
+   * Navigates to session management view
+   */
+  const handleSessionManagementClick = () => {
+    if (isLoggedIn) {
+      setCurrentView('session-management');
+    }
+  };
+
+  /**
    * Main Render Logic
    * 
    * The component renders different content based on the current view state:
@@ -206,19 +216,21 @@ const Index = () => {
    * - contact: Contact information and form
    * - Various dashboards: Role-specific user interfaces
    * - invite: User invitation flow
+   * - session-management: User session security management
    */
   return (
     <div className="min-h-screen bg-white">
       {/* 
         Conditional Header Rendering
-        Header is hidden for certain views (admin, invite, onboarding) 
+        Header is hidden for certain views (admin, invite, onboarding, session-management) 
         that have their own navigation or are full-screen flows
       */}
-      {currentView !== 'admin' && currentView !== 'invite' && currentView !== 'onboarding' && (
+      {currentView !== 'admin' && currentView !== 'invite' && currentView !== 'onboarding' && currentView !== 'session-management' && (
         <Header 
           onLoginClick={handleLoginClick} 
           onHomeClick={handleHomeClick}
           onDashboardClick={handleDashboardClick}
+          onSessionManagementClick={handleSessionManagementClick}
           currentView={currentView}
           isLoggedIn={isLoggedIn}
           userType={userType}
@@ -230,83 +242,11 @@ const Index = () => {
         Main Content Area - Conditional Rendering Based on Current View
         Each view renders its corresponding component with appropriate props
       */}
-      {currentView === 'home' ? (
-        <>
-          {/* Home Page Layout */}
-          <main>
-            {/* Hero section with primary call-to-action buttons */}
-            <HeroSection 
-              onBrowseClick={handleBrowseClick}
-              onListClick={handleListClick}
-            />
-            
-            {/* Trust indicators and social proof */}
-            <TrustSection />
-            
-            {/* Feature highlights and value propositions */}
-            <FeaturesSection />
-            
-            {/* Preview of marketplace functionality */}
-            <MarketplacePreview />
-          </main>
-
-          {/* Footer Section */}
-          <footer className="bg-slate-900 text-white py-12">
-            <div className="container mx-auto px-6 lg:px-12 max-w-7xl">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                {/* Logo and Branding Column */}
-                <div>
-                  <div className="flex items-center space-x-3 mb-6">
-                    {/* Company logo - larger size for better visibility on dark background */}
-                    <img 
-                      src="/lovable-uploads/3445b0da-b926-49fc-9f5e-9a14522b14fd.png" 
-                      alt="TradeRails - The Invisible Rails of Global Commerce" 
-                      className="h-48 w-auto object-contain"
-                    />
-                  </div>
-                </div>
-                
-                {/* Platform Links Column */}
-                <div>
-                  <h3 className="font-semibold mb-4 text-white text-lg">Platform</h3>
-                  <ul className="space-y-2 text-sm text-slate-300">
-                    <li><button onClick={handleBrowseClick} className="hover:text-emerald-400 transition-colors">Marketplace</button></li>
-                    <li><button onClick={handleAboutClick} className="hover:text-emerald-400 transition-colors">About</button></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Pricing</a></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">API</a></li>
-                  </ul>
-                </div>
-                
-                {/* Support Links Column */}
-                <div>
-                  <h3 className="font-semibold mb-4 text-white text-lg">Support</h3>
-                  <ul className="space-y-2 text-sm text-slate-300">
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Help Center</a></li>
-                    <li><button onClick={handleContactClick} className="hover:text-emerald-400 transition-colors">Contact Us</button></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Status</a></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Security</a></li>
-                  </ul>
-                </div>
-                
-                {/* Company Information Column */}
-                <div>
-                  <h3 className="font-semibold mb-4 text-white text-lg">Company</h3>
-                  <ul className="space-y-2 text-sm text-slate-300">
-                    <li><button onClick={handleAboutClick} className="hover:text-emerald-400 transition-colors">About</button></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Careers</a></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Privacy</a></li>
-                    <li><a href="#" className="hover:text-emerald-400 transition-colors">Terms</a></li>
-                  </ul>
-                </div>
-              </div>
-              
-              {/* Copyright Section */}
-              <div className="border-t border-slate-700 mt-8 pt-8 text-center text-sm text-slate-300">
-                <p>&copy; 2024 TradeRails. All rights reserved.</p>
-              </div>
-            </div>
-          </footer>
-        </>
+      {currentView === 'session-management' ? (
+        /* Session Management view for security and session control */
+        <SessionManagement />
+      ) : currentView === 'home' ? (
+        // ... keep existing code (home page layout)
       ) : currentView === 'marketplace' ? (
         /* Marketplace view for browsing stone inventory */
         <MarketplaceContent />

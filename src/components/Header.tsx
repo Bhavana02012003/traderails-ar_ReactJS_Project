@@ -1,3 +1,4 @@
+
 /**
  * Header Component
  * 
@@ -23,13 +24,14 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { User, Menu, X, Bell } from 'lucide-react';
+import { User, Menu, X, Bell, Shield } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 
 /**
@@ -42,8 +44,10 @@ interface HeaderProps {
   onHomeClick?: () => void;
   /** Optional function to navigate to user dashboard */
   onDashboardClick?: () => void;
+  /** Optional function to navigate to session management */
+  onSessionManagementClick?: () => void;
   /** Current active view for navigation highlighting */
-  currentView?: 'home' | 'marketplace' | 'about' | 'contact' | 'exporter' | 'buyer' | 'admin' | 'trader' | 'agent';
+  currentView?: 'home' | 'marketplace' | 'about' | 'contact' | 'exporter' | 'buyer' | 'admin' | 'trader' | 'agent' | 'session-management';
   /** User authentication status */
   isLoggedIn?: boolean;
   /** User role type for role-based features */
@@ -64,7 +68,8 @@ interface HeaderProps {
 const Header = ({ 
   onLoginClick, 
   onHomeClick, 
-  onDashboardClick, 
+  onDashboardClick,
+  onSessionManagementClick,
   currentView = 'home',
   isLoggedIn = false,
   userType,
@@ -79,6 +84,14 @@ const Header = ({
    */
   const handleLogout = () => {
     onLogout?.();
+    setIsMenuOpen(false);
+  };
+
+  /**
+   * Handles session management navigation
+   */
+  const handleSessionManagement = () => {
+    onSessionManagementClick?.();
     setIsMenuOpen(false);
   };
 
@@ -132,6 +145,12 @@ const Header = ({
                     <DropdownMenuItem onClick={onDashboardClick}>
                       Dashboard
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSessionManagement}>
+                      <Shield className="w-4 h-4 mr-2" />
+                      Session Management
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout}>
                       Logout
                     </DropdownMenuItem>
@@ -201,6 +220,11 @@ const Header = ({
                       setIsMenuOpen(false);
                     }} variant="ghost" className="justify-start text-stone-700">
                       Dashboard
+                    </Button>
+                    
+                    <Button onClick={handleSessionManagement} variant="ghost" className="justify-start text-stone-700">
+                      <Shield className="w-4 h-4 mr-2" />
+                      Session Management
                     </Button>
                     
                     <Button variant="ghost" onClick={handleLogout} className="justify-start text-stone-700">
