@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,7 +26,8 @@ import {
   Shield, 
   ChevronDown,
   AlertTriangle,
-  Wifi
+  Wifi,
+  ArrowLeft
 } from 'lucide-react';
 
 interface Session {
@@ -48,9 +48,10 @@ interface Session {
 interface SessionManagementProps {
   isAdmin?: boolean;
   userId?: string;
+  onBack?: () => void;
 }
 
-const SessionManagement = ({ isAdmin = false, userId }: SessionManagementProps) => {
+const SessionManagement = ({ isAdmin = false, userId, onBack }: SessionManagementProps) => {
   const [sessions, setSessions] = useState<Session[]>([
     {
       id: '1',
@@ -132,8 +133,19 @@ const SessionManagement = ({ isAdmin = false, userId }: SessionManagementProps) 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-emerald-50/30 p-4 sm:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
+        {/* Header with Back Button */}
         <div className="mb-8">
+          {onBack && (
+            <Button 
+              variant="ghost" 
+              onClick={onBack}
+              className="mb-4 text-stone-600 hover:text-stone-900"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+          )}
+          
           <div className="flex items-center space-x-3 mb-4">
             <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
               <Shield className="w-6 h-6 text-white" />

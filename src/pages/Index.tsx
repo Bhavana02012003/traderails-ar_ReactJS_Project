@@ -1,4 +1,3 @@
-
 /**
  * Main Index Page Component
  * 
@@ -245,7 +244,7 @@ const Index = () => {
       */}
       {currentView === 'session-management' ? (
         /* Session Management view for security and session control */
-        <SessionManagement />
+        <SessionManagement onBack={handleHomeClick} />
       ) : currentView === 'home' ? (
         /* Home page layout with hero section, features, and marketplace preview */
         <main className="overflow-hidden">
