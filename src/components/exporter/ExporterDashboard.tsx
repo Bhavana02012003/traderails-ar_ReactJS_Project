@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useIsMobile } from '@/hooks/use-mobile';
 import DashboardHeader from './DashboardHeader';
 import QuickActionsPanel from './QuickActionsPanel';
 import SlabInventory from './SlabInventory';
@@ -15,6 +16,8 @@ import MyQuotes from './MyQuotes';
 import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
 import OrgDetailsPage from '@/components/org/OrgDetailsPage';
 import QuoteCreationFlow from '@/components/quotes/QuoteCreationFlow';
+import MobileDashboard from '@/components/mobile/MobileDashboard';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 interface ExporterDashboardProps {
   onShowInviteFlow?: () => void;
@@ -47,6 +50,8 @@ const mockOrganizations = [
 const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: ExporterDashboardProps) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [showQuoteCreation, setShowQuoteCreation] = useState(false);
+  const [mobileTab, setMobileTab] = useState('home');
+  const isMobile = useIsMobile();
 
   const currentOrg = mockOrganizations[0]; // Default to first org
 
@@ -78,7 +83,24 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
   // Only show organization details for exporters (not traders)
   const canManageOrganization = userType === 'exporter';
 
-  // If quote creation is active, show it full screen
+  // Mobile Layout
+  if (isMobile) {
+    if (showQuoteCreation) {
+      return <QuoteCreationFlow onClose={handleCloseQuoteCreation} />;
+    }
+
+    return (
+      <>
+        <MobileDashboard userType={userType} />
+        <MobileBottomNav 
+          activeTab={mobileTab} 
+          onTabChange={setMobileTab}
+        />
+      </>
+    );
+  }
+
+  // Desktop Layout
   if (showQuoteCreation) {
     return <QuoteCreationFlow onClose={handleCloseQuoteCreation} />;
   }
