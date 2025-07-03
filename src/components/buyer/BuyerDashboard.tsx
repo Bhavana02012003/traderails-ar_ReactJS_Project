@@ -6,6 +6,7 @@ import QuoteReviewPage from './QuoteReviewPage';
 import FinancialWorkflowTrigger from '@/components/finance/FinancialWorkflowTrigger';
 import InviteUserFlow from '@/components/invite/InviteUserFlow';
 import ShipmentTrackingView from '@/components/shipment/ShipmentTrackingView';
+import ShipmentTrackerDemo from '@/components/shipment/ShipmentTrackerDemo';
 import TrustBadges from './TrustBadges';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,7 +22,7 @@ interface BuyerDashboardProps {
 const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboardProps) => {
   const [showInviteFlow, setShowInviteFlow] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
-  const [currentView, setCurrentView] = useState<'dashboard' | 'quote-review' | 'shipment-tracking'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'quote-review' | 'shipment-tracking' | 'real-time-tracker'>('dashboard');
   const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(null);
   const [selectedShipmentId, setSelectedShipmentId] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -107,6 +108,10 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
     }
   };
 
+  const handleRealTimeTracker = () => {
+    setCurrentView('real-time-tracker');
+  };
+
   if (showInviteFlow) {
     return <InviteUserFlow onBack={() => setShowInviteFlow(false)} />;
   }
@@ -122,6 +127,14 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
         userRole={userType}
         onBack={handleBackToDashboard}
       />
+    );
+  }
+
+  if (currentView === 'real-time-tracker') {
+    return (
+      <div>
+        <ShipmentTrackerDemo onBack={handleBackToDashboard} />
+      </div>
     );
   }
 
@@ -145,6 +158,26 @@ const BuyerDashboard = ({ onShowInviteFlow, userType = 'buyer' }: BuyerDashboard
         {/* Summary Cards */}
         <div className="mb-8">
           <BuyerSummaryCards />
+        </div>
+
+        {/* Real-Time Tracker Demo Button */}
+        <div className="mb-8">
+          <Card className="glass-panel border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-stone-900">Real-Time Shipment Tracking</h3>
+                  <p className="text-stone-600">Monitor your trades from quote acceptance to payout release</p>
+                </div>
+                <Button 
+                  onClick={handleRealTimeTracker}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  View Live Tracker
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Main Content with Tabs */}
