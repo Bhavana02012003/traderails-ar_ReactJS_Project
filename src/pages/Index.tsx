@@ -1,3 +1,4 @@
+
 /**
  * Main Index Page Component
  * 
@@ -207,6 +208,17 @@ const Index = () => {
   };
 
   /**
+   * Handles back navigation from session management to appropriate dashboard
+   */
+  const handleSessionManagementBack = () => {
+    if (isLoggedIn && userType) {
+      handleDashboardClick();
+    } else {
+      setCurrentView('home');
+    }
+  };
+
+  /**
    * Main Render Logic
    * 
    * The component renders different content based on the current view state:
@@ -244,7 +256,7 @@ const Index = () => {
       */}
       {currentView === 'session-management' ? (
         /* Session Management view for security and session control */
-        <SessionManagement onBack={handleHomeClick} />
+        <SessionManagement onBack={handleSessionManagementBack} />
       ) : currentView === 'home' ? (
         /* Home page layout with hero section, features, and marketplace preview */
         <main className="overflow-hidden">
