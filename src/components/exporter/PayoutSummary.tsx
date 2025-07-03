@@ -3,6 +3,7 @@ import { DollarSign, TrendingUp, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { StatusBadgeGroup } from '@/components/ui/status-badges';
 
 interface PayoutSummaryProps {
   detailed?: boolean;
@@ -15,21 +16,24 @@ const PayoutSummary = ({ detailed = false }: PayoutSummaryProps) => {
       amount: '₹2,45,000',
       releaseDate: '2024-01-15',
       status: 'Released',
-      method: 'RTGS'
+      method: 'RTGS',
+      protections: ['credit', 'escrow'] as Array<'credit' | 'escrow' | 'fx-lock'>
     },
     {
       invoiceId: 'INV-2024-002',
       amount: '₹3,20,000',
       releaseDate: '2024-01-20',
       status: 'In Escrow',
-      method: 'Wire Transfer'
+      method: 'Wire Transfer',
+      protections: ['escrow', 'fx-lock'] as Array<'credit' | 'escrow' | 'fx-lock'>
     },
     {
       invoiceId: 'INV-2024-003',
       amount: '₹2,85,000',
       releaseDate: '2024-01-25',
       status: 'Pending',
-      method: 'RTGS'
+      method: 'RTGS',
+      protections: ['credit', 'escrow', 'fx-lock'] as Array<'credit' | 'escrow' | 'fx-lock'>
     }
   ];
 
@@ -66,24 +70,33 @@ const PayoutSummary = ({ detailed = false }: PayoutSummaryProps) => {
 
           <div className="space-y-3">
             {payouts.map((payout) => (
-              <div key={payout.invoiceId} className="flex items-center justify-between p-3 bg-white/50 rounded-lg">
-                <div>
-                  <div className="font-medium text-stone-900">{payout.invoiceId}</div>
-                  <div className="text-sm text-stone-500 flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    {payout.releaseDate}
+              <div key={payout.invoiceId} className="space-y-3 p-3 bg-white/50 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-stone-900">{payout.invoiceId}</div>
+                    <div className="text-sm text-stone-500 flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      {payout.releaseDate}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-semibold text-stone-900">{payout.amount}</div>
+                    <Badge variant="outline" className={
+                      payout.status === 'Released' ? 'text-emerald-600 border-emerald-200' :
+                      payout.status === 'In Escrow' ? 'text-amber-600 border-amber-200' :
+                      'text-stone-600 border-stone-200'
+                    }>
+                      {payout.status}
+                    </Badge>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="font-semibold text-stone-900">{payout.amount}</div>
-                  <Badge variant="outline" className={
-                    payout.status === 'Released' ? 'text-emerald-600 border-emerald-200' :
-                    payout.status === 'In Escrow' ? 'text-amber-600 border-amber-200' :
-                    'text-stone-600 border-stone-200'
-                  }>
-                    {payout.status}
-                  </Badge>
-                </div>
+                
+                {/* Status badges */}
+                <StatusBadgeGroup 
+                  statuses={payout.protections} 
+                  size="sm"
+                  className="justify-start"
+                />
               </div>
             ))}
           </div>

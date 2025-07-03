@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -30,6 +29,7 @@ import {
   X
 } from 'lucide-react';
 import { Slab } from '@/types/marketplace';
+import { StatusBadgeGroup } from '@/components/ui/status-badges';
 
 interface PayoutModalProps {
   isOpen: boolean;
@@ -53,6 +53,13 @@ const PayoutModal = ({ isOpen, onClose, slab }: PayoutModalProps) => {
   const platformDiscount = 20000 + (selectedCredit?.discount || 0);
   const taxesFees = 18320;
   const totalPayable = baseAmount - platformDiscount + taxesFees;
+
+  // Determine active protections
+  const activeProtections: Array<'credit' | 'escrow' | 'fx-lock'> = ['escrow'];
+  if (creditTerm !== 'no-credit') {
+    activeProtections.push('credit');
+  }
+  activeProtections.push('fx-lock'); // Always include FX lock for this demo
 
   const handleConfirmPayment = () => {
     setIsProcessing(true);
@@ -98,6 +105,12 @@ const PayoutModal = ({ isOpen, onClose, slab }: PayoutModalProps) => {
                       <h3 className="text-lg font-semibold text-stone-900">{slab.name}</h3>
                       <p className="text-stone-600">{slab.supplier.name}</p>
                     </div>
+                  </div>
+                  
+                  {/* Protection badges */}
+                  <div className="border-t pt-4">
+                    <p className="text-sm font-medium text-stone-700 mb-2">Transaction Security:</p>
+                    <StatusBadgeGroup statuses={activeProtections} />
                   </div>
                 </CardContent>
               </Card>

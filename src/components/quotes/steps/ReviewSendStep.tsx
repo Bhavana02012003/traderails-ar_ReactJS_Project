@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Send, Download, Eye } from 'lucide-react';
 import { useQuote } from '../QuoteContext';
+import { StatusBadgeGroup } from '@/components/ui/status-badges';
 
 interface StepProps {
   onNext: () => void;
@@ -19,6 +19,18 @@ const ReviewSendStep = ({ onNext }: StepProps) => {
 
   const totalValue = state.selectedSlabs.reduce((sum, slab) => sum + slab.totalPrice, 0);
   const totalSlabs = state.selectedSlabs.reduce((sum, slab) => sum + slab.quantity, 0);
+
+  // Determine active protections based on state
+  const activeProtections: Array<'credit' | 'escrow' | 'fx-lock'> = [];
+  if (state.selectedBuyer?.creditEligible && state.showCreditTerms) {
+    activeProtections.push('credit');
+  }
+  if (state.escrowEnabled) {
+    activeProtections.push('escrow');
+  }
+  if (state.fxLockingEnabled) {
+    activeProtections.push('fx-lock');
+  }
 
   const handleSendQuote = () => {
     // Here you would typically send the quote via API
@@ -140,6 +152,14 @@ const ReviewSendStep = ({ onNext }: StepProps) => {
                 <div className="text-sm text-stone-500">
                   Currency: {state.currency} • {state.shippingTerms} Terms
                 </div>
+
+                {/* Protection badges */}
+                {activeProtections.length > 0 && (
+                  <div className="pt-3 border-t border-stone-200">
+                    <p className="text-sm font-medium text-stone-700 mb-2">Transaction Protections:</p>
+                    <StatusBadgeGroup statuses={activeProtections} size="sm" />
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

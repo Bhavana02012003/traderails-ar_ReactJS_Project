@@ -21,7 +21,7 @@ import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 interface ExporterDashboardProps {
   onShowInviteFlow?: () => void;
-  userType?: 'exporter' | 'trader';
+  userType?: 'exporter' | 'factory';
   onOrgDetailsClick?: () => void;
 }
 
