@@ -118,3 +118,38 @@ All colors MUST be HSL.
     background-clip: text;
   }
 }
+
+/* Custom animations for hero section */
+@keyframes draw {
+  0% {
+    stroke-dasharray: 0 1000;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 500 1000;
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dasharray: 500 1000;
+    stroke-dashoffset: -500;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.6;
+  }
+  33% {
+    transform: translateY(-10px) translateX(5px);
+    opacity: 1;
+  }
+  66% {
+    transform: translateY(5px) translateX(-5px);
+    opacity: 0.8;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
