@@ -84,9 +84,9 @@ const Index = () => {
 
   /**
    * Handles successful login and redirects user to appropriate dashboard
-   * @param type - The user role type (buyer, exporter, agent, trader)
+   * @param type - The user role type (buyer, exporter, agent, trader, admin)
    */
-  const handleLoginSuccess = (type: 'buyer' | 'exporter' | 'agent' | 'trader') => {
+  const handleLoginSuccess = (type: 'buyer' | 'exporter' | 'agent' | 'trader' | 'admin') => {
     setUserType(type);
     setIsLoggedIn(true);
     setIsLoginModalOpen(false);
@@ -100,6 +100,8 @@ const Index = () => {
       setCurrentView('exporter');
     } else if (type === 'trader') {
       setCurrentView('trader');
+    } else if (type === 'admin') {
+      setCurrentView('admin');
     }
   };
 

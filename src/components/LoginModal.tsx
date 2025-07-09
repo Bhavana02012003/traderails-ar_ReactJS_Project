@@ -12,7 +12,7 @@ import ChooseOrganizationModal from './auth/ChooseOrganizationModal';
 interface LoginModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onLoginSuccess?: (userType: 'buyer' | 'exporter' | 'agent' | 'trader') => void;
+  onLoginSuccess?: (userType: 'buyer' | 'exporter' | 'agent' | 'trader' | 'admin') => void;
   onCreateAccount?: () => void;
 }
 
@@ -49,16 +49,17 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
   const [mfaOtp, setMfaOtp] = useState('');
   const [showMfaInput, setShowMfaInput] = useState(false);
   const [showOtpFlow, setShowOtpFlow] = useState(false);
-  const [selectedUserType, setSelectedUserType] = useState<'buyer' | 'exporter' | 'agent' | 'trader'>('buyer');
+  const [selectedUserType, setSelectedUserType] = useState<'buyer' | 'exporter' | 'agent' | 'trader' | 'admin'>('buyer');
   const [showOrgChoice, setShowOrgChoice] = useState(false);
 
   const getUserTypeConfig = (userType: string) => {
     switch (userType) {
       case 'buyer':
       case 'exporter':
+      case 'admin':
         return { 
           authMethod: 'email', 
-          label: userType === 'buyer' ? 'Buyer / Importer' : 'Exporter / Seller',
+          label: userType === 'buyer' ? 'Buyer / Importer' : userType === 'exporter' ? 'Exporter / Seller' : 'Platform Admin',
           requiresMfa: true 
         };
       case 'agent':
@@ -89,7 +90,14 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
   };
 
   const handleOTPVerificationSuccess = (contactData: ContactData) => {
-    // Check if user has multiple organizations
+    // Check if user has multiple organizations (not applicable to admin)
+    if (selectedUserType === 'admin') {
+      onLoginSuccess?.(selectedUserType);
+      onOpenChange(false);
+      setShowOtpFlow(false);
+      return;
+    }
+
     const userOrganizations = mockOrganizations; // In real app, this would come from API
     
     if (userOrganizations.length > 1) {
@@ -119,6 +127,13 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
       }
     }
     
+    // Admin users don't have multiple organizations
+    if (selectedUserType === 'admin') {
+      onLoginSuccess?.(selectedUserType);
+      onOpenChange(false);
+      return;
+    }
+
     // Mock login - check for multiple organizations
     const userOrganizations = mockOrganizations; // In real app, this would come from API
     
@@ -162,7 +177,7 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
         onOpenChange={onOpenChange}
         organizations={mockOrganizations}
         onOrganizationSelect={handleOrganizationSelect}
-        userType={selectedUserType}
+        userType={selectedUserType as 'buyer' | 'exporter' | 'agent' | 'trader'}
       />
     );
   }
@@ -177,7 +192,7 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
             onVerificationSuccess={handleOTPVerificationSuccess}
             onBack={handleBackFromOTP}
             purpose="login"
-            userRole={selectedUserType}
+            userRole={selectedUserType as 'buyer' | 'exporter' | 'agent' | 'trader'}
           />
         </DialogContent>
       </Dialog>
@@ -205,7 +220,7 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
               <User className="w-4 h-4 inline mr-2" />
               Login as
             </Label>
-            <Select value={selectedUserType} onValueChange={(value: 'buyer' | 'exporter' | 'agent' | 'trader') => setSelectedUserType(value)}>
+            <Select value={selectedUserType} onValueChange={(value: 'buyer' | 'exporter' | 'agent' | 'trader' | 'admin') => setSelectedUserType(value)}>
               <SelectTrigger className="bg-white border-stone-200">
                 <SelectValue />
               </SelectTrigger>
@@ -214,6 +229,7 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
                 <SelectItem value="exporter">Exporter / Seller</SelectItem>
                 <SelectItem value="agent">Buyer's Agent</SelectItem>
                 <SelectItem value="trader">Independent Trader</SelectItem>
+                <SelectItem value="admin">Platform Admin</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -221,7 +237,7 @@ const LoginModal = ({ open, onOpenChange, onLoginSuccess, onCreateAccount }: Log
           {/* Login Form */}
           <div className="space-y-4">
             {config.authMethod === 'email' ? (
-              // Email-based login for buyers and exporters
+              // Email-based login for buyers, exporters, and admins
               <>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
