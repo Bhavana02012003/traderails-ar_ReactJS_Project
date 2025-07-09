@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import AdminSidebar from './AdminSidebar';
 import AdminMetrics from './AdminMetrics';
@@ -15,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { FileText, Users, Shield, CreditCard, AlertTriangle, FileCheck, Settings } from 'lucide-react';
 
 interface AdminDashboardProps {
-  userRole?: 'admin' | 'buyer' | 'seller' | 'agent';
+  userRole?: 'admin' | 'buyer' | 'exporter' | 'agent' | 'trader';
   onLogout?: () => void;
   onShowInviteFlow?: () => void;
 }
