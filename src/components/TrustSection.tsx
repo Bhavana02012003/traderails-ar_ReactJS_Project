@@ -42,7 +42,7 @@ const TrustSection = () => {
         {/* Statistics */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
           <div className="animate-fade-in">
-            <div className="text-3xl md:text-4xl font-bold text-emerald-600 mb-2">$2.5B+</div>
+            <div className="text-3xl md:text-4xl font-bold text-emerald-600 mb-2">$5.5B+</div>
             <div className="text-stone-600">Total Trade Volume</div>
           </div>
           <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>

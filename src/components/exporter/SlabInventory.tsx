@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Search, Filter, MoreHorizontal, Edit, Trash2, BarChart } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -65,25 +64,26 @@ const SlabInventory = () => {
   return (
     <Card className="glass-panel border-0">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle>Slab Inventory</CardTitle>
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400" />
-              <Input
-                placeholder="Search slabs..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-64"
-              />
-            </div>
-            <Button variant="outline" size="sm">
-              <Filter className="w-4 h-4 mr-2" />
-              Filters
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <CardTitle>Slab Inventory</CardTitle>
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+      <div className="relative w-full sm:w-64">
+        <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400" />
+        <Input
+          placeholder="Search slabs..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10 w-full"
+        />
+      </div>
+      <Button variant="outline" size="sm" className="w-full sm:w-auto">
+        <Filter className="w-4 h-4 mr-2" />
+        Filters
+      </Button>
+    </div>
+  </div>
+</CardHeader>
+
       <CardContent>
         <Table>
           <TableHeader>

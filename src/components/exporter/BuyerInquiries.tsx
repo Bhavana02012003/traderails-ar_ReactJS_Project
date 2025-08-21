@@ -54,47 +54,54 @@ const BuyerInquiries = ({ detailed = false }: BuyerInquiriesProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {inquiries.map((inquiry, index) => (
-          <div key={inquiry.id}>
-            <div className="space-y-3 p-4 bg-white/50 rounded-xl">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-semibold text-stone-900">{inquiry.buyer}</h4>
-                    {inquiry.urgent && (
-                      <Badge className="bg-red-100 text-red-800 text-xs">Urgent</Badge>
-                    )}
-                  </div>
-                  <p className="text-sm text-stone-600">
-                    Re: Slab {inquiry.slabId} • {inquiry.country} • {inquiry.timestamp}
-                  </p>
-                </div>
-              </div>
-
-              <p className="text-sm text-stone-700 leading-relaxed">
-                {inquiry.message}
-              </p>
-
-              <div className="flex items-center gap-2 pt-2">
-                <Button size="sm" className="emerald-gradient text-white">
-                  Accept
-                </Button>
-                <Button size="sm" variant="outline">
-                  Negotiate
-                </Button>
-                <Button size="sm" variant="ghost" className="text-stone-500">
-                  Ignore
-                </Button>
-                <Button size="sm" variant="outline" className="ml-auto flex items-center gap-1">
-                  <Phone className="w-3 h-3" />
-                  WhatsApp
-                </Button>
-              </div>
+  {inquiries.map((inquiry, index) => (
+    <div key={inquiry.id}>
+      <div className="space-y-3 p-4 bg-white/50 rounded-xl">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h4 className="font-semibold text-stone-900">{inquiry.buyer}</h4>
+              {inquiry.urgent && (
+                <Badge className="bg-red-100 text-red-800 text-xs">Urgent</Badge>
+              )}
             </div>
-            {index < inquiries.length - 1 && <Separator className="my-4" />}
+            <p className="text-sm text-stone-600">
+              Re: Slab {inquiry.slabId} • {inquiry.country} • {inquiry.timestamp}
+            </p>
           </div>
-        ))}
-      </CardContent>
+        </div>
+
+        <p className="text-sm text-stone-700 leading-relaxed">
+          {inquiry.message}
+        </p>
+
+        <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2 gap-2 pt-2">
+          <div className="flex flex-row gap-2">
+            <Button size="sm" className="emerald-gradient text-white">
+              Accept
+            </Button>
+            <Button size="sm" variant="outline">
+              Negotiate
+            </Button>
+            <Button size="sm" variant="ghost" className="text-stone-500">
+              Ignore
+            </Button>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            className="flex items-center gap-1 sm:ml-auto"
+          >
+            <Phone className="w-3 h-3" />
+            WhatsApp
+          </Button>
+        </div>
+      </div>
+      {index < inquiries.length - 1 && <Separator className="my-4" />}
+    </div>
+  ))}
+</CardContent>
+
     </Card>
   );
 };

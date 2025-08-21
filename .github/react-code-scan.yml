@@ -1,0 +1,139 @@
+name: React Code Scan and Report
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+
+jobs:
+  scan-react:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Setup Python (for JSON→CSV conversion)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # ---------- Install deps (npm) ----------
+      - name: Install dependencies
+        run: npm ci
+
+      # ---------- ESLint (flat config) ----------
+      - name: Lint to JSON (ESLint)
+        run: npx eslint . --ext .js,.jsx,.ts,.tsx -f json -o eslint-report.json || true
+
+      - name: Convert ESLint JSON to CSV
+        run: |
+          python - << 'PY'
+          import json, csv, os
+          rows=[["Tool","File","Line","Severity","Message","Rule/Code","Category"]]
+          p="eslint-report.json"
+          if os.path.exists(p) and os.path.getsize(p)>0:
+            data=json.load(open(p, encoding="utf-8"))
+            if isinstance(data, dict): data=[data]
+            for f in data:
+              filename=f.get("filePath","")
+              for m in f.get("messages",[]):
+                sev = "Error" if m.get("severity")==2 else "Warning"
+                line = m.get("line") or ""
+                rule = m.get("ruleId") or ""
+                msg  = (m.get("message") or "").replace("\n"," ").strip()
+                rows.append(["eslint", filename, line, sev, msg, rule, "Lint"])
+          with open("eslint-report.csv","w",newline="",encoding="utf-8") as out:
+            csv.writer(out).writerows(rows)
+          PY
+
+      # ---------- TypeScript (auto-skip if no tsconfig) ----------
+      - name: TypeScript type-check
+        if: ${{ hashFiles('**/tsconfig*.json') != '' }}
+        run: npx tsc --noEmit > tsc-output.txt 2>&1 || true
+
+      - name: Convert tsc output to CSV
+        if: ${{ hashFiles('**/tsconfig*.json') != '' }}
+        run: |
+          python - << 'PY'
+          import csv, re, os
+          rows=[["Tool","File","Line","Severity","Message","Rule/Code","Category"]]
+          if os.path.exists("tsc-output.txt"):
+            for line in open("tsc-output.txt","r",encoding="utf-8",errors="ignore"):
+              m=re.search(r"(.+\.(?:ts|tsx|js|jsx))\((\d+),\d+\): (error|warning) (TS\d+): (.+)", line)
+              if m:
+                file,line_no,sev,code,msg = m.groups()
+                rows.append(["tsc", file, line_no, sev.capitalize(), msg.strip(), code, "Type Check"])
+          with open("tsc-report.csv","w",newline="",encoding="utf-8") as out:
+            csv.writer(out).writerows(rows)
+          PY
+
+      # ---------- Dependency vulnerabilities ----------
+      - name: npm audit to JSON
+        run: npm audit --json > npm-audit.json || true
+
+      - name: Convert npm audit JSON to CSV
+        run: |
+          python - << 'PY'
+          import json, csv, os
+          rows=[["Tool","File","Line","Severity","Message","Rule/Code","Category"]]
+          def push(pkg, sev, title, rule):
+            rows.append(["npm-audit", pkg, "", (sev or "").capitalize(), title or "", str(rule or ""), "Dependency"])
+          if os.path.exists("npm-audit.json") and os.path.getsize("npm-audit.json")>0:
+            data=json.load(open("npm-audit.json", encoding="utf-8"))
+            vulns=data.get("vulnerabilities")
+            if isinstance(vulns, dict):
+              for pkg, v in vulns.items():
+                via=v.get("via",[])
+                if via:
+                  for item in via:
+                    if isinstance(item, dict):
+                      push(pkg, v.get("severity"), item.get("title") or item.get("name"), item.get("source") or item.get("id"))
+                else:
+                  push(pkg, v.get("severity"), "", "")
+            advisories=data.get("advisories")
+            if isinstance(advisories, dict):
+              for adv in advisories.values():
+                push(adv.get("module_name"), adv.get("severity"), adv.get("title"), adv.get("id"))
+          with open("npm-audit-report.csv","w",newline="",encoding="utf-8") as out:
+            csv.writer(out).writerows(rows)
+          PY
+
+      # ---------- Unified 7-column CSV ----------
+      - name: Merge all CSVs → react-violation-report.csv
+        run: |
+          python - << 'PY'
+          import csv, os
+          header=["Tool","File","Line","Severity","Message","Rule/Code","Category"]
+          rows=[header]
+          def append_csv(path):
+            if os.path.exists(path) and os.path.getsize(path)>0:
+              with open(path,newline="",encoding="utf-8") as f:
+                r=list(csv.reader(f))
+                rows.extend(r[1:])
+          append_csv("eslint-report.csv")
+          if os.path.exists("tsc-report.csv"): append_csv("tsc-report.csv")
+          append_csv("npm-audit-report.csv")
+          with open("react-violation-report.csv","w",newline="",encoding="utf-8") as out:
+            csv.writer(out).writerows(rows)
+          PY
+
+      - name: Upload Violation Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-violation-reports
+          path: |
+            eslint-report.csv
+            tsc-report.csv
+            npm-audit-report.csv
+            react-violation-report.csv

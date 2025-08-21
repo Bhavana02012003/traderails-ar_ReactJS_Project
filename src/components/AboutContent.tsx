@@ -30,7 +30,7 @@ const AboutContent = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 to-emerald-50">
       {/* 
-        About Section
+0        About Section
         Company information, mission, and value proposition
         Uses emerald theme with professional layout
       */}

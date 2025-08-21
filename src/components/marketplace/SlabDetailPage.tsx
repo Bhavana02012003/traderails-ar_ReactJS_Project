@@ -1,16 +1,17 @@
-import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { X } from "lucide-react";
+import {
   ArrowLeft,
-  Heart, 
-  Eye, 
-  Star, 
-  MapPin, 
-  Clock, 
-  Verified, 
-  Share2, 
+  Heart,
+  Eye,
+  Star,
+  MapPin,
+  Clock,
+  Verified,
+  Share2,
   MessageCircle,
   Box,
   Shield,
@@ -29,10 +30,10 @@ import {
   CheckCircle,
   AlertTriangle,
   TrendingUp,
-  Sparkles
-} from 'lucide-react';
-import { Slab } from '@/types/marketplace';
-import PayoutModal from './PayoutModal';
+  Sparkles,
+} from "lucide-react";
+import { Slab } from "@/types/marketplace";
+import PayoutModal from "./PayoutModal";
 
 interface SlabDetailPageProps {
   slab: Slab;
@@ -53,7 +54,9 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + slab.images.length) % slab.images.length);
+    setCurrentImageIndex(
+      (prev) => (prev - 1 + slab.images.length) % slab.images.length
+    );
   };
 
   const handleImageZoom = () => {
@@ -64,16 +67,35 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
     setShowPayoutModal(true);
   };
 
+  const [showARModal, setShowARModal] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
+
+  const arPolygons: Record<string, string> = {
+    kitchen:
+      "1,486,165,395,166,368,252,367,254,445,267,450,271,442,629,440,643,445,649,445,648,370,663,374,739,372,807,402,809,455,778,457,778,539,1,538,1,486",
+    bedroom:
+      "5,264,69,260,82,255,162,252,147,275,149,310,176,319,496,314,494,271,492,263,555,254,579,262,634,264,634,356,3,356,5,264",
+  };
+  const [slabOverlayVisible, setSlabOverlayVisible] = useState(true);
+
   const aiGradingData = {
     overallScore: slab.aiQualityScore,
     patternUniformity: 8.7,
     colorConsistency: 9.2,
     surfaceQuality: 8.9,
-    suggestedUse: ['Countertops', 'Wall Cladding'],
+    suggestedUse: ["Countertops", "Wall Cladding"],
     defects: [
-      { type: 'Minor Vein Interruption', severity: 'Low', position: { x: 30, y: 45 } },
-      { type: 'Color Variation', severity: 'Very Low', position: { x: 70, y: 25 } }
-    ]
+      {
+        type: "Minor Vein Interruption",
+        severity: "Low",
+        position: { x: 30, y: 45 },
+      },
+      {
+        type: "Color Variation",
+        severity: "Very Low",
+        position: { x: 70, y: 25 },
+      },
+    ],
   };
 
   return (
@@ -83,8 +105,8 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
           <div className="container mx-auto px-4 lg:px-8 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   onClick={onBack}
                   className="text-stone-600 hover:text-stone-900"
                 >
@@ -92,7 +114,9 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
                   Back to Marketplace
                 </Button>
                 <div className="h-6 w-px bg-stone-300" />
-                <h1 className="text-xl font-semibold text-stone-900">{slab.name}</h1>
+                <h1 className="text-xl font-semibold text-stone-900">
+                  {slab.name}
+                </h1>
               </div>
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm">
@@ -113,42 +137,44 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
               {/* Image Viewer */}
               <Card className="overflow-hidden bg-white/80 backdrop-blur-sm shadow-xl">
                 <div className="relative aspect-[4/3] bg-stone-100">
-                  <img 
+                  <img
                     ref={imageRef}
-                    src={slab.images[currentImageIndex]} 
+                    src={slab.images[currentImageIndex]}
                     alt={slab.name}
                     className={`w-full h-full object-cover transition-transform duration-300 ${
-                      isZoomed ? 'scale-150 cursor-zoom-out' : 'cursor-zoom-in'
+                      isZoomed ? "scale-150 cursor-zoom-out" : "cursor-zoom-in"
                     }`}
                     onClick={handleImageZoom}
                   />
-                  
+
                   {/* Defect Overlay */}
-                  {showDefectOverlay && aiGradingData.defects.map((defect, index) => (
-                    <div
-                      key={index}
-                      className="absolute w-6 h-6 bg-red-500/20 border-2 border-red-500 rounded-full animate-pulse"
-                      style={{
-                        left: `${defect.position.x}%`,
-                        top: `${defect.position.y}%`,
-                        transform: 'translate(-50%, -50%)'
-                      }}
-                      title={`${defect.type} - ${defect.severity} severity`}
-                    />
-                  ))}
+                  {showDefectOverlay &&
+                    aiGradingData.defects.map((defect, index) => (
+                      <div
+                        key={index}
+                        className="absolute w-6 h-6 bg-red-500/20 border-2 border-red-500 rounded-full animate-pulse"
+                        style={{
+                          left: `${defect.position.x}%`,
+                          top: `${defect.position.y}%`,
+                          transform: "translate(-50%, -50%)",
+                        }}
+                        title={`${defect.type} - ${defect.severity} severity`}
+                      />
+                    ))}
 
                   {/* Navigation arrows */}
                   {slab.images.length > 1 && (
                     <>
-                      <button 
+                      <button
                         onClick={prevImage}
-                        className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 glass-panel rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform"
+                        className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-emerald-400 hover:bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-md transition-transform hover:scale-110"
                       >
                         <ChevronLeft className="w-6 h-6" />
                       </button>
-                      <button 
+
+                      <button
                         onClick={nextImage}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 glass-panel rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-emerald-400 hover:bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-md transition-transform hover:scale-110"
                       >
                         <ChevronRight className="w-6 h-6" />
                       </button>
@@ -158,7 +184,9 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
                   {/* Top overlay controls */}
                   <div className="absolute top-4 left-4 flex gap-2">
                     {slab.featured && (
-                      <Badge className="bg-emerald-500 text-white">Featured</Badge>
+                      <Badge className="bg-emerald-500 text-white">
+                        Featured
+                      </Badge>
                     )}
                     <Badge className="glass-panel text-white">
                       <Sparkles className="w-3 h-3 mr-1" />
@@ -169,25 +197,31 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
                   {/* Media Controls */}
                   <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
                     <div className="flex gap-2">
-                      <Button 
-                        className="glass-panel text-white border-white/20 hover:bg-white/20"
+                      <Button
+                        className="bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300 shadow-sm transition-colors"
                         variant="outline"
                         onClick={() => setView3D(!view3D)}
                       >
                         <Box className="w-4 h-4 mr-2" />
-                        {view3D ? 'Photo View' : '3D View'}
+                        {view3D ? "Photo View" : "3D View"}
                       </Button>
-                      <Button className="glass-panel text-white border-white/20 hover:bg-white/20" variant="outline">
+
+                      <Button
+                        className="bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300 shadow-sm transition-colors"
+                        variant="outline"
+                        onClick={() => setShowARModal(true)}
+                      >
                         <Smartphone className="w-4 h-4 mr-2" />
                         AR Preview
                       </Button>
-                      <Button 
-                        className="glass-panel text-white border-white/20 hover:bg-white/20" 
+
+                      <Button
+                        className="bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300 shadow-sm transition-colors"
                         variant="outline"
                         onClick={handleImageZoom}
                       >
                         <ZoomIn className="w-4 h-4 mr-2" />
-                        {isZoomed ? 'Zoom Out' : 'Zoom In'}
+                        {isZoomed ? "Zoom Out" : "Zoom In"}
                       </Button>
                     </div>
 
@@ -199,7 +233,9 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
                             key={index}
                             onClick={() => setCurrentImageIndex(index)}
                             className={`w-2 h-2 rounded-full transition-all ${
-                              index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                              index === currentImageIndex
+                                ? "bg-white"
+                                : "bg-white/50"
                             }`}
                           />
                         ))}
@@ -223,10 +259,14 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
                       <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-2">
                         <MapPin className="w-8 h-8 text-emerald-600" />
                       </div>
-                      <p className="font-medium text-stone-900">{slab.quarry.name}</p>
-                      <p className="text-sm text-stone-600">{slab.quarry.location}</p>
+                      <p className="font-medium text-stone-900">
+                        {slab.quarry.name}
+                      </p>
+                      <p className="text-sm text-stone-600">
+                        {slab.quarry.location}
+                      </p>
                     </div>
-                    
+
                     <div className="flex-1 flex items-center justify-center">
                       <div className="w-full h-0.5 bg-gradient-to-r from-emerald-500 to-blue-500 relative">
                         <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
@@ -234,15 +274,19 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="text-center">
                       <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-2">
                         <Layers className="w-8 h-8 text-blue-600" />
                       </div>
-                      <p className="font-medium text-stone-900">Block {slab.blockId}</p>
-                      <p className="text-sm text-stone-600">12 slabs extracted</p>
+                      <p className="font-medium text-stone-900">
+                        Block {slab.blockId}
+                      </p>
+                      <p className="text-sm text-stone-600">
+                        12 slabs extracted
+                      </p>
                     </div>
-                    
+
                     <div className="flex-1 flex items-center justify-center">
                       <div className="w-full h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 relative">
                         <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
@@ -250,7 +294,7 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="text-center">
                       <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-2">
                         <Target className="w-8 h-8 text-purple-600" />
@@ -270,66 +314,97 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
                       <Sparkles className="w-5 h-5 mr-2 text-purple-600" />
                       AI Quality Analysis
                     </div>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => setShowAIGrading(!showAIGrading)}
                     >
-                      {showAIGrading ? 'Hide Details' : 'Show Details'}
+                      {showAIGrading ? "Hide Details" : "Show Details"}
                     </Button>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-emerald-600">{aiGradingData.overallScore}</div>
-                      <div className="text-sm text-stone-600">Overall Score</div>
+                      <div className="text-2xl font-bold text-emerald-600">
+                        {aiGradingData.overallScore}
+                      </div>
+                      <div className="text-sm text-stone-600">
+                        Overall Score
+                      </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">{aiGradingData.patternUniformity}</div>
-                      <div className="text-sm text-stone-600">Pattern Uniformity</div>
+                      <div className="text-2xl font-bold text-blue-600">
+                        {aiGradingData.patternUniformity}
+                      </div>
+                      <div className="text-sm text-stone-600">
+                        Pattern Uniformity
+                      </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">{aiGradingData.colorConsistency}</div>
-                      <div className="text-sm text-stone-600">Color Consistency</div>
+                      <div className="text-2xl font-bold text-purple-600">
+                        {aiGradingData.colorConsistency}
+                      </div>
+                      <div className="text-sm text-stone-600">
+                        Color Consistency
+                      </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-orange-600">{aiGradingData.surfaceQuality}</div>
-                      <div className="text-sm text-stone-600">Surface Quality</div>
+                      <div className="text-2xl font-bold text-orange-600">
+                        {aiGradingData.surfaceQuality}
+                      </div>
+                      <div className="text-sm text-stone-600">
+                        Surface Quality
+                      </div>
                     </div>
                   </div>
 
                   {showAIGrading && (
                     <div className="space-y-4">
                       <div>
-                        <h4 className="font-medium text-stone-900 mb-2">Recommended Applications</h4>
+                        <h4 className="font-medium text-stone-900 mb-2">
+                          Recommended Applications
+                        </h4>
                         <div className="flex flex-wrap gap-2">
-                          {aiGradingData.suggestedUse.map(use => (
-                            <Badge key={use} variant="outline" className="bg-emerald-50 text-emerald-700">
+                          {aiGradingData.suggestedUse.map((use) => (
+                            <Badge
+                              key={use}
+                              variant="outline"
+                              className="bg-emerald-50 text-emerald-700"
+                            >
                               <CheckCircle className="w-3 h-3 mr-1" />
                               {use}
                             </Badge>
                           ))}
                         </div>
                       </div>
-                      
+
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-stone-900">Quality Inspection</h4>
-                          <Button 
-                            variant="outline" 
+                          <h4 className="font-medium text-stone-900">
+                            Quality Inspection
+                          </h4>
+                          <Button
+                            variant="outline"
                             size="sm"
-                            onClick={() => setShowDefectOverlay(!showDefectOverlay)}
+                            onClick={() =>
+                              setShowDefectOverlay(!showDefectOverlay)
+                            }
                           >
-                            {showDefectOverlay ? 'Hide' : 'Show'} Defects
+                            {showDefectOverlay ? "Hide" : "Show"} Defects
                           </Button>
                         </div>
                         <div className="space-y-2">
                           {aiGradingData.defects.map((defect, index) => (
-                            <div key={index} className="flex items-center justify-between p-2 bg-stone-50 rounded">
+                            <div
+                              key={index}
+                              className="flex items-center justify-between p-2 bg-stone-50 rounded"
+                            >
                               <div className="flex items-center">
                                 <AlertTriangle className="w-4 h-4 mr-2 text-orange-500" />
-                                <span className="text-sm font-medium">{defect.type}</span>
+                                <span className="text-sm font-medium">
+                                  {defect.type}
+                                </span>
                               </div>
                               <Badge variant="outline" className="text-xs">
                                 {defect.severity}
@@ -344,6 +419,100 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
               </Card>
             </div>
 
+            {showARModal && (
+              <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+                <div className="bg-white rounded-lg shadow-xl p-6 w-[90%] max-w-md space-y-4">
+                  <h3 className="text-lg font-semibold text-stone-900">
+                    Choose a Room
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    {["Kitchen", "Hall", "Bedroom"].map((room) => (
+                      <Button
+                        key={room}
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => {
+                          setSelectedRoom(room);
+                          setShowARModal(false);
+                        }}
+                      >
+                        {room}
+                      </Button>
+                    ))}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    className="w-full text-stone-500 mt-2"
+                    onClick={() => setShowARModal(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {selectedRoom && (
+              <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
+                <div className="relative bg-white rounded-lg shadow-xl overflow-hidden">
+                  {/* ✅ Close "X" button */}
+                  <button
+                    onClick={() => setSelectedRoom(null)}
+                    className="absolute top-3 right-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full p-1.5 z-10 shadow-md"
+                    title="Close"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                  <div className="relative w-[810px] h-[540px]">
+                    {/* Room Background */}
+                    <img
+                      src={`/ar-rooms/${selectedRoom.toLowerCase()}.jpg`}
+                      alt={selectedRoom}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+
+                    {/* Slab Polygon */}
+                    {slabOverlayVisible &&
+                      arPolygons[selectedRoom.toLowerCase()] && (
+                        <svg
+                          className="absolute inset-0 w-full h-full"
+                          viewBox="0 0 810 540"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <defs>
+                            <clipPath
+                              id="slabClip"
+                              clipPathUnits="userSpaceOnUse"
+                            >
+                              <polygon
+                                points={arPolygons[selectedRoom.toLowerCase()]}
+                              />
+                            </clipPath>
+                          </defs>
+                          <image
+                            href={slab.images[currentImageIndex]}
+                            width="810"
+                            height="540"
+                            preserveAspectRatio="xMidYMid slice"
+                            clipPath="url(#slabClip)"
+                          />
+                        </svg>
+                      )}
+
+                    {/* Slab Preview (Bottom Left) */}
+                    <div className="absolute bottom-4 left-4">
+                      <img
+                        src={slab.images[currentImageIndex]}
+                        alt="Slab preview"
+                        className="w-24 h-16 object-cover border-2 border-white shadow-lg cursor-pointer rounded-sm hover:scale-105 transition-transform"
+                        onClick={() => setSlabOverlayVisible((prev) => !prev)}
+                        title="Click to toggle slab overlay"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Sidebar - Slab Info & Actions */}
             <div className="space-y-6">
               <Card className="bg-white/80 backdrop-blur-sm shadow-xl">
@@ -353,36 +522,49 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
                     <div>
                       <div className="text-3xl font-bold text-emerald-600 mb-2">
                         ${slab.price}
-                        <span className="text-lg text-stone-500">/{slab.priceUnit}</span>
+                        <span className="text-lg text-stone-500">
+                          /{slab.priceUnit}
+                        </span>
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
                           {[...Array(5)].map((_, i) => (
-                            <Star 
-                              key={i} 
-                              className={`w-4 h-4 ${i < Math.floor(slab.grade) ? 'text-yellow-400 fill-current' : 'text-stone-300'}`} 
+                            <Star
+                              key={i}
+                              className={`w-4 h-4 ${
+                                i < Math.floor(slab.grade)
+                                  ? "text-yellow-400 fill-current"
+                                  : "text-stone-300"
+                              }`}
                             />
                           ))}
                           <span className="ml-2 text-sm text-stone-600">
                             {slab.grade.toFixed(1)} Grade
                           </span>
                         </div>
-                        <Badge 
+                        <Badge
                           className={
-                            slab.availability === 'in-stock' ? 'bg-green-100 text-green-800' :
-                            slab.availability === 'pre-order' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-red-100 text-red-800'
+                            slab.availability === "in-stock"
+                              ? "bg-green-100 text-green-800"
+                              : slab.availability === "pre-order"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
                           }
                         >
-                          {slab.availability === 'in-stock' ? 'In Stock' :
-                           slab.availability === 'pre-order' ? 'Pre-Order' : 'Sold'}
+                          {slab.availability === "in-stock"
+                            ? "In Stock"
+                            : slab.availability === "pre-order"
+                            ? "Pre-Order"
+                            : "Sold"}
                         </Badge>
                       </div>
                     </div>
 
                     {/* Specifications */}
                     <div className="space-y-3">
-                      <h4 className="font-semibold text-stone-900">Specifications</h4>
+                      <h4 className="font-semibold text-stone-900">
+                        Specifications
+                      </h4>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span className="text-stone-600">Slab ID:</span>
@@ -394,23 +576,30 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-stone-600">Material:</span>
-                          <span className="capitalize font-medium">{slab.material}</span>
+                          <span className="capitalize font-medium">
+                            {slab.material}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-stone-600">Finish:</span>
-                          <span className="capitalize font-medium">{slab.finish}</span>
+                          <span className="capitalize font-medium">
+                            {slab.finish}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-stone-600">Dimensions:</span>
                           <span className="font-medium">
-                            {slab.dimensions.length} × {slab.dimensions.width} × {slab.dimensions.thickness}cm
+                            {slab.dimensions.length} × {slab.dimensions.width} ×{" "}
+                            {slab.dimensions.thickness}cm
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-stone-600">Shipping:</span>
                           <div className="flex items-center">
                             <Clock className="w-3 h-3 mr-1" />
-                            <span className="font-medium">{slab.shippingTime}</span>
+                            <span className="font-medium">
+                              {slab.shippingTime}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -418,10 +607,19 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
 
                     {/* Actions */}
                     <div className="space-y-3">
-                      <Button className="w-full emerald-gradient text-white h-12 text-lg font-semibold" onClick={handleBuyNow}>
+                      <Button
+                        className="w-full emerald-gradient text-white h-12 text-lg font-semibold"
+                        onClick={handleBuyNow}
+                      >
                         Buy Now
                       </Button>
-                      <Button variant="outline" className="w-full h-12 text-lg font-semibold" onClick={() => console.log('Request quote for:', slab.id)}>
+                      <Button
+                        variant="outline"
+                        className="w-full h-12 text-lg font-semibold"
+                        onClick={() =>
+                          console.log("Request quote for:", slab.id)
+                        }
+                      >
                         Request Quote
                       </Button>
                       <div className="grid grid-cols-2 gap-3">
@@ -444,7 +642,9 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
                     <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
                       <div className="flex items-center text-emerald-700 text-sm mb-2">
                         <Shield className="w-4 h-4 mr-2" />
-                        <span className="font-medium">Protected Transaction</span>
+                        <span className="font-medium">
+                          Protected Transaction
+                        </span>
                       </div>
                       <p className="text-emerald-600 text-xs">
                         Covered by escrow protection & FX hedge guarantee
@@ -465,7 +665,9 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center">
-                        <span className="font-medium text-stone-900">{slab.supplier.name}</span>
+                        <span className="font-medium text-stone-900">
+                          {slab.supplier.name}
+                        </span>
                         {slab.supplier.verified && (
                           <Verified className="w-4 h-4 ml-1 text-emerald-500" />
                         )}
@@ -476,13 +678,17 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       {[...Array(5)].map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`w-3 h-3 ${i < Math.floor(slab.supplier.rating) ? 'text-yellow-400 fill-current' : 'text-stone-300'}`} 
+                        <Star
+                          key={i}
+                          className={`w-3 h-3 ${
+                            i < Math.floor(slab.supplier.rating)
+                              ? "text-yellow-400 fill-current"
+                              : "text-stone-300"
+                          }`}
                         />
                       ))}
                       <span className="ml-2 text-xs text-stone-600">
@@ -512,9 +718,11 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
 
                   {/* Certifications */}
                   <div>
-                    <h5 className="font-medium text-stone-900 mb-2">Certifications</h5>
+                    <h5 className="font-medium text-stone-900 mb-2">
+                      Certifications
+                    </h5>
                     <div className="flex flex-wrap gap-1">
-                      {slab.certifications.map(cert => (
+                      {slab.certifications.map((cert) => (
                         <Badge key={cert} variant="outline" className="text-xs">
                           <Award className="w-3 h-3 mr-1" />
                           {cert}
@@ -528,9 +736,9 @@ const SlabDetailPage = ({ slab, onBack }: SlabDetailPageProps) => {
           </div>
         </div>
       </div>
-      <PayoutModal 
-        isOpen={showPayoutModal} 
-        onClose={() => setShowPayoutModal(false)} 
+      <PayoutModal
+        isOpen={showPayoutModal}
+        onClose={() => setShowPayoutModal(false)}
         slab={slab}
       />
     </>

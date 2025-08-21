@@ -23,9 +23,9 @@ const MarketplacePreview = () => {
       priceUnit: 'sqft',
       location: "Carrara, Italy",
       rating: 4.9,
-      image: "https://images.unsplash.com/photo-1541123356219-284ebe98ae3b?w=500&h=600&fit=crop",
-      thumbnail: "https://images.unsplash.com/photo-1541123356219-284ebe98ae3b?w=400&h=300&fit=crop",
-      images: ["https://images.unsplash.com/photo-1541123356219-284ebe98ae3b?w=800&h=600&fit=crop"],
+      image: "https://images.orientbell.com/media/catalog/product/p/g/pgvt_endless_carrara_marble_f2_inspire_collection_gloss_finish_800x1600_mm__floor_tiles.jpg",
+      thumbnail: "https://images.orientbell.com/media/catalog/product/p/g/pgvt_endless_carrara_marble_f2_inspire_collection_gloss_finish_800x1600_mm__floor_tiles.jpg",
+      images: ["https://images.orientbell.com/media/catalog/product/p/g/pgvt_endless_carrara_marble_f2_inspire_collection_gloss_finish_800x1600_mm__floor_tiles.jpg"],
       featured: true,
       thickness: "2cm",
       finish: "polished",
@@ -90,7 +90,7 @@ const MarketplacePreview = () => {
       location: "Tuscany, Italy",
       rating: 5.0,
       image: "https://images.unsplash.com/photo-1615529182904-14819c35db37?w=500&h=600&fit=crop",
-      thumbnail: "https://images.unsplash.com/photo-1615529182904-14819c35db37?w=400&h=300&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1615529182904-14819c35db37?w=800&h=600&fit=crop",
       images: ["https://images.unsplash.com/photo-1615529182904-14819c35db37?w=800&h=600&fit=crop"],
       featured: true,
       thickness: "2cm",
@@ -253,7 +253,7 @@ const MarketplacePreview = () => {
       <Slab3DViewer 
         slab={selectedSlab}
         isOpen={show3DViewer}
-        onClose={() => {
+        onClose={() => { 
           setShow3DViewer(false);
           setSelectedSlab(null);
         }}

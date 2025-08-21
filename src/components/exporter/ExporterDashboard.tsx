@@ -1,62 +1,75 @@
-import { useState } from 'react';
-import { Plus, Upload, Download, Bell, TrendingUp, Package, Truck, DollarSign, FileText } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useIsMobile } from '@/hooks/use-mobile';
-import DashboardHeader from './DashboardHeader';
-import QuickActionsPanel from './QuickActionsPanel';
-import SlabInventory from './SlabInventory';
-import ShipmentTracker from './ShipmentTracker';
-import PayoutSummary from './PayoutSummary';
-import BuyerInquiries from './BuyerInquiries';
-import CompliancePanel from './CompliancePanel';
-import MyQuotes from './MyQuotes';
-import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
-import OrgDetailsPage from '@/components/org/OrgDetailsPage';
-import QuoteCreationFlow from '@/components/quotes/QuoteCreationFlow';
-import MobileDashboard from '@/components/mobile/MobileDashboard';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { useState } from "react";
+import {
+  Plus,
+  Upload,
+  Download,
+  Bell,
+  TrendingUp,
+  Package,
+  Truck,
+  DollarSign,
+  FileText,
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useIsMobile } from "@/hooks/use-mobile";
+import DashboardHeader from "./DashboardHeader";
+import QuickActionsPanel from "./QuickActionsPanel";
+import SlabInventory from "./SlabInventory";
+import ShipmentTracker from "./ShipmentTracker";
+import PayoutSummary from "./PayoutSummary";
+import BuyerInquiries from "./BuyerInquiries";
+import CompliancePanel from "./CompliancePanel";
+import MyQuotes from "./MyQuotes";
+import OrganizationSwitcher from "@/components/auth/OrganizationSwitcher";
+import OrgDetailsPage from "@/components/org/OrgDetailsPage";
+import QuoteCreationFlow from "@/components/quotes/QuoteCreationFlow";
+import MobileDashboard from "@/components/mobile/MobileDashboard";
+import MobileBottomNav from "@/components/mobile/MobileBottomNav";
 
 interface ExporterDashboardProps {
   onShowInviteFlow?: () => void;
-  userType?: 'exporter' | 'factory' | 'trader';
+  userType?: "exporter" | "factory" | "trader";
   onOrgDetailsClick?: () => void;
 }
 
 // Mock organizations for demonstration
 const mockOrganizations = [
   {
-    id: '1',
-    name: 'Shivani Granites Ltd.',
-    type: 'Factory' as const,
-    location: 'Jaipur, India',
+    id: "1",
+    name: "Shivani Granites Ltd.",
+    type: "Factory" as const,
+    location: "Jaipur, India",
   },
   {
-    id: '2',
-    name: 'Global Stone Exports',
-    type: 'Exporter' as const,
-    location: 'Mumbai, India',
+    id: "2",
+    name: "Global Stone Exports",
+    type: "Exporter" as const,
+    location: "Mumbai, India",
   },
   {
-    id: '3',
-    name: 'Premium Marble Trading Co.',
-    type: 'Trader' as const,
-    location: 'Dubai, UAE',
+    id: "3",
+    name: "Premium Marble Trading Co.",
+    type: "Trader" as const,
+    location: "Dubai, UAE",
   },
 ];
 
-const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: ExporterDashboardProps) => {
-  const [activeTab, setActiveTab] = useState('overview');
+const ExporterDashboard = ({
+  onShowInviteFlow,
+  userType = "exporter",
+}: ExporterDashboardProps) => {
+  const [activeTab, setActiveTab] = useState("overview");
   const [showQuoteCreation, setShowQuoteCreation] = useState(false);
-  const [mobileTab, setMobileTab] = useState('home');
+  const [mobileTab, setMobileTab] = useState("home");
   const isMobile = useIsMobile();
 
   const currentOrg = mockOrganizations[0]; // Default to first org
 
   const handleOrganizationChange = (orgId: string) => {
-    console.log('Switching to organization:', orgId);
+    console.log("Switching to organization:", orgId);
     // In a real app, this would trigger a context switch
   };
 
@@ -69,41 +82,21 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
   };
 
   const handleViewQuote = (quoteId: string) => {
-    console.log('Viewing quote:', quoteId);
+    console.log("Viewing quote:", quoteId);
     // Navigate to quote details
   };
 
   const handleEditQuote = (quoteId: string) => {
-    console.log('Editing quote:', quoteId);
+    console.log("Editing quote:", quoteId);
     // Navigate to quote edit
   };
 
   // Only show organization switcher for traders
-  const canSwitchOrganizations = userType === 'trader';
+  const canSwitchOrganizations = userType === "trader";
   // Only show organization details for exporters (not traders)
-  const canManageOrganization = userType === 'exporter';
+  const canManageOrganization = userType === "exporter";
 
-  // Mobile Layout
-  if (isMobile) {
-    if (showQuoteCreation) {
-      return (
-        <div className="animate-slide-in-right">
-          <QuoteCreationFlow onClose={handleCloseQuoteCreation} />
-        </div>
-      );
-    }
-
-    return (
-      <>
-        <MobileDashboard userType={userType} />
-        <MobileBottomNav 
-          activeTab={mobileTab} 
-          onTabChange={setMobileTab}
-        />
-      </>
-    );
-  }
-
+ 
   // Desktop Layout
   if (showQuoteCreation) {
     return (
@@ -115,33 +108,33 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
 
   const summaryMetrics = [
     {
-      title: 'Total Listings',
-      value: '247',
-      change: '+12 this month',
+      title: "Total Listings",
+      value: "247",
+      change: "+12 this month",
       icon: Package,
-      color: 'emerald'
+      color: "emerald",
     },
     {
-      title: 'Active Inquiries',
-      value: '18',
-      change: '3 urgent',
+      title: "Active Inquiries",
+      value: "18",
+      change: "3 urgent",
       icon: Bell,
-      color: 'amber'
+      color: "amber",
     },
     {
-      title: 'Slabs in Transit',
-      value: '34',
-      change: '8 arriving today',
+      title: "Slabs in Transit",
+      value: "34",
+      change: "8 arriving today",
       icon: Truck,
-      color: 'blue'
+      color: "blue",
     },
     {
-      title: 'Upcoming Payouts',
-      value: '₹8,50,000',
-      change: 'Next: ₹2,45,000',
+      title: "Upcoming Payouts",
+      value: "₹8,50,000",
+      change: "Next: ₹2,45,000",
       icon: DollarSign,
-      color: 'green'
-    }
+      color: "green",
+    },
   ];
 
   return (
@@ -149,7 +142,7 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
       <div className="container mx-auto px-4 py-6 space-y-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <DashboardHeader />
-          
+
           {/* Organization Switcher - Only for traders */}
           {canSwitchOrganizations && (
             <div className="w-full lg:w-80">
@@ -161,21 +154,33 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
             </div>
           )}
         </div>
-        
+
         {/* Summary Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {summaryMetrics.map((metric, index) => {
             const Icon = metric.icon;
             return (
-              <Card key={index} className="glass-panel border-0 hover:shadow-lg transition-all duration-300 group animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
+              <Card
+                key={index}
+                className="glass-panel border-0 hover:shadow-lg transition-all duration-300 group animate-fade-in"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-stone-600 text-sm font-medium">{metric.title}</p>
-                      <p className="text-2xl font-bold text-stone-900 mt-1">{metric.value}</p>
-                      <p className="text-xs text-stone-500 mt-1">{metric.change}</p>
+                      <p className="text-stone-600 text-sm font-medium">
+                        {metric.title}
+                      </p>
+                      <p className="text-2xl font-bold text-stone-900 mt-1">
+                        {metric.value}
+                      </p>
+                      <p className="text-xs text-stone-500 mt-1">
+                        {metric.change}
+                      </p>
                     </div>
-                    <div className={`w-12 h-12 rounded-2xl bg-${metric.color}-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                    <div
+                      className={`w-12 h-12 rounded-2xl bg-${metric.color}-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+                    >
                       <Icon className={`w-6 h-6 text-${metric.color}-600`} />
                     </div>
                   </div>
@@ -185,23 +190,72 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
           })}
         </div>
 
-        <QuickActionsPanel onShowInviteFlow={onShowInviteFlow} onCreateQuote={handleCreateQuote} />
+        <QuickActionsPanel
+          onShowInviteFlow={onShowInviteFlow}
+          onCreateQuote={handleCreateQuote}
+        />
 
         {/* Main Dashboard Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="glass-panel border-0 p-1 h-auto">
-            <TabsTrigger value="overview" className="px-6 py-3">Overview</TabsTrigger>
-            <TabsTrigger value="quotes" className="px-6 py-3">My Quotes</TabsTrigger>
-            <TabsTrigger value="invoices" className="px-6 py-3">Invoices</TabsTrigger>
-            <TabsTrigger value="inventory" className="px-6 py-3">Inventory</TabsTrigger>
-            <TabsTrigger value="shipments" className="px-6 py-3">Shipments</TabsTrigger>
-            <TabsTrigger value="payouts" className="px-6 py-3">Payouts</TabsTrigger>
-            <TabsTrigger value="inquiries" className="px-6 py-3">Inquiries</TabsTrigger>
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
+          {/* Tabs List */}
+          <TabsList className="glass-panel border-0 p-1 h-auto overflow-x-auto whitespace-nowrap flex gap-2">
+            <TabsTrigger
+              value="overview"
+              className="px-4 py-2 text-sm md:px-6 md:py-3 md:text-base"
+            >
+              Overview
+            </TabsTrigger>
+            <TabsTrigger
+              value="quotes"
+              className="px-4 py-2 text-sm md:px-6 md:py-3 md:text-base"
+            >
+              My Quotes
+            </TabsTrigger>
+            <TabsTrigger
+              value="invoices"
+              className="px-4 py-2 text-sm md:px-6 md:py-3 md:text-base"
+            >
+              Invoices
+            </TabsTrigger>
+            <TabsTrigger
+              value="inventory"
+              className="px-4 py-2 text-sm md:px-6 md:py-3 md:text-base"
+            >
+              Inventory
+            </TabsTrigger>
+            <TabsTrigger
+              value="shipments"
+              className="px-4 py-2 text-sm md:px-6 md:py-3 md:text-base"
+            >
+              Shipments
+            </TabsTrigger>
+            <TabsTrigger
+              value="payouts"
+              className="px-4 py-2 text-sm md:px-6 md:py-3 md:text-base"
+            >
+              Payouts
+            </TabsTrigger>
+            <TabsTrigger
+              value="inquiries"
+              className="px-4 py-2 text-sm md:px-6 md:py-3 md:text-base"
+            >
+              Inquiries
+            </TabsTrigger>
             {canManageOrganization && (
-              <TabsTrigger value="organization" className="px-6 py-3">Organization</TabsTrigger>
+              <TabsTrigger
+                value="organization"
+                className="px-4 py-2 text-sm md:px-6 md:py-3 md:text-base"
+              >
+                Organization
+              </TabsTrigger>
             )}
           </TabsList>
 
+          {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <ShipmentTracker />
@@ -215,16 +269,18 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
             </div>
           </TabsContent>
 
+          {/* Quotes Tab */}
           <TabsContent value="quotes">
-            <MyQuotes 
+            <MyQuotes
               onCreateQuote={handleCreateQuote}
               onViewQuote={handleViewQuote}
               onEditQuote={handleEditQuote}
             />
           </TabsContent>
 
+          {/* Invoices Tab */}
           <TabsContent value="invoices">
-            <Card className="glass-panel border-0">
+            <Card className="glass-panel border-0 w-full">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <FileText className="w-5 h-5 mr-2" />
@@ -234,20 +290,28 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
               <CardContent>
                 <div className="space-y-4">
                   <div className="bg-white/60 backdrop-blur-lg rounded-xl p-4 border border-white/30">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                       <div>
-                        <h3 className="font-semibold text-stone-900">INV-2024-00108</h3>
-                        <p className="text-sm text-stone-600">Rohan Imports Ltd - ₹2,85,574</p>
-                        <p className="text-xs text-stone-500">Created: June 28, 2025</p>
+                        <h3 className="font-semibold text-stone-900">
+                          INV-2024-00108
+                        </h3>
+                        <p className="text-sm text-stone-600">
+                          Rohan Imports Ltd - ₹2,85,574
+                        </p>
+                        <p className="text-xs text-stone-500">
+                          Created: June 28, 2025
+                        </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge className="bg-amber-100 text-amber-800 border-amber-200">
+                        <Badge className="bg-amber-100 text-amber-800 border-amber-200 text-xs md:text-sm">
                           Pending Payment
                         </Badge>
-                        <Button 
-                          size="sm" 
-                          onClick={() => window.open('/invoice/preview', '_blank')}
-                          className="bg-emerald-600 hover:bg-emerald-700"
+                        <Button
+                          size="sm"
+                          onClick={() =>
+                            window.open("/invoice/preview", "_blank")
+                          }
+                          className="bg-emerald-600 hover:bg-emerald-700 text-xs md:text-sm px-2 py-1 md:px-4 md:py-2"
                         >
                           View Invoice
                         </Button>
@@ -259,22 +323,27 @@ const ExporterDashboard = ({ onShowInviteFlow, userType = 'exporter' }: Exporter
             </Card>
           </TabsContent>
 
+          {/* Inventory Tab */}
           <TabsContent value="inventory">
             <SlabInventory />
           </TabsContent>
 
+          {/* Shipments Tab */}
           <TabsContent value="shipments">
             <ShipmentTracker detailed />
           </TabsContent>
 
+          {/* Payouts Tab */}
           <TabsContent value="payouts">
             <PayoutSummary detailed />
           </TabsContent>
 
+          {/* Inquiries Tab */}
           <TabsContent value="inquiries">
             <BuyerInquiries detailed />
           </TabsContent>
 
+          {/* Organization Tab */}
           {canManageOrganization && (
             <TabsContent value="organization">
               <OrgDetailsPage />

@@ -223,24 +223,31 @@ const QuotesList = ({ onViewQuote }: QuotesListProps) => {
   return (
     <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        
+        <div className="flex flex-wrap items-center justify-between">
+
           <CardTitle className="text-stone-900">Quotes ({filteredAndSortedQuotes.length})</CardTitle>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
+              
+
+
               <Input
                 placeholder="Search quotes..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-64"
+                className="pl-10 w-full sm:w-64"
               />
             </div>
 
             {/* Status Filter */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="w-full sm:w-auto">
+
                   <Filter className="w-4 h-4 mr-2" />
                   Status
                 </Button>
@@ -269,7 +276,8 @@ const QuotesList = ({ onViewQuote }: QuotesListProps) => {
             {/* Sort */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="w-full sm:w-auto">
+
                   <ArrowUpDown className="w-4 h-4 mr-2" />
                   Sort
                 </Button>
@@ -312,7 +320,7 @@ const QuotesList = ({ onViewQuote }: QuotesListProps) => {
                   'bg-blue-50/50 border-blue-200'
                 }`}
               >
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex  items-start justify-between mb-3">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-semibold text-stone-900">#{quote.id}</h3>

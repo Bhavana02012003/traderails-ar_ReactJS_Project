@@ -2,6 +2,9 @@
 import { Eye, Shield, Globe, Camera, Star, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+import Spline from '@splinetool/react-spline';
+
+
 const FeaturesSection = () => {
   const features = [
     {
@@ -43,7 +46,7 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section id="features" className="py-20 bg-white">
+    <section id="features" className="py-20 bg-green-50">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-stone-900 mb-4">
@@ -78,12 +81,15 @@ const FeaturesSection = () => {
           <p className="text-stone-600 mb-6 max-w-xl mx-auto">
             Join thousands of suppliers and buyers already using StoneFlow to streamline their operations.
           </p>
+
+
           <Button size="lg" className="emerald-gradient text-white">
             Start Trading Now
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
       </div>
+
     </section>
   );
 };

@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Truck, 
-  Eye, 
-  AlertTriangle, 
-  CheckCircle, 
-  Camera, 
-  MessageCircle, 
-  Phone, 
+import React, { useState } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Truck,
+  Eye,
+  AlertTriangle,
+  CheckCircle,
+  Camera,
+  MessageCircle,
+  Phone,
   Building,
   MapPin,
   Clock,
   Package,
   FileText,
   Layers,
-  ArrowRight
-} from 'lucide-react';
-import OrganizationSwitcher from '@/components/auth/OrganizationSwitcher';
-import ChooseOrganizationModal from '@/components/auth/ChooseOrganizationModal';
+  ArrowRight,
+} from "lucide-react";
+import OrganizationSwitcher from "@/components/auth/OrganizationSwitcher";
+import ChooseOrganizationModal from "@/components/auth/ChooseOrganizationModal";
 
 interface AgentDashboardProps {
   onShowInviteFlow: () => void;
@@ -27,7 +27,7 @@ interface AgentDashboardProps {
 }
 
 const AgentDashboard = ({ onShowInviteFlow }: AgentDashboardProps) => {
-  const [selectedOrg, setSelectedOrg] = useState<string>('marble-corp');
+  const [selectedOrg, setSelectedOrg] = useState<string>("marble-corp");
   const [showOrgModal, setShowOrgModal] = useState(false);
   const [selectedShipment, setSelectedShipment] = useState<string | null>(null);
   const [selectedSlab, setSelectedSlab] = useState<string | null>(null);
@@ -35,67 +35,68 @@ const AgentDashboard = ({ onShowInviteFlow }: AgentDashboardProps) => {
   // Mock data for organizations
   const organizations = [
     {
-      id: 'marble-corp',
-      name: 'Marble Corp USA',
-      type: 'Buyer' as const,
-      location: 'New York, USA',
-      logo: '/placeholder.svg'
+      id: "marble-corp",
+      name: "Marble Corp USA",
+      type: "Buyer" as const,
+      location: "New York, USA",
+      logo: "/placeholder.svg",
     },
     {
-      id: 'stone-international',
-      name: 'Stone International Ltd',
-      type: 'Buyer' as const,
-      location: 'London, UK',
-      logo: '/placeholder.svg'
-    }
+      id: "stone-international",
+      name: "Stone International Ltd",
+      type: "Buyer" as const,
+      location: "London, UK",
+      logo: "/placeholder.svg",
+    },
   ];
 
-  const currentOrg = organizations.find(org => org.id === selectedOrg) || organizations[0];
+  const currentOrg =
+    organizations.find((org) => org.id === selectedOrg) || organizations[0];
 
   // Mock data for assigned shipments
   const assignedShipments = [
     {
-      id: 'SHIP-001',
-      containerNo: 'TCLU-7834123',
-      exporter: 'Rajasthan Marble Co.',
-      port: 'Mumbai Port',
-      eta: '2024-01-15T10:00:00Z',
-      status: 'Arriving Soon',
+      id: "SHIP-001",
+      containerNo: "TCLU-7834123",
+      exporter: "Rajasthan Marble Co.",
+      port: "Mumbai Port",
+      eta: "2024-01-15T10:00:00Z",
+      status: "Arriving Soon",
       slabCount: 48,
-      priority: 'high'
+      priority: "high",
     },
     {
-      id: 'SHIP-002',
-      containerNo: 'MSKU-9876543',
-      exporter: 'Gujarat Stone Exports',
-      port: 'Kandla Port',
-      eta: '2024-01-18T14:30:00Z',
-      status: 'In Transit',
+      id: "SHIP-002",
+      containerNo: "MSKU-9876543",
+      exporter: "Gujarat Stone Exports",
+      port: "Kandla Port",
+      eta: "2024-01-18T14:30:00Z",
+      status: "In Transit",
       slabCount: 32,
-      priority: 'medium'
-    }
+      priority: "medium",
+    },
   ];
 
   // Mock data for slabs requiring inspection
   const slabsForInspection = [
     {
-      id: 'SLAB-001',
-      name: 'Carrara White Premium',
-      dimensions: '320x160x2cm',
-      shipmentId: 'SHIP-001',
-      status: 'Pending Inspection',
-      image: '/placeholder.svg',
-      priority: 'high'
+      id: "SLAB-001",
+      name: "Carrara White Premium",
+      dimensions: "320x160x2cm",
+      shipmentId: "SHIP-001",
+      status: "Pending Inspection",
+      image: "/placeholder.svg",
+      priority: "high",
     },
     {
-      id: 'SLAB-002',
-      name: 'Calacatta Gold',
-      dimensions: '320x160x3cm',
-      shipmentId: 'SHIP-001',
-      status: 'Pending Inspection',
-      image: '/placeholder.svg',
-      priority: 'medium'
-    }
+      id: "SLAB-002",
+      name: "Calacatta Gold",
+      dimensions: "320x160x3cm",
+      shipmentId: "SHIP-001",
+      status: "Pending Inspection",
+      image: "/placeholder.svg",
+      priority: "medium",
+    },
   ];
 
   const handleOrganizationChange = (orgId: string) => {
@@ -103,23 +104,23 @@ const AgentDashboard = ({ onShowInviteFlow }: AgentDashboardProps) => {
   };
 
   const handleMarkInspected = (shipmentId: string) => {
-    console.log('Marking shipment as inspected:', shipmentId);
+    console.log("Marking shipment as inspected:", shipmentId);
     // Implementation for marking shipment as inspected
   };
 
   const handleReportIssue = (shipmentId: string) => {
-    console.log('Reporting issue for shipment:', shipmentId);
+    console.log("Reporting issue for shipment:", shipmentId);
     // Implementation for reporting issues
   };
 
   const handleSlabInspection = (slabId: string) => {
     setSelectedSlab(slabId);
-    console.log('Opening slab inspection for:', slabId);
+    console.log("Opening slab inspection for:", slabId);
     // Implementation for detailed slab inspection
   };
 
-  const handleQuickContact = (type: 'whatsapp' | 'call') => {
-    console.log('Initiating contact via:', type);
+  const handleQuickContact = (type: "whatsapp" | "call") => {
+    console.log("Initiating contact via:", type);
     // Implementation for quick communication
   };
 
@@ -128,31 +129,33 @@ const AgentDashboard = ({ onShowInviteFlow }: AgentDashboardProps) => {
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 h-auto sm:h-16">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
                   <Eye className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-slate-900">Agent Portal</span>
+                <span className="text-xl font-bold text-slate-900">
+                  Agent Portal
+                </span>
               </div>
               <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">
                 Field Inspector
               </Badge>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              <Button 
-                variant="ghost" 
-                onClick={() => handleQuickContact('whatsapp')}
+
+            <div className="flex flex-wrap items-center gap-2 sm:space-x-4">
+              <Button
+                variant="ghost"
+                onClick={() => handleQuickContact("whatsapp")}
                 className="text-slate-600 hover:text-emerald-600 hover:bg-emerald-50"
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
                 WhatsApp
               </Button>
-              <Button 
-                variant="ghost" 
-                onClick={() => handleQuickContact('call')}
+              <Button
+                variant="ghost"
+                onClick={() => handleQuickContact("call")}
                 className="text-slate-600 hover:text-emerald-600 hover:bg-emerald-50"
               >
                 <Phone className="w-4 h-4 mr-2" />
@@ -176,11 +179,12 @@ const AgentDashboard = ({ onShowInviteFlow }: AgentDashboardProps) => {
             <div className="flex items-center space-x-2">
               <Building className="w-4 h-4 text-slate-500" />
               <span className="text-sm text-slate-600">
-                Currently inspecting for: <span className="font-medium">{currentOrg.name}</span>
+                Currently inspecting for:{" "}
+                <span className="font-medium">{currentOrg.name}</span>
               </span>
             </div>
           </div>
-          
+
           <div className="w-full lg:w-80 lg:flex-shrink-0">
             <OrganizationSwitcher
               currentOrg={currentOrg}
@@ -207,46 +211,52 @@ const AgentDashboard = ({ onShowInviteFlow }: AgentDashboardProps) => {
                     key={shipment.id}
                     className="bg-white/60 backdrop-blur-lg rounded-xl p-4 border border-white/30 hover:bg-white/80 transition-all duration-200"
                   >
-                    <div className="flex items-start justify-between mb-3">
+                    {/* Header Section */}
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-3 gap-2">
                       <div>
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h3 className="font-semibold text-slate-900">{shipment.containerNo}</h3>
-                          <Badge 
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <h3 className="font-semibold text-slate-900">
+                            {shipment.containerNo}
+                          </h3>
+                          <Badge
                             className={`text-xs ${
-                              shipment.priority === 'high' 
-                                ? 'bg-red-100 text-red-800 border-red-200'
-                                : 'bg-yellow-100 text-yellow-800 border-yellow-200'
+                              shipment.priority === "high"
+                                ? "bg-red-100 text-red-800 border-red-200"
+                                : "bg-yellow-100 text-yellow-800 border-yellow-200"
                             }`}
                           >
-                            {shipment.priority === 'high' ? 'Urgent' : 'Medium'}
+                            {shipment.priority === "high" ? "Urgent" : "Medium"}
                           </Badge>
                         </div>
-                        <p className="text-sm text-slate-600 mb-1">{shipment.exporter}</p>
-                        <div className="flex items-center text-sm text-slate-500 space-x-4">
+                        <p className="text-sm text-slate-600 mb-1">
+                          {shipment.exporter}
+                        </p>
+                        <div className="flex flex-wrap items-center text-sm text-slate-500 gap-4">
                           <div className="flex items-center">
-                            <MapPin className="w-3 h-3 mr-1" />
+                            <MapPin className="w-4 h-4 mr-1" />
                             {shipment.port}
                           </div>
                           <div className="flex items-center">
-                            <Clock className="w-3 h-3 mr-1" />
+                            <Clock className="w-4 h-4 mr-1" />
                             {new Date(shipment.eta).toLocaleDateString()}
                           </div>
                           <div className="flex items-center">
-                            <Package className="w-3 h-3 mr-1" />
+                            <Package className="w-4 h-4 mr-1" />
                             {shipment.slabCount} slabs
                           </div>
                         </div>
                       </div>
-                      <Badge className="bg-blue-100 text-blue-800 border-blue-200">
+                      <Badge className="bg-blue-100 text-blue-800 border-blue-200 text-xs md:text-sm mt-2 md:mt-0">
                         {shipment.status}
                       </Badge>
                     </div>
-                    
-                    <div className="flex space-x-2">
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-wrap gap-2">
                       <Button
                         size="sm"
                         onClick={() => handleMarkInspected(shipment.id)}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm px-3 py-1"
                       >
                         <CheckCircle className="w-4 h-4 mr-1" />
                         Mark Inspected
@@ -255,7 +265,7 @@ const AgentDashboard = ({ onShowInviteFlow }: AgentDashboardProps) => {
                         size="sm"
                         variant="outline"
                         onClick={() => handleReportIssue(shipment.id)}
-                        className="border-red-200 text-red-700 hover:bg-red-50"
+                        className="border-red-200 text-red-700 hover:bg-red-50 text-xs md:text-sm px-3 py-1"
                       >
                         <AlertTriangle className="w-4 h-4 mr-1" />
                         Report Issue
@@ -272,16 +282,24 @@ const AgentDashboard = ({ onShowInviteFlow }: AgentDashboardProps) => {
             {/* Current Assignment Status */}
             <Card className="bg-white/90 backdrop-blur-xl border-white/20 shadow-xl">
               <CardHeader className="pb-4">
-                <CardTitle className="text-slate-900">Current Assignment</CardTitle>
+                <CardTitle className="text-slate-900">
+                  Current Assignment
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-4">
                   <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-3">
                     <Building className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="font-semibold text-slate-900 mb-1">Inspecting for:</h3>
-                  <p className="text-sm text-slate-600 font-medium">{currentOrg.name}</p>
-                  <p className="text-xs text-slate-500">{currentOrg.location}</p>
+                  <h3 className="font-semibold text-slate-900 mb-1">
+                    Inspecting for:
+                  </h3>
+                  <p className="text-sm text-slate-600 font-medium">
+                    {currentOrg.name}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {currentOrg.location}
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -289,18 +307,20 @@ const AgentDashboard = ({ onShowInviteFlow }: AgentDashboardProps) => {
             {/* Quick Communication */}
             <Card className="bg-white/90 backdrop-blur-xl border-white/20 shadow-xl">
               <CardHeader className="pb-4">
-                <CardTitle className="text-slate-900">Quick Communication</CardTitle>
+                <CardTitle className="text-slate-900">
+                  Quick Communication
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button
-                  onClick={() => handleQuickContact('whatsapp')}
+                  onClick={() => handleQuickContact("whatsapp")}
                   className="w-full bg-green-600 hover:bg-green-700 text-white"
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Contact Buyer Team
                 </Button>
                 <Button
-                  onClick={() => handleQuickContact('call')}
+                  onClick={() => handleQuickContact("call")}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   <Phone className="w-4 h-4 mr-2" />
@@ -331,24 +351,30 @@ const AgentDashboard = ({ onShowInviteFlow }: AgentDashboardProps) => {
                     <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg mb-3 flex items-center justify-center">
                       <Camera className="w-8 h-8 text-slate-400" />
                     </div>
-                    
+
                     <div className="space-y-2">
                       <div className="flex items-start justify-between">
-                        <h3 className="font-semibold text-slate-900 text-sm">{slab.name}</h3>
-                        <Badge 
+                        <h3 className="font-semibold text-slate-900 text-sm">
+                          {slab.name}
+                        </h3>
+                        <Badge
                           className={`text-xs ${
-                            slab.priority === 'high' 
-                              ? 'bg-red-100 text-red-800 border-red-200'
-                              : 'bg-yellow-100 text-yellow-800 border-yellow-200'
+                            slab.priority === "high"
+                              ? "bg-red-100 text-red-800 border-red-200"
+                              : "bg-yellow-100 text-yellow-800 border-yellow-200"
                           }`}
                         >
-                          {slab.priority === 'high' ? 'Urgent' : 'Medium'}
+                          {slab.priority === "high" ? "Urgent" : "Medium"}
                         </Badge>
                       </div>
-                      
-                      <p className="text-xs text-slate-600">{slab.dimensions}</p>
-                      <p className="text-xs text-slate-500">Shipment: {slab.shipmentId}</p>
-                      
+
+                      <p className="text-xs text-slate-600">
+                        {slab.dimensions}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        Shipment: {slab.shipmentId}
+                      </p>
+
                       <div className="flex items-center justify-between pt-2">
                         <Badge className="bg-orange-100 text-orange-800 border-orange-200 text-xs">
                           {slab.status}

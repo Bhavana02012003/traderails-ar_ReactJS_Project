@@ -195,7 +195,8 @@ Dashboard → Manage Inventory → Add New Slabs → Update Pricing
 - **Current View**: Single state variable managing primary navigation
 - **Authentication State**: User login status and role information
 - **Modal State**: Login, onboarding, and other overlay states
-
+          
+          
 ### Breadcrumb Strategy
 - **Contextual Navigation**: Clear indication of current location
 - **Back Button Functionality**: Consistent navigation patterns
